@@ -12,6 +12,8 @@ import {Text, View } from 'react-native';
 import TabNavigator from './src/components/navigation/TabNavigator';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
+import BrandListScreen from './src/screens/BrandListScreen';
+import BrandRequirementScreen from './src/screens/BrandRequirementScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -26,6 +28,8 @@ function App(): React.JSX.Element {
 
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Brands-list" component={BrandListScreen} />
+        <Stack.Screen name="Brands-requirement" component={BrandRequirementScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>
