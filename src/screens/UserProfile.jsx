@@ -24,7 +24,20 @@ const UserProfile = () => {
         className='bg-green-500 p-3 rounded-lg w-full items-center mb-3'>
         <Text className='text-white text-lg'>Go to Signup</Text>
       </TouchableOpacity>
+      <TouchableOpacity 
+        onPress={() => navigation.navigate('Brands-list')} 
+        className='bg-green-500 p-3 rounded-lg w-full items-center mb-3'>
+        <Text className='text-white text-lg'>All Brands</Text>
+      </TouchableOpacity>
+      <TouchableOpacity 
+        onPress={() => navigation.navigate('Brands-requirement')} 
+        className='bg-green-500 p-3 rounded-lg w-full items-center mb-3'>
+        <Text className='text-white text-lg'>BrandRequirementScreen</Text>
+      </TouchableOpacity>
 
+
+
+{/* ========================================= */}
  <StyledView className="bg-white p-4">
       {/* Profile Section */}
       <StyledView className="flex-row items-center space-x-3">
@@ -151,21 +164,3 @@ const UserProfile = () => {
 }
 
 export default UserProfile;
-
-
-// const MenuItem = ({ icon, title, subtitle, showCheck }) => {
-//   return (
-//     <StyledView className="flex-row items-center px-4 py-3 border-b border-gray-200">
-//        <StyledImage
-//           // source={{ uri: "https://your-thumbnail-url.com/image.jpg" }} 
-//           source={require(`../assets/Images/clock.png`)}
-//           className="w-[24px] h-[24px]"
-//         />
-     
-//       <StyledView className="flex-1">
-//         <StyledText className="text-black text-base">{title}</StyledText>
-//         {subtitle && <StyledText className="text-gray-500 text-sm">{subtitle}</StyledText>}
-//       </StyledView>
-//     </StyledView>
-//   );
-// };
