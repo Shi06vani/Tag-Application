@@ -16,6 +16,7 @@ import BrandListScreen from './src/screens/BrandListScreen';
 import BrandRequirementScreen from './src/screens/BrandRequirementScreen';
 import BrandRequirementForm from './src/screens/BrandRequirementForm';
 import Leaderboard from './src/screens/Leaderboard';
+import ChatScreen from './src/screens/ChatScreen';
 import Shorts from './src/screens/Shorts';
 
 
@@ -35,6 +36,7 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Brands-requirement" component={BrandRequirementScreen} />
         <Stack.Screen name="Your-requirement" component={BrandRequirementForm} />
         <Stack.Screen name="Leaderboard" component={Leaderboard} />
+        <Stack.Screen name="Chat" component={ChatScreen} />
         <Stack.Screen name="Shorts" component={Shorts} />
 
       </Stack.Navigator>

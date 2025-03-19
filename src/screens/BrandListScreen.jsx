@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, TextInput } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const brands = [
   { id: '1', name: 'Nike', category: 'Sportswear', logo: require('../assets/Images/user.png') },
@@ -9,6 +10,7 @@ const brands = [
 ];
 
 const BrandListScreen = () => {
+   const navigation = useNavigation();
   const [search, setSearch] = useState('');
   
   const filteredBrands = brands.filter(brand => 
@@ -29,7 +31,9 @@ const BrandListScreen = () => {
         data={filteredBrands}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity className="bg-white px-3 py-2 mb-2 rounded-2xl shadow-lg flex-row items-center">
+          <TouchableOpacity className="bg-white px-3 py-2 mb-2 rounded-2xl shadow-lg flex-row items-center"
+          onPress={() => navigation.navigate('Chat')} 
+          >
             <Image source={item.logo} className="w-16 h-16 rounded-lg mr-4" />
             <View>
               <Text className="text-xl font-semibold text-primary">{item.name}</Text>
