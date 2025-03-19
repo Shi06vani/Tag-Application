@@ -1,9 +1,9 @@
 import React from 'react';
-import { View,Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View,Image, TouchableOpacity } from 'react-native';
 
 const Header = () => {
   return (
-    <View className="flex flex-row justify-between border-b py-4 px-[10px] border-b-[#CECECE] bg-white">
+    <View className="flex flex-row justify-between py-4 px-[10px]  bg-white ">
     <Image source={require('../assets/Images/Logo.png')} className="" />
     <View className="flex flex-row gap-4">
       <TouchableOpacity>

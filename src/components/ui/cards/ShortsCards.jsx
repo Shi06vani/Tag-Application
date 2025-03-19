@@ -13,7 +13,7 @@ const ShortsCard = ({image, title, views, onPress}) => {
     console.log('Image prop:', image); // Debugging
   return (
     <StyledTouchableOpacity
-      className="w-40 h-60  overflow-hidden  relative"
+      className="w-40 h-60   overflow-hidden  relative"
       onPress={onPress}>
       <Image source={require("../../../assets/Images/shortsimage.png")} className="w-full h-full" />
       

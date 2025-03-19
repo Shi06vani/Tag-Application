@@ -1,3 +1,4 @@
+import Add from "../screens/Add"
 import Home from "../screens/Home"
 import Shorts from "../screens/Shorts"
 import Subscription from "../screens/Subscription"
@@ -12,12 +13,12 @@ export const TabsRoutes = [
   {
     name: "Shorts",
     Component: Shorts,
-    options: { headerShown: false }
+    options: { headerShown: false  }
 
   },
   {
     name: "Add",
-    Component: Shorts,
+    Component: Add,
     options: { headerShown: false }
 
   },

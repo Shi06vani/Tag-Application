@@ -31,8 +31,8 @@ const shortsData = [
 
 const HomeShorts = () => {
   return (
-    <View>
-      <View className="flex flex-row gap-3 py-[14px] px-3">
+    <View className='bg-white h-full'>
+      <View className="flex flex-row gap-3 py-[15px] px-3">
         <Image source={require('../../assets/Images/shorts.png')} />
         <Text className="text-base font-medium">Storts </Text>
       </View>
