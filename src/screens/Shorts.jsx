@@ -234,7 +234,7 @@ const Shorts = () => {
               <Text style={{color: 'white', fontSize: 16}}>{item.channel}</Text>
               <TouchableOpacity
                 style={{
-                  backgroundColor: 'red',
+                  backgroundColor: '#441752',
                   paddingVertical: 5,
                   paddingHorizontal: 10,
                   borderRadius: 5,

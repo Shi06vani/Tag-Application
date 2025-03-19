@@ -10,7 +10,7 @@ const Home = () => {
         {/* <Header /> */}
       <View className="flex flex-row items-center p-3">
         <View className="  border-r-2 border-r-[#ECECEC] px-3">
-          <Text className="text-sm font-medium  text-[#000000] p-2 rounded-lg bg-[#ECECEC] border-gray-300">
+          <Text className="text-sm font-medium   px-4 py-2 rounded-lg bg-[#441752] text-white border-gray-300">
             Explore
           </Text>
         </View>

@@ -135,7 +135,6 @@ const Add = () => {
         <View>
           <Text className="text-xl font-bold mb-4">Upload or Record short Shorts</Text>
 
-          {/* Upload from Gallery */}
           <TouchableOpacity className="bg-[#441752] px-6 py-3 rounded-full mb-4 flex-row items-center">
             <Image
               source={require('../assets/Images/bell1.png')}
@@ -144,7 +143,6 @@ const Add = () => {
             <Text className="text-white">Upload from Gallery</Text>
           </TouchableOpacity>
 
-          {/* Record New Video */}
           <TouchableOpacity className="bg-[#8174A0] px-6 py-3 rounded-full mb-4 flex-row items-center">
             <Image
               source={require('../assets/Images/camera.png')}
@@ -155,7 +153,6 @@ const Add = () => {
         </View>
       )}
 
-      {/* Bottom Tabs */}
       <View className="absolute bottom-4 w-full flex justify-center items-center ">
         <View className="flex-row gap-6">
           <TouchableOpacity

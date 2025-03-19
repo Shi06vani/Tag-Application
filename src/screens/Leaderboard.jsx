@@ -24,15 +24,15 @@ const creators = [
 const Leaderboard = () => {
   return (
     <View className="flex-1 bg-purple-100 p-[15px]">
-      <Text className="text-4xl font-bold text-center text-purple-800 mb-4">Top Creators</Text>
+      <Text className="text-4xl font-bold text-center text-primary mb-4">Top Creators</Text>
       <ScrollView className="bg-white rounded-lg shadow-lg py-3 px-3 flex-1">
         {creators.map((creator, index) => (
           <View key={index} className="flex-row items-center justify-between p-2 border-b border-purple-300">
             <View className="flex-row items-center">
               <Image source={require(`../assets/Images/user.png`)} className="w-12 h-12 rounded-full mr-4" />
               <View>
-                <Text className="text-xl font-semibold text-purple-700">{index + 1}. {creator.name}</Text>
-                <Text className="text-md text-gray-600">{creator.followers}K Followers</Text>
+                <Text className="text-xl font-semibold text-primary">{index + 1}. {creator.name}</Text>
+                <Text className="text-md text-secondary">{creator.followers}K Followers</Text>
               </View>
             </View>
             <Text className="text-xl font-bold text-purple-900">{creator.points} pts</Text>

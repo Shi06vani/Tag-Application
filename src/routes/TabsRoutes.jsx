@@ -1,5 +1,7 @@
 import Add from "../screens/Add"
+import BrandListScreen from "../screens/BrandListScreen"
 import Home from "../screens/Home"
+import Leaderboard from "../screens/Leaderboard"
 import Shorts from "../screens/Shorts"
 import Subscription from "../screens/Subscription"
 import UserProfile from "../screens/UserProfile"
@@ -11,20 +13,20 @@ export const TabsRoutes = [
     options: { headerShown: false }
   },
   {
-    name: "Shorts",
-    Component: Shorts,
+    name: "Leaderboard",
+    Component: Leaderboard,
     options: { headerShown: false  }
 
   },
   {
     name: "Add",
     Component: Add,
-    options: { headerShown: false }
+    options: { headerShown: false,tabBarLabel: 'Add' }
 
   },
   {
-    name: "Subscription",
-    Component: Subscription,
+    name: "Brand",
+    Component: BrandListScreen,
     options: { headerShown: false }
 
   },

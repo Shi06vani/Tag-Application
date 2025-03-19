@@ -17,7 +17,7 @@ const BrandRequirementScreen = () => {
 
   return (
     <View className="flex-1 bg-purple-100 py-[10px] px-[15px]">
-    <Text className="text-3xl font-bold text-center text-purple-800 mb-2">Brand Requirements</Text>
+    <Text className="text-3xl font-bold text-center text-primary mb-2">Brand Requirements</Text>
     <TextInput
       className="w-full p-3 border border-purple-300 rounded-[100px] mb-4 text-lg bg-white"
       placeholder="Search requirements..."
@@ -28,12 +28,12 @@ const BrandRequirementScreen = () => {
       data={filteredRequirements}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <View className="bg-white p-4 mb-3 rounded-2xl shadow-lg border-l-4 border-purple-600">
-          <Text className="text-xl font-bold text-purple-700">{item.brand}</Text>
-          <Text className="text-lg font-semibold text-gray-700 mt-1">{item.title}</Text>
+        <View className="bg-white p-4 mb-3 rounded-2xl shadow-lg border-l-4 border-accent">
+          <Text className="text-xl font-bold text-primary">{item.brand}</Text>
+          <Text className="text-lg font-semibold text-secondary mt-1">{item.title}</Text>
           <Text className="text-gray-600 mt-2">{item.details}</Text>
-          <Text className="text-purple-600 font-semibold mt-2">Budget: {item.budget}</Text>
-          <TouchableOpacity className="bg-purple-700 p-3 rounded-lg mt-3 items-center">
+          <Text className="text-primary font-semibold mt-2">Budget: {item.budget}</Text>
+          <TouchableOpacity className="bg-primary p-3 rounded-lg mt-3 items-center">
             <Text className="text-white text-lg font-semibold">Apply Now</Text>
           </TouchableOpacity>
         </View>

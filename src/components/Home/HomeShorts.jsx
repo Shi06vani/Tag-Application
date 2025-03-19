@@ -1,6 +1,7 @@
 import React from 'react';
-import {View, Text, Image, ScrollView} from 'react-native';
+import {View, Text, Image, ScrollView, TouchableOpacity} from 'react-native';
 import ShortsCard from '../ui/cards/ShortsCards';
+import {useNavigation} from '@react-navigation/native';
 
 const shortsData = [
   {
@@ -30,23 +31,26 @@ const shortsData = [
 ];
 
 const HomeShorts = () => {
+  const navigation = useNavigation();
+
   return (
-    <View className='bg-white h-full'>
+    <View className="bg-white h-full">
       <View className="flex flex-row gap-3 py-[15px] px-3">
-        <Image source={require('../../assets/Images/shorts.png')} />
+        <Image source={require('../../assets/Images/shorts-icon.png')} className='w-8 h-8'/>
         <Text className="text-base font-medium">Storts </Text>
       </View>
       <View>
         <ScrollView horizontal={true} className="flex flex-row ">
           {shortsData.map((shorts, index) => (
             <View className="flex flex-row mx-1" key={index}>
-              <ShortsCard
-                
-                image={shorts.image}
-                title={shorts.title}
-                views={shorts.views}
-                onPress={() => console.log('Another Card Pressed')}
-              />
+              <TouchableOpacity >
+                <ShortsCard
+                  image={shorts.image}
+                  title={shorts.title}
+                  views={shorts.views}
+                  onPress={() => navigation.navigate("Shorts")}
+                />
+              </TouchableOpacity>
             </View>
           ))}
         </ScrollView>

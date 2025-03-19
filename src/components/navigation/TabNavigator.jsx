@@ -32,7 +32,7 @@ const TabNavigator = () => {
               iconSource = focused
                 ? require('../../assets/Images/home-dark.png')
                 : require('../../assets/Images/home.png');
-            } else if (route.name === 'Shorts') {
+            } else if (route.name === 'Leaderboard') {
               iconSource = focused
                 ? require('../../assets/Images/home-dark.png')
                 : require('../../assets/Images/home.png');
@@ -40,7 +40,7 @@ const TabNavigator = () => {
               iconSource = focused
                 ? require('../../assets/Images/plus.png')
                 : require('../../assets/Images/plus.png');
-            } else if (route.name === 'Subscription') {
+            } else if (route.name === 'Brand') {
               iconSource = focused
                 ? require('../../assets/Images/home-dark.png')
                 : require('../../assets/Images/home.png');

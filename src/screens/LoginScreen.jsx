@@ -14,6 +14,7 @@ const LoginScreen = () => {
     }
     try {
       Alert.alert('Success', 'Logged in successfully');
+      navigation.replace('Main'); 
     } catch (error) {
       Alert.alert('Login Failed', error.message);
     }
@@ -22,7 +23,7 @@ const LoginScreen = () => {
   return (
     <View className="flex-1 justify-center items-center px-5 bg-purple-100">
       <View className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm">
-        <Text className="text-3xl font-bold text-center mb-6 text-purple-800">Welcome Back</Text>
+        <Text className="text-3xl font-bold text-center mb-6 text-primary">Welcome Back</Text>
         <TextInput
           className="w-full p-4 border border-gray-300 rounded-[50px] mb-4 text-lg"
           placeholder='Email'
@@ -39,13 +40,13 @@ const LoginScreen = () => {
         />
         <TouchableOpacity
           onPress={handleLogin}
-          className="bg-purple-600 p-4 rounded-[50px] w-full items-center mb-4">
+          className="bg-primary p-4 rounded-[50px] w-full items-center mb-4">
           <Text className="text-white text-lg font-semibold">Login</Text>
         </TouchableOpacity>
         <View className="flex-row justify-center">
           <Text className="text-gray-600 text-lg">Don't have an account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-            <Text className="text-purple-600 text-lg font-semibold">Sign Up</Text>
+            <Text className="text-accent text-lg font-semibold">Sign Up</Text>
           </TouchableOpacity>
         </View>
       </View>
