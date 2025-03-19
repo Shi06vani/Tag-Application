@@ -34,6 +34,16 @@ const UserProfile = () => {
         className='bg-green-500 p-3 rounded-lg w-full items-center mb-3'>
         <Text className='text-white text-lg'>BrandRequirementScreen</Text>
       </TouchableOpacity>
+      <TouchableOpacity 
+        onPress={() => navigation.navigate('Your-requirement')} 
+        className='bg-green-500 p-3 rounded-lg w-full items-center mb-3'>
+        <Text className='text-white text-lg'>Your-requirement</Text>
+      </TouchableOpacity>
+      <TouchableOpacity 
+        onPress={() => navigation.navigate('Leaderboard')} 
+        className='bg-green-500 p-3 rounded-lg w-full items-center mb-3'>
+        <Text className='text-white text-lg'>Leaderboard</Text>
+      </TouchableOpacity>
 
 
 

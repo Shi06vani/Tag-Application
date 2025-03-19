@@ -14,6 +14,8 @@ import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import BrandListScreen from './src/screens/BrandListScreen';
 import BrandRequirementScreen from './src/screens/BrandRequirementScreen';
+import BrandRequirementForm from './src/screens/BrandRequirementForm';
+import Leaderboard from './src/screens/Leaderboard';
 
 
 const Stack = createNativeStackNavigator();
@@ -30,6 +32,8 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="Brands-list" component={BrandListScreen} />
         <Stack.Screen name="Brands-requirement" component={BrandRequirementScreen} />
+        <Stack.Screen name="Your-requirement" component={BrandRequirementForm} />
+        <Stack.Screen name="Leaderboard" component={Leaderboard} />
 
       </Stack.Navigator>
     </NavigationContainer>
