@@ -34,7 +34,7 @@ const ChatScreen = () => {
                   <Image source={require('../assets/Images/heart.png')} style={{ width: 18, height: 18, tintColor: item.reaction === 'heart' ? 'red' : 'gray' }} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => addReaction(item.id, 'like')}>
-                  <Image source={require('../assets/Images/thumb-up.png')} style={{ width: 18, height: 18, tintColor: item.reaction === 'like' ? 'blue' : 'gray' }} />
+                  <Image source={require('../assets/Images/thumblike.png')} style={{ width: 18, height: 18, tintColor: item.reaction === 'like' ? 'blue' : 'gray' }} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => addReaction(item.id, 'dislike')}>
                   <Image source={require('../assets/Images/dislike.png')} style={{ width: 18, height: 18, tintColor: item.reaction === 'dislike' ? 'red' : 'gray' }} />

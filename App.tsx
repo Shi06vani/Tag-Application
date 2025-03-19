@@ -17,6 +17,7 @@ import BrandRequirementScreen from './src/screens/BrandRequirementScreen';
 import BrandRequirementForm from './src/screens/BrandRequirementForm';
 import Leaderboard from './src/screens/Leaderboard';
 import ChatScreen from './src/screens/ChatScreen';
+import Shorts from './src/screens/Shorts';
 
 
 const Stack = createNativeStackNavigator();
@@ -25,7 +26,7 @@ const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName="Signup">
         <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="Profile" component={() => <View><Text>hdgfhg</Text></View>} />
 
@@ -36,6 +37,7 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Your-requirement" component={BrandRequirementForm} />
         <Stack.Screen name="Leaderboard" component={Leaderboard} />
         <Stack.Screen name="Chat" component={ChatScreen} />
+        <Stack.Screen name="Shorts" component={Shorts} />
 
       </Stack.Navigator>
     </NavigationContainer>

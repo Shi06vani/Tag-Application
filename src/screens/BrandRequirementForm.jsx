@@ -17,7 +17,7 @@ const BrandRequirementForm = () => {
 
   return (
     <View className="flex-1 bg-purple-100 p-5">
-      <Text className="text-3xl font-bold text-center text-purple-800 mb-4">Post a Requirement</Text>
+      <Text className="text-3xl font-bold text-center text-primary mb-4">Post a Requirement</Text>
       <TextInput
         className="w-full p-3 border border-purple-300 rounded-lg mb-4 text-lg bg-white"
         placeholder="Brand Name"
@@ -44,7 +44,7 @@ const BrandRequirementForm = () => {
         value={budget}
         onChangeText={setBudget}
       />
-      <TouchableOpacity onPress={handleSubmit} className="bg-purple-700 p-4 rounded-lg w-full items-center">
+      <TouchableOpacity onPress={handleSubmit} className="bg-primary p-4 rounded-lg w-full items-center">
         <Text className="text-white text-lg font-semibold">Submit Requirement</Text>
       </TouchableOpacity>
     </View>

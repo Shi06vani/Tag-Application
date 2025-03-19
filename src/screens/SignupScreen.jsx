@@ -26,17 +26,17 @@ const SignupScreen = () => {
   };
 
   return (
-    <View className="flex-1 justify-center items-center px-5 bg-purple-100">
+    <View className="flex-1 justify-center items-center px-5 bg-[#f8e7ff]">
       <View className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm">
-        <Text className="text-3xl font-bold text-center mb-6 text-purple-800">Create an Account</Text>
+        <Text className="text-3xl font-bold text-center mb-6 text-primary">Create an Account</Text>
         <View className="flex-row justify-between mb-4">
           <TouchableOpacity
-            className={`flex-1 p-3 rounded-[50px] mx-1 ${userType === 'creator' ? 'bg-purple-600' : 'bg-gray-300'}`}
+            className={`flex-1 p-3 rounded-[50px] mx-1 ${userType === 'creator' ? 'bg-primary' : 'bg-accent'}`}
             onPress={() => setUserType('creator')}>
             <Text className="text-white text-center font-semibold">Creator</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className={`flex-1 p-3 rounded-[50px] mx-1 ${userType === 'brand' ? 'bg-purple-600' : 'bg-gray-300'}`}
+            className={`flex-1 p-3 rounded-[50px] mx-1 ${userType === 'brand' ? 'bg-primary' : 'bg-accent'}`}
             onPress={() => setUserType('brand')}>
             <Text className="text-white text-center font-semibold">Brand</Text>
           </TouchableOpacity>
@@ -80,13 +80,13 @@ const SignupScreen = () => {
         )}
         <TouchableOpacity
           onPress={handleSignup}
-          className="bg-purple-600 p-4 rounded-[50px] w-full items-center mb-4">
+          className="bg-primary p-4 rounded-[50px] w-full items-center mb-4">
           <Text className="text-white text-lg font-semibold">Sign Up</Text>
         </TouchableOpacity>
         <View className="flex-row justify-center">
           <Text className="text-gray-600 text-lg">Already have an account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-            <Text className="text-purple-600 text-lg font-semibold">Login</Text>
+            <Text className="text-primary text-lg font-semibold">Login</Text>
           </TouchableOpacity>
         </View>
       </View>
