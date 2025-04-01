@@ -1,6 +1,12 @@
+
+
+
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import BASE_URL from "../../config"
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -13,8 +19,27 @@ const LoginScreen = () => {
       return;
     }
     try {
+      const response = await fetch(`${BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+       console.log("logindata",data.token ,data.user.id ,data)
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
       Alert.alert('Success', 'Logged in successfully');
-      navigation.replace('Main'); 
+      navigation.replace('Main');
+      await AsyncStorage.setItem('token',data?.token);
+      await AsyncStorage.setItem('loginuser_id',data?.user?.id);
+      await AsyncStorage.setItem('role',data?.user?.role);
+
     } catch (error) {
       Alert.alert('Login Failed', error.message);
     }

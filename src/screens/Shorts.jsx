@@ -90,6 +90,7 @@ const Shorts = () => {
           }}
           onPress={togglePlayPause}>
           <View
+            className='bg-black relative'
             style={{
               height,
               width,
@@ -100,8 +101,8 @@ const Shorts = () => {
             <Video
               ref={ref => (videoRefs.current[index] = ref)}
               source={{uri: item.url}}
-              style={{width: '100%', height: '100%'}}
-              resizeMode="cover"
+              style={{ width: '100%', height: height * 0.8 }} // Adjust height
+              resizeMode="contain"
               repeat
               muted={currentIndex !== index}
               playInBackground={false}

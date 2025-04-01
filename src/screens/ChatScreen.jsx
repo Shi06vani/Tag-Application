@@ -20,12 +20,12 @@ const ChatScreen = () => {
 
   return (
     <View className="flex-1 bg-purple-100 p-5">
-      <Text className="text-3xl font-bold text-center text-purple-800 mb-4">Chat</Text>
+      {/* <Text className="text-3xl font-bold text-center text-primary mb-4">Chat</Text> */}
       <FlatList
         data={messages}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View className={`p-3 my-2 rounded-lg max-w-[75%] ${item.sender === 'me' ? 'self-end bg-purple-700' : 'self-start bg-white'}`}> 
+          <View className={`p-3 my-2 rounded-lg max-w-[75%] ${item.sender === 'me' ? 'self-end bg-primary' : 'self-start bg-white'}`}> 
             <Text className={`text-lg ${item.sender === 'me' ? 'text-white' : 'text-gray-800'}`}>{item.text}</Text>
             <View className="flex-row justify-between items-center mt-2">
               <Text className="text-xs text-gray-500">{item.time}</Text>
@@ -51,7 +51,7 @@ const ChatScreen = () => {
           value={inputText}
           onChangeText={setInputText}
         />
-        <TouchableOpacity onPress={sendMessage} className="bg-purple-700 p-3 rounded-lg ml-2">
+        <TouchableOpacity onPress={sendMessage} className="bg-primary p-3 rounded-lg ml-2">
           <Text className="text-white text-lg font-semibold">Send</Text>
         </TouchableOpacity>
       </View>

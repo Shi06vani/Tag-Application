@@ -1,192 +1,336 @@
-import React from 'react';
-import {View, Text, Image, ScrollView, TouchableOpacity} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import BASE_URL from '../../config';
+import {Share} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {styled} from 'nativewind';
-import {useNavigation} from '@react-navigation/native';
-
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledImage = styled(Image);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 
+const fetchUserData = async (setUserData, setLoading) => {
+  setLoading(true);
+  try {
+    const userId = await AsyncStorage.getItem('loginuser_id');
+    if (!userId) {
+      throw new Error('No user ID found in AsyncStorage');
+    }
+
+    const response = await fetch(`${BASE_URL}/api/auth/profile/${userId}`);
+    const data = await response.json();
+    setUserData(data.user);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+  }
+  setLoading(false);
+};
+
 const UserProfile = () => {
-  const navigation = useNavigation();
   const recentData = [{}, {}, {}, {}, {}];
+  const [role, setRole] = useState(null);
+  const navigation = useNavigation();
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!userData && !loading) {
+      navigation.replace('Login'); 
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      const storedRole = await AsyncStorage.getItem("role");
+      setRole(storedRole);
+    };
+
+    fetchRole();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData(setUserData, setLoading);
+    }, []),
+  );
+
+  if (loading) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#441752"
+        className="flex-1 justify-center items-center"
+      />
+    );
+  }
+
+  const shareProfile = async () => {
+    try {
+      const shareOptions = {
+        title: 'Check out this profile!',
+        message: `Hey, check out this profile:
+        
+        Name: ${userData?.name}
+        Company: ${userData?.companyName}
+        Website: ${userData?.website}
+  
+        You can visit their profile here: https://yourwebsite.com/user/${userData?._id}`,
+      };
+
+      await Share.share(shareOptions);
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+
+
 
   return (
-    <View className="p-[8px]">
-      {/* <TouchableOpacity
-        onPress={() => navigation.navigate('Login')}
-        className="bg-green-500 p-3 rounded-lg w-full items-center mb-3">
-        <Text className="text-white text-lg">Go to Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Signup')}
-        className="bg-green-500 p-3 rounded-lg w-full items-center mb-3">
-        <Text className="text-white text-lg">Go to Signup</Text>
-      </TouchableOpacity> */}
-      {/* <TouchableOpacity
-        onPress={() => navigation.navigate('Brands-list')}
-        className="bg-green-500 p-3 rounded-lg w-full items-center mb-3">
-        <Text className="text-white text-lg">All Brands</Text>
-      </TouchableOpacity> */}
-
-      {/* <TouchableOpacity
-        onPress={() => navigation.navigate('Leaderboard')}
-        className="bg-green-500 p-3 rounded-lg w-full items-center mb-3">
-        <Text className="text-white text-lg">Leaderboard</Text>
-      </TouchableOpacity> */}
-
-      <View className='flex flex-col px-2'>
+    <ScrollView>
+      <View className="p-[8px]">
         <TouchableOpacity
-          onPress={() => navigation.navigate('Brands-requirement')}
-          className="bg-accent p-3 rounded-lg w-full  items-center mb-3">
-          <Text className="text-white text-lg">BrandRequirementScreen</Text>
+          onPress={() => navigation.navigate('Brands-list')}
+          className="bg-secondary p-3 rounded-lg w-full items-center mb-3">
+          <Text className="text-primary text-lg">All Brands</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Your-requirement')}
-          className="bg-light p-3 rounded-lg w-full  items-center mb-3">
-          <Text className="text-primary text-lg">Your-requirement</Text>
-        </TouchableOpacity>
-      </View>
 
-      {/* ========================================= */}
-      <StyledView className="bg-white p-4">
-        {/* Profile Section */}
-        <StyledView className="flex-row items-center space-x-3">
-          <StyledImage
-            source={require(`../assets/Images/user.png`)}
-            className="w-12 h-12 rounded-full"
-          />
-          <StyledView>
-            <StyledText className="text-black text-lg font-bold">
-              Rise and Shine
-            </StyledText>
-            <StyledText className="text-gray-500 text-sm">
-              @Motivation--2024 • View channel
-            </StyledText>
-          </StyledView>
-        </StyledView>
+       
 
-        {/* Buttons Section */}
-        <StyledView className="mt-4">
-          <ScrollView
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            className="flex flex-row gap-[10px]">
-            <StyledTouchableOpacity className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] text-white pt-[-2px] bg-accent 0 rounded-full">
-              <StyledImage
-              tintColor={"white"}
-                source={require(`../assets/Images/my-video.png`)}
-                className="w-[18px] h-[18px]"
-              />
-              <StyledText className="text-white text-sm">Settings</StyledText>
-            </StyledTouchableOpacity>
-            <StyledTouchableOpacity className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] pt-[4px] bg-accent 0 rounded-full">
-              <StyledImage
-                tintColor={"white"}
-                source={require(`../assets/Images/my-video.png`)}
-                className="w-[18px] h-[18px]"
-              />
-              <StyledText className="text-white text-sm">
-                Switch account
-              </StyledText>
-            </StyledTouchableOpacity>
+        <StyledView className="bg-white p-4 rounded-lg">
+          <View className="p-[8px]">
+            <View className="flex-row justify-between">
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('Update-Profile', {data: userData})
+                }>
+                <View className="bg-slate-100 px-2 py-1 rounded-md">
+                  <Text>Update Profile</Text>
+                </View>
+              </TouchableOpacity>
 
-            <StyledTouchableOpacity className="flex-row items-center gap-[6px] px-[12px] py-[8px] pt-[-2px] bg-accent 0 rounded-full">
-              <StyledImage
-                tintColor={"white"}
-                source={require(`../assets/Images/clock.png`)}
-                className="w-[18px] h-[18px]"
-              />
-              <StyledText className="text-white text-sm">
-                Share Channel
-              </StyledText>
-            </StyledTouchableOpacity>
-          </ScrollView>
-        </StyledView>
-      </StyledView>
+              <TouchableOpacity onPress={shareProfile}>
+                <View className="bg-slate-100 px-2 py-1 rounded-md">
+                  <Text>Share Profile</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
 
-      <Text className="text-[#000000] text-[16px] ">Recent</Text>
-
-      {/* <View className='p-[5px] flex flex-row gap-[10px] items-center w-full overflow-scroll'> */}
-      <View className="p-[5px] w-full">
-        <ScrollView
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          className="flex flex-row gap-[10px]">
-          {recentData.map((item, index) => {
-            return (
-              <StyledView
-                className="w-40 bg-white rounded-lg overflow-hidden"
-                key={index}>
-                {/* Thumbnail */}
-                <StyledView className="relative">
-                  <StyledImage
-                    // source={{ uri: "https://your-thumbnail-url.com/image.jpg" }}
-                    source={require('../assets/Images/heart-touching.png')}
-                    className="w-full h-24"
-                  />
-                  {/* Video Duration */}
-                  <StyledView className="absolute bottom-1 right-1 bg-black px-2 py-1 rounded-md">
-                    <StyledText className="text-white text-xs">0:50</StyledText>
-                  </StyledView>
-                </StyledView>
-
-                {/* Video Details */}
-                <StyledView className="p-2">
-                  <StyledText className="text-black font-semibold text-sm">
-                    Heart Touching Nasheed #Shorts
+            <StyledView className="bg-white p-4 rounded-lg shadow-md">
+              <StyledView className="flex-row items-center space-x-3">
+                <StyledImage
+                  source={require('../assets/Images/user.png')}
+                  className="w-12 h-12 rounded-full"
+                />
+                <StyledView>
+                  <StyledText className="text-black text-lg font-bold">
+                    {userData?.name}
                   </StyledText>
-                  <StyledText className="text-gray-500 text-xs">
-                    An Naffe
+                  <StyledText className="text-gray-500 text-sm">
+                    {userData?.email}
+                  </StyledText>
+                  <StyledText className="text-gray-500 text-sm">
+                    {userData?.role} - {userData?.companyName}
                   </StyledText>
                 </StyledView>
               </StyledView>
-            );
-          })}
-        </ScrollView>
+              <StyledText className="text-gray-600 mt-2">
+                {userData?.bio}
+              </StyledText>
+              <StyledText className="text-gray-600 mt-2">
+                {userData?.topic}
+              </StyledText>
+            </StyledView>
+          </View>
+
+          {/* Buttons Section */}
+          <StyledView className="mt-4">
+            <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              className="flex flex-row gap-[10px]">
+              <StyledTouchableOpacity className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] text-white pt-[-2px] bg-accent 0 rounded-full">
+                <StyledImage
+                  tintColor={'white'}
+                  source={require(`../assets/Images/my-video.png`)}
+                  className="w-[18px] h-[18px]"
+                />
+                <StyledText className="text-white text-sm">Settings</StyledText>
+              </StyledTouchableOpacity>
+              <StyledTouchableOpacity className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] pt-[4px] bg-accent 0 rounded-full">
+                <StyledImage
+                  tintColor={'white'}
+                  source={require(`../assets/Images/my-video.png`)}
+                  className="w-[18px] h-[18px]"
+                />
+                <StyledText className="text-white text-sm">
+                  Switch account
+                </StyledText>
+              </StyledTouchableOpacity>
+
+              <StyledTouchableOpacity
+                className="flex-row items-center gap-[6px] px-[12px] py-[8px] pt-[-2px] bg-accent 0 rounded-full"
+                onPress={() => navigation.navigate('Leaderboard')}>
+                <StyledImage
+                  tintColor={'white'}
+                  source={require(`../assets/Images/clock.png`)}
+                  className="w-[18px] h-[18px]"
+                />
+                <StyledText className="text-white text-sm">
+                  Leaderboard
+                </StyledText>
+              </StyledTouchableOpacity>
+            </ScrollView>
+          </StyledView>
+        </StyledView>
+
+        {/* <View className="bg-white mt-2 p-1 rounded-lg">
+          <Text className="text-[#000000] text-[16px] ">Recent</Text>
+
+          <View className="p-[5px] w-full">
+            <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              className="flex flex-row gap-[10px]">
+              {recentData.map((item, index) => {
+                return (
+                  <StyledView
+                    className="w-40 bg-white rounded-lg overflow-hidden"
+                    key={index}>
+                    <StyledView className="relative">
+                      <StyledImage
+                        source={require('../assets/Images/heart-touching.png')}
+                        className="w-full h-24"
+                      />
+                      <StyledView className="absolute bottom-1 right-1 bg-black px-2 py-1 rounded-md">
+                        <StyledText className="text-white text-xs">
+                          0:50
+                        </StyledText>
+                      </StyledView>
+                    </StyledView>
+
+                    <StyledView className="p-2">
+                      <StyledText className="text-black font-semibold text-sm">
+                        Heart Touching Nasheed #Shorts
+                      </StyledText>
+                      <StyledText className="text-gray-500 text-xs">
+                        An Naffe
+                      </StyledText>
+                    </StyledView>
+                  </StyledView>
+                );
+              })}
+            </ScrollView>
+          </View>
+        </View> */}
+
+        <View>
+          <ScrollView className="">
+            <View className="">
+              <StyledView className="bg-white  mt-[12px] rounded-lg shadow-md">
+                <StyledView className="flex-row items-center px-4 py-3 gap-[8px] ">
+                  <StyledImage
+                    source={require(`../assets/Images/clock.png`)}
+                    className="w-[24px] h-[24px]"
+                  />
+
+                  <StyledView className="">
+                    <StyledText className="text-black text-base">
+                      History
+                    </StyledText>
+                  </StyledView>
+                </StyledView>
+
+                {role === 'brand' && (
+                  <StyledTouchableOpacity
+                    onPress={() => navigation.navigate('Your-requirement')}>
+                    <StyledView className="flex-row items-center px-4 py-3 gap-[8px]">
+                      <StyledImage
+                        source={require('../assets/Images/clock.png')}
+                        className="w-[24px] h-[24px]"
+                      />
+                      <StyledView>
+                        <StyledText className="text-black text-base">
+                          Requirement
+                        </StyledText>
+                      </StyledView>
+                    </StyledView>
+                  </StyledTouchableOpacity>
+                )}
+
+                <StyledTouchableOpacity>
+                  <StyledView className="flex-row items-center px-4 py-3 gap-[8px]">
+                    <StyledImage
+                      source={require(`../assets/Images/my-video.png`)}
+                      className="w-[24px] h-[24px]"
+                    />
+
+                    <StyledView className="">
+                      <StyledText className="text-black text-base">
+                        Your videos
+                      </StyledText>
+                    </StyledView>
+                  </StyledView>
+                </StyledTouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Following')}>
+                  <StyledView className="flex-row items-center px-4 py-3 gap-[8px]">
+                    <StyledImage
+                      source={require(`../assets/Images/my-video.png`)}
+                      className="w-[24px] h-[24px]"
+                    />
+
+                    <StyledView className="">
+                      <StyledText className="text-black text-base">
+                        Following
+                      </StyledText>
+                    </StyledView>
+                  </StyledView>
+                </TouchableOpacity>
+                <StyledTouchableOpacity
+                  onPress={() => navigation.navigate('Followers')}>
+                  <StyledView className="flex-row items-center px-4 py-3 gap-[8px] ">
+                    <StyledImage
+                      source={require(`../assets/Images/my-video.png`)}
+                      className="w-[24px] h-[24px]"
+                    />
+
+                    <StyledView className="">
+                      <StyledText className="text-black text-base">
+                        Followers
+                      </StyledText>
+                    </StyledView>
+                  </StyledView>
+                </StyledTouchableOpacity>
+              </StyledView>
+            </View>
+          </ScrollView>
+        </View>
       </View>
-
-      {/* ================================== */}
-
-      <StyledView className="bg-white m-[5px] mt-[12px] rounded-lg shadow-md">
-        <StyledView className="flex-row items-center px-4 py-3 gap-[8px] border-accent0">
-          <StyledImage
-            source={require(`../assets/Images/clock.png`)}
-            className="w-[24px] h-[24px]"
-          />
-
-          <StyledView className="flex-1">
-            <StyledText className="text-black text-base">History</StyledText>
-          </StyledView>
-        </StyledView>
-
-        <StyledView className="flex-row items-center px-4 py-3 gap-[8px] border-b border-accent0">
-          <StyledImage
-            source={require(`../assets/Images/my-video.png`)}
-            className="w-[24px] h-[24px]"
-          />
-
-          <StyledView className="flex-1">
-            <StyledText className="text-black text-base">
-              Your videos
-            </StyledText>
-          </StyledView>
-        </StyledView>
-
-        {/* <StyledView className="flex-row items-center px-4 py-3 border-b border-accent0">
-       <StyledImage 
-          source={require(`../assets/Images/clock.png`)}
-          className="w-[24px] h-[24px]"
-        />
-     
-      <StyledView className="flex-1">
-        <StyledText className="text-black text-base">Watch later</StyledText> 
-      </StyledView>
-    </StyledView> */}
-      </StyledView>
-    </View>
+    </ScrollView>
   );
 };
 
 export default UserProfile;
+
+// const fetchUserData = async () => {
+//   setLoading(true);
+//   try {
+//     const response = await fetch(
+//       `${BASE_URL}/api/auth/profile/67e053780ca3791a112bfc9a`,
+//     );
+//     const data = await response.json();
+//     setUserData(data.user);
+//   } catch (error) {
+//     console.error('Error fetching user data:', error);
+//   }
+//   setLoading(false);
+// };

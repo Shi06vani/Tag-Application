@@ -18,7 +18,19 @@ import BrandRequirementForm from './src/screens/BrandRequirementForm';
 import Leaderboard from './src/screens/Leaderboard';
 import ChatScreen from './src/screens/ChatScreen';
 import Shorts from './src/screens/Shorts';
-
+import Splash from './src/screens/Splash';
+import BrandDetails from './src/components/brand/BrandDetails';
+import UploadFromGallery from './src/components/UploadFromGallery';
+import RecordVideo from './src/components/RecordVideo';
+import FullScreenVideo from "./src/components/FullScreenVideo"
+import ShortsPlayer from './src/components/ShortsPlayer';
+import Following from './src/screens/Following';
+import Followers from './src/screens/Follwers';
+import UpdateProfileScreen from './src/screens/UpdateProfile';
+import UserListing from './src/screens/UserListing';
+import BrandFollowing from './src/components/brand/BrandFollowing';
+import BrandFollowers from './src/components/brand/BrandFollowers';
+import UserDetails from './src/components/UserDetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,18 +38,39 @@ const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Signup">
-        <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
-        <Stack.Screen name="Profile" component={() => <View><Text>hdgfhg</Text></View>} />
+      <Stack.Navigator initialRouteName="Splash" >
 
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen
+            name="Splash"
+            component={Splash}
+            options={{ headerShown: false }}
+          />
+
+        <Stack.Screen name="Login" component={LoginScreen} options={{ title:"Signup" }} />
+        <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="Brands-list" component={BrandListScreen} />
         <Stack.Screen name="Brands-requirement" component={BrandRequirementScreen} />
         <Stack.Screen name="Your-requirement" component={BrandRequirementForm} />
         <Stack.Screen name="Leaderboard" component={Leaderboard} />
         <Stack.Screen name="Chat" component={ChatScreen} />
-        <Stack.Screen name="Shorts" component={Shorts} />
+        <Stack.Screen name="Brand-details" component={BrandDetails} />
+        <Stack.Screen name="UploadFromGallery" component={UploadFromGallery} />
+        <Stack.Screen name="RecordVideo" component={RecordVideo} />
+        <Stack.Screen name="FullScreenVideo" component={FullScreenVideo} />
+        <Stack.Screen name="FullScreenShorts" component={ShortsPlayer} />
+        <Stack.Screen name="Following" component={Following} />
+        <Stack.Screen name="Followers" component={Followers} />
+
+        <Stack.Screen name="Update-Profile" component={UpdateProfileScreen} />
+        <Stack.Screen name="User-listing" component={UserListing} />
+        <Stack.Screen name="Brand-following" component={BrandFollowing} />
+        <Stack.Screen name="Brand-followers" component={BrandFollowers} />
+        <Stack.Screen name="User-Details" component={UserDetails} />
+
+
+
+        {/* <Stack.Screen name="Shorts" component={Shorts} options={{ headerShown: true, }}/> */}
 
       </Stack.Navigator>
     </NavigationContainer>
