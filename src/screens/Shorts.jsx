@@ -9,7 +9,7 @@ import {
   AppState,
 } from 'react-native';
 import Video from 'react-native-video';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
 const {height, width} = Dimensions.get('window');
 
 const shortsData = [
