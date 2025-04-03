@@ -91,4 +91,27 @@ export const getFollowers = async (userId) => {
 };
 
 
+export const getFollowCounts = async (userId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/friend/follow-counts/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data; // Assuming the API returns follow count in JSON format
+  } catch (error) {
+    console.error("Failed to fetch follow counts:", error);
+    return null;
+  }
+};
+
+
+
 

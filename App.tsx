@@ -31,6 +31,7 @@ import UserListing from './src/screens/UserListing';
 import BrandFollowing from './src/components/brand/BrandFollowing';
 import BrandFollowers from './src/components/brand/BrandFollowers';
 import UserDetails from './src/components/UserDetails';
+import UserProfileDetailpage from './src/components/UserProfileDetailpage';
 
 const Stack = createNativeStackNavigator();
 
@@ -67,8 +68,9 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Brand-following" component={BrandFollowing} />
         <Stack.Screen name="Brand-followers" component={BrandFollowers} />
         <Stack.Screen name="User-Details" component={UserDetails} />
+        <Stack.Screen name="Profile-detail" component={UserProfileDetailpage} />
 
-
+        
 
         {/* <Stack.Screen name="Shorts" component={Shorts} options={{ headerShown: true, }}/> */}
 

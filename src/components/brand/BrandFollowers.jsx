@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, FlatList, ScrollView } from "react-native";
 import { styled } from "nativewind";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getFollowers, getFollowingList } from "../../api/useFollow/FollowUser";
+import { getFollowCounts, getFollowers, getFollowingList } from "../../api/useFollow/FollowUser";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -11,31 +11,10 @@ const StyledTouchableOpacity = styled(TouchableOpacity);
 
 
 
-const followers = [
-  {
-    id: "1",
-    name: "John Doe",
-    username: "john_doe",
-    image: "https://randomuser.me/api/portraits/men/1.jpg",
-    isFollowing: true,
-  },
-  {
-    id: "2",
-    name: "Emily Smith",
-    username: "emily_smith",
-    image: "https://randomuser.me/api/portraits/women/2.jpg",
-    isFollowing: false,
-  },
-  {
-    id: "3",
-    name: "Michael Brown",
-    username: "michael_brown",
-    image: "https://randomuser.me/api/portraits/men/3.jpg",
-    isFollowing: false,
-  },
-];
+
 
 const BrandFollowers = ({route}) => {
+
 
   const {brand_id} = route.params;
   const [isFollowing, setIsFollowing] = useState(false);
@@ -45,6 +24,8 @@ const BrandFollowers = ({route}) => {
     fetchFollowingList();
 
   }, []);
+
+
 
   const fetchFollowingList = async () => {
     try {
@@ -58,6 +39,7 @@ const BrandFollowers = ({route}) => {
       console.error("Error fetching following list:", error);
     }
   };
+
 
 
 

@@ -17,22 +17,6 @@ const StyledText = styled(Text);
 const StyledImage = styled(Image);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 
-const fetchUserData = async (setUserData, setLoading) => {
-  setLoading(true);
-  try {
-    const userId = await AsyncStorage.getItem('loginuser_id');
-    if (!userId) {
-      throw new Error('No user ID found in AsyncStorage');
-    }
-
-    const response = await fetch(`${BASE_URL}/api/auth/profile/${userId}`);
-    const data = await response.json();
-    setUserData(data.user);
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-  }
-  setLoading(false);
-};
 
 const UserProfile = () => {
   const recentData = [{}, {}, {}, {}, {}];
@@ -40,6 +24,28 @@ const UserProfile = () => {
   const navigation = useNavigation();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [followCounts, setFollowCounts] = useState(null);
+  const  [userId,setUserId] = useState(null)
+
+
+  const fetchUserData = async (setUserData, setLoading) => {
+    setLoading(true);
+    try {
+      const userId = await AsyncStorage.getItem('loginuser_id');
+      if (!userId) {
+        throw new Error('No user ID found in AsyncStorage');
+      }
+      setUserId(userId)
+  
+      const response = await fetch(`${BASE_URL}/api/auth/profile/${userId}`);
+      const data = await response.json();
+      setUserData(data.user);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+    setLoading(false);
+  };
+  
 
   useEffect(() => {
     if (!userData && !loading) {
@@ -61,6 +67,8 @@ const UserProfile = () => {
       fetchUserData(setUserData, setLoading);
     }, []),
   );
+
+
 
   if (loading) {
     return (
@@ -125,10 +133,13 @@ const UserProfile = () => {
 
             <StyledView className="bg-white p-4 rounded-lg shadow-md">
               <StyledView className="flex-row items-center space-x-3">
+                <StyledTouchableOpacity onPress={()=> navigation.navigate("Profile-detail",{userId:userId})}>
                 <StyledImage
                   source={require('../assets/Images/user.png')}
                   className="w-12 h-12 rounded-full"
                 />
+                </StyledTouchableOpacity>
+               
                 <StyledView>
                   <StyledText className="text-black text-lg font-bold">
                     {userData?.name}

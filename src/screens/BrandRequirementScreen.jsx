@@ -153,7 +153,10 @@ const BrandRequirementScreen = ({navigation}) => {
       onChangeText={setSearch}
     />
     {loading ? (
-      <ActivityIndicator size="large" color="#6200ea" />
+      <View className='flex-1 justify-center items-center'>
+         <ActivityIndicator size="large" color="#441752" />
+      </View>
+     
     ) : (
       <FlatList
         data={filteredRequirements}

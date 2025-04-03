@@ -15,7 +15,7 @@ import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import Video from 'react-native-video';
 
 import {useNavigation} from '@react-navigation/native';
-import {followUser, unfollowUser} from '../../api/useFollow/FollowUser';
+import {followUser, getFollowCounts, unfollowUser} from '../../api/useFollow/FollowUser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {BrandInfo, BrandVideos} from '../../api/brandRequirements/Requiements';
 import FullScreenVideo from '../FullScreenVideo';
@@ -31,6 +31,7 @@ const BrandDetails = ({route}) => {
   const [activeTab, setActiveTab] = useState('Videos');
   const [index, setIndex] = useState(0);
   const [video, setVideo] = useState(null);
+  const [followCounts, setFollowCounts] = useState(null);
 
   const [routes] = useState([
     {key: 'videos', title: 'Videos'},
@@ -111,16 +112,24 @@ const BrandDetails = ({route}) => {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getFollowCounts(brandid);
+      setFollowCounts(data);
+    };
+
+    fetchData();
+  }, [brandid]);
+  
+
   return (
 
     <ScrollView className='bg-white h-full flex-1'>
       <View className="pt-4 px-4  relative f ">
       {loading ? (
-        <ActivityIndicator
-          size="large"
-          color="#441752"
-          className=" justify-center items-center"
-        />
+         <View className='flex-1 justify-center items-center'>
+                <ActivityIndicator size="large" color="#441752" />
+             </View>
       ) : (
         <ScrollView className="flex-1  ">
           <View className=" relative h-full">
@@ -148,7 +157,7 @@ const BrandDetails = ({route}) => {
                         brand_id: brandid,
                       })
                     }>
-                    <Text className="text-center font-bold">12</Text>
+                    <Text className="text-center font-bold">{followCounts?.following}</Text>
                     <Text className="text-primary font-bold">Followings</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -157,7 +166,7 @@ const BrandDetails = ({route}) => {
                         brand_id: brandid,
                       })
                     }>
-                    <Text className="text-center font-bold">3</Text>
+                    <Text className="text-center font-bold">{followCounts?.followers}</Text>
                     <Text className="text-primary font-bold">Followers</Text>
                   </TouchableOpacity>
                 </View>
