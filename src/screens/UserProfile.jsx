@@ -24,16 +24,14 @@ const UserProfile = () => {
   const navigation = useNavigation();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [followCounts, setFollowCounts] = useState(null);
   const  [userId,setUserId] = useState(null)
-
 
   const fetchUserData = async (setUserData, setLoading) => {
     setLoading(true);
     try {
       const userId = await AsyncStorage.getItem('loginuser_id');
       if (!userId) {
-        throw new Error('No user ID found in AsyncStorage');
+        navigation.navigate("Login")
       }
       setUserId(userId)
   
@@ -83,14 +81,8 @@ const UserProfile = () => {
   const shareProfile = async () => {
     try {
       const shareOptions = {
-        title: 'Check out this profile!',
-        message: `Hey, check out this profile:
-        
-        Name: ${userData?.name}
-        Company: ${userData?.companyName}
-        Website: ${userData?.website}
-  
-        You can visit their profile here: https://yourwebsite.com/user/${userData?._id}`,
+        title: 'Check out this tag App!',
+       
       };
 
       await Share.share(shareOptions);
@@ -99,7 +91,14 @@ const UserProfile = () => {
     }
   };
 
+  const handleLogin =async()=>{
+    await AsyncStorage.removeItem("token")
+    await AsyncStorage.removeItem("loginuser_id")
+    await AsyncStorage.removeItem("role")
+    await AsyncStorage.removeItem("category")
 
+    navigation.navigate("Login")
+  }
 
   return (
     <ScrollView>
@@ -124,16 +123,16 @@ const UserProfile = () => {
                 </View>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={shareProfile}>
+              {/* <TouchableOpacity onPress={shareProfile}>
                 <View className="bg-slate-100 px-2 py-1 rounded-md">
                   <Text>Share Profile</Text>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
 
             <StyledView className="bg-white p-4 rounded-lg shadow-md">
               <StyledView className="flex-row items-center space-x-3">
-                <StyledTouchableOpacity onPress={()=> navigation.navigate("Profile-detail",{userId:userId})}>
+                <StyledTouchableOpacity onPress={()=> navigation.navigate("Profile-details",{userId:userId})}>
                 <StyledImage
                   source={require('../assets/Images/user.png')}
                   className="w-12 h-12 rounded-full"
@@ -167,7 +166,7 @@ const UserProfile = () => {
               horizontal={true}
               showsHorizontalScrollIndicator={false}
               className="flex flex-row gap-[10px]">
-              <StyledTouchableOpacity className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] text-white pt-[-2px] bg-accent 0 rounded-full">
+              {/* <StyledTouchableOpacity className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] text-white pt-[-2px] bg-accent 0 rounded-full">
                 <StyledImage
                   tintColor={'white'}
                   source={require(`../assets/Images/my-video.png`)}
@@ -183,6 +182,16 @@ const UserProfile = () => {
                 />
                 <StyledText className="text-white text-sm">
                   Switch account
+                </StyledText>
+              </StyledTouchableOpacity> */}
+                <StyledTouchableOpacity className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] pt-[4px] bg-accent 0 rounded-full" onPress={handleLogin}>
+                <StyledImage
+                  tintColor={'white'}
+                  source={require(`../assets/Images/my-video.png`)}
+                  className="w-[18px] h-[18px]"
+                />
+                <StyledText className="text-white text-sm">
+                  Logout
                 </StyledText>
               </StyledTouchableOpacity>
 
@@ -246,7 +255,7 @@ const UserProfile = () => {
           <ScrollView className="">
             <View className="">
               <StyledView className="bg-white  mt-[12px] rounded-lg shadow-md">
-                <StyledView className="flex-row items-center px-4 py-3 gap-[8px] ">
+                {/* <StyledView className="flex-row items-center px-4 py-3 gap-[8px] ">
                   <StyledImage
                     source={require(`../assets/Images/clock.png`)}
                     className="w-[24px] h-[24px]"
@@ -257,7 +266,7 @@ const UserProfile = () => {
                       History
                     </StyledText>
                   </StyledView>
-                </StyledView>
+                </StyledView> */}
 
                 {role === 'brand' && (
                   <StyledTouchableOpacity
@@ -269,7 +278,7 @@ const UserProfile = () => {
                       />
                       <StyledView>
                         <StyledText className="text-black text-base">
-                          Requirement
+                          Post Requirement
                         </StyledText>
                       </StyledView>
                     </StyledView>
@@ -285,13 +294,27 @@ const UserProfile = () => {
 
                     <StyledView className="">
                       <StyledText className="text-black text-base">
-                        Your videos
+                        My videos
+                      </StyledText>
+                    </StyledView>
+                  </StyledView>
+                </StyledTouchableOpacity>
+                <StyledTouchableOpacity>
+                  <StyledView className="flex-row items-center px-4 py-3 gap-[8px]">
+                    <StyledImage
+                      source={require(`../assets/Images/my-video.png`)}
+                      className="w-[24px] h-[24px]"
+                    />
+
+                    <StyledView className="">
+                      <StyledText className="text-black text-base">
+                        My shorts
                       </StyledText>
                     </StyledView>
                   </StyledView>
                 </StyledTouchableOpacity>
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={() => navigation.navigate('Following')}>
                   <StyledView className="flex-row items-center px-4 py-3 gap-[8px]">
                     <StyledImage
@@ -320,7 +343,7 @@ const UserProfile = () => {
                       </StyledText>
                     </StyledView>
                   </StyledView>
-                </StyledTouchableOpacity>
+                </StyledTouchableOpacity> */}
               </StyledView>
             </View>
           </ScrollView>
@@ -345,3 +368,12 @@ export default UserProfile;
 //   }
 //   setLoading(false);
 // };
+
+
+// message: `Hey, check out this profile:
+        
+// // Name: ${userData?.name}
+// // Company: ${userData?.companyName}
+// // Website: ${userData?.website}
+
+// // You can visit their profile here: https://yourwebsite.com/user/${userData?._id}`,

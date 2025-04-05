@@ -28,7 +28,7 @@ const LoginScreen = () => {
       });
 
       const data = await response.json();
-       console.log("logindata",data.token ,data.user.id ,data)
+       console.log("logindata",data.token ,data.user.id ,data?.user?.topic)
 
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
@@ -39,6 +39,7 @@ const LoginScreen = () => {
       await AsyncStorage.setItem('token',data?.token);
       await AsyncStorage.setItem('loginuser_id',data?.user?.id);
       await AsyncStorage.setItem('role',data?.user?.role);
+      await AsyncStorage.setItem('category',data?.user?.topic);
 
     } catch (error) {
       Alert.alert('Login Failed', error.message);

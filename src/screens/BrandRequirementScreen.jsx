@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator} from 'react-native';
 import { brandRequirements } from '../api/brandRequirements/Requiements';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // const initialRequirements = [
 //   {
@@ -88,6 +89,17 @@ const BrandRequirementScreen = ({navigation}) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
+    const checkLogin= async()=>{
+      const loginUser = await AsyncStorage.getItem('loginuser_id');
+
+      if(!loginUser) {
+        navigation.navigate("Login")
+      }
+    
+    }
+
+
     const getRequirements = async () => {
       const data = await brandRequirements();
       if (data) {
@@ -95,7 +107,7 @@ const BrandRequirementScreen = ({navigation}) => {
       }
       setLoading(false);
     };
-
+    checkLogin()
     getRequirements();
   }, []);
 

@@ -1,221 +1,167 @@
-// import React, { useEffect, useState } from "react";
-// import { 
-//   View, 
-//   Text, 
-//   TouchableOpacity, 
-//   TextInput, 
-//   ActivityIndicator, 
-//   Alert, 
-//   Platform, 
-//   PermissionsAndroid 
-// } from "react-native";
-// import Video from "react-native-video";
-// import { launchImageLibrary } from "react-native-image-picker";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// const ShortsVideoUploade = ({ handleUpload, navigation }) => {
-//   const [shortVideo, setShortVideo] = useState(null); 
-//   const [shortTitle, setShortTitle] = useState("");
-//   const [shortDescription, setShortDescription] = useState(""); // Updated state name
-//   const [shortCategory, setShortCategory] = useState(""); // Updated state name
-//   const [isUploading, setIsUploading] = useState(false); // Updated state name
-
-//   useEffect(() => {
-//     const checkAuth = async () => {
-//       const userToken = await AsyncStorage.getItem("token");
-//       if (!userToken) {
-//         navigation.replace("Login");
-//       }
-//     };
-//     checkAuth();
-//   }, []);
-
-//   const requestPermission = async () => {
-//     if (Platform.OS === "android") {
-//       try {
-//         if (parseInt(Platform.Version, 10) >= 33) {
-//           const granted = await PermissionsAndroid.request(
-//             PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO
-//           );
-//           return granted === PermissionsAndroid.RESULTS.GRANTED;
-//         } else {
-//           const granted = await PermissionsAndroid.request(
-//             PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
-//           );
-//           return granted === PermissionsAndroid.RESULTS.GRANTED;
-//         }
-//       } catch (err) {
-//         console.warn("Permission request error:", err);
-//         return false;
-//       }
-//     }
-//     return true;
-//   };
-
-//   const pickShortVideo = async () => {
-//     const hasPermission = await requestPermission();
-//     if (!hasPermission) {
-//       Alert.alert("Permission Denied", "You need to grant permission to access media.");
-//       return;
-//     }
-
-//     const options = {
-//       mediaType: "video",
-//       quality: 1,
-//       includeBase64: false,
-//     };
-
-//     launchImageLibrary(options, (response) => {
-//       if (response.didCancel) {
-//         console.log("User cancelled video picker");
-//       } else if (response.errorCode) {
-//         console.error("Picker Error: ", response.errorMessage);
-//         Alert.alert("Error", response.errorMessage || "Failed to select video");
-//       } else if (response.assets && response.assets.length > 0) {
-//         console.log("Video selected:", response.assets[0]);
-//         setShortVideo(response.assets[0]);
-//       } else {
-//         console.log("No video selected");
-//         Alert.alert("Error", "No video was selected");
-//       }
-//     });
-//   };
-
-//   return (
-//     <View className="bg-purple-50 flex-1 p-4 mt-16 items-center max-h-full">
-//       {/* Video Preview / Picker */}
-//       <TouchableOpacity
-//         className="w-full h-64 bg-gray-100 rounded-lg items-center justify-center"
-//         onPress={pickShortVideo}
-//       >
-//         {shortVideo ? (
-//           <View className="w-full h-64 bg-black rounded-lg">
-//             <Video
-//               source={{ uri: shortVideo.uri }}
-//               style={{ width: "100%", height: "100%" }}
-//               controls
-//               resizeMode="contain"
-//             />
-//           </View>
-//         ) : (
-//           <Text className="text-black font-semibold">Select a Short Video</Text>
-//         )}
-//       </TouchableOpacity>
-
-//       {/* Input Fields */}
-//       <TextInput
-//         className="w-full p-3 mt-4 bg-white rounded-lg"
-//         placeholder="Title"
-//         value={shortTitle}
-//         onChangeText={setShortTitle}
-//       />
-//       <TextInput
-//         className="w-full p-3 mt-4 bg-white rounded-lg"
-//         placeholder="Description"
-//         value={shortDescription}
-//         onChangeText={setShortDescription}
-//         multiline
-//         numberOfLines={3}
-//       />
-//       <TextInput
-//         className="w-full p-3 mt-4 bg-white rounded-lg"
-//         placeholder="Category"
-//         value={shortCategory}
-//         onChangeText={setShortCategory}
-//       />
-
-//       {/* Upload Button */}
-//       <TouchableOpacity
-//         className={`mt-4 px-6 py-3 rounded-lg ${shortVideo ? "bg-primary" : "bg-accent"}`}
-//         onPress={() => handleUpload(shortVideo, shortTitle, shortDescription, shortCategory)}
-//         disabled={!shortVideo || isUploading}
-//       >
-//         {isUploading ? (
-//           <ActivityIndicator color="white" />
-//         ) : (
-//           <Text className="text-white font-bold">Upload Video</Text>
-//         )}
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-// export default ShortsVideoUploade;
-
-
-import React, { useState, useEffect } from "react";
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
+  Image,
   ActivityIndicator,
-  PermissionsAndroid,
   Alert,
-  Platform,
-  ScrollView
-} from "react-native";
-import { launchImageLibrary } from "react-native-image-picker";
-import Video from "react-native-video";
-import BASE_URL from "../../config";
+  TextInput,
+} from 'react-native';
+import {launchImageLibrary} from 'react-native-image-picker';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from "@react-navigation/native";
 
-const ShortsVideoUploade = () => {
-  const [shortsVideo, setShortsVideo] = useState(null);
-  const [shortTitle, setShortTitle] = useState("");
-  const [shortDescription, setShortDescription] = useState("");
-  const [shortCategory, setShortCategory] = useState("");
-  const [uploading, setUploading] = useState(false);
+const API_URL = 'https://tag-backend.vercel.app/api';
 
-  
+const ShortVideoUpload = () => {
+  const [videoUri, setVideoUri] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [creatorId, setCreatorId] = useState(null);
+  const [category, setCategory] = useState(null);
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const id = await AsyncStorage.getItem('loginuser_id');
+        const category = await AsyncStorage.getItem('category');
+        setCategory(category);
+        if (id) setCreatorId(id);
+      } catch (error) {
+        console.error('Error retrieving user ID:', error);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
+  // Function to pick video from gallery
+  const pickVideo = () => {
+    let options = {
+      mediaType: 'video', // Only allow videos
+      quality: 1, // High quality
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled video picker');
+      } else if (response.errorMessage) {
+        console.log('Error:', response.errorMessage);
+      } else {
+        setVideoUri(response.assets[0].uri);
+      }
+    });
+  };
+
+  // Function to upload the selected video
+  const uploadVideo = async () => {
+    if (!videoUri) {
+      Alert.alert('Error', 'Please select a video first.');
+      return;
+    }
+
+    setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append('videoFile', {
+      uri: videoUri,
+      name: 'uploaded_video.mp4',
+      type: 'video/mp4',
+    });
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('category', category);
+    formData.append('type', 'short');
+    formData.append('creatorId', creatorId);
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/videos/post/creator`,
+        formData,
+        {
+          headers: {'Content-Type': 'multipart/form-data'},
+        },
+      );
+
+      Alert.alert('Success', response.data.message);
+      setVideoUri(null);
+    } catch (error) {
+      console.error('Upload Error:', error);
+      Alert.alert('Upload Failed', 'Something went wrong.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  console.log('data', title);
+  console.log('data', description);
+
   return (
-    <View className="bg-purple-50 flex-1 p-4 mt-16 items-center max-h-full">
-          {shortsVideo ? (
-            <View className="w-full h-64 bg-black rounded-lg">
-              <Video
-                source={{ uri: shortsVideo.uri }}
-                style={{ width: "100%", height: "100%" }}
-                controls
-                resizeMode="contain"
-              />
-            </View>
-          ) : (
-            <TouchableOpacity
-              className="w-full h-64 bg-gray-100 rounded-lg items-center justify-center"
-            >
-              <Text className="text-black font-semibold">Select a short Video</Text>
-            </TouchableOpacity>
-          )}
-          <TextInput
-            className="w-full p-3 mt-4 bg-white rounded-lg"
-            placeholder="Title"
-            value={shortTitle}
-            onChangeText={setShortTitle}
-          />
-          <TextInput
-            className="w-full p-3 mt-4 bg-white rounded-lg"
-            placeholder="Description"
-            value={shortDescription}
-            onChangeText={setShortDescription}
-            multiline
-            numberOfLines={3}
-          />
-          <TextInput
-            className="w-full p-3 mt-4 bg-white rounded-lg"
-            placeholder="Category"
-            value={shortCategory}
-            onChangeText={setShortCategory}
-          />
-          <TouchableOpacity
-            className={`mt-4 px-6 py-3 rounded-lg ${shortsVideo ? "bg-primary" : "bg-accent"}`}
-            onPress={() => handleUpload("shorts")}
-            disabled={!shortsVideo || uploading}
-          >
-            {uploading ? <ActivityIndicator color="white" /> : <Text className="text-white font-bold">Upload Video</Text>}
-          </TouchableOpacity>
+    <View className="flex-1 bg-purple-50 mt-16  p-4">
+      {videoUri && (
+        <View className="mb-4">
+          <Text className="text-gray-600">Selected Short Video:</Text>
+          <Text className="text-blue-500">{videoUri}</Text>
         </View>
+      )}
+
+      {/* Upload from Gallery */}
+      <View className='flex justify-center items-center'>
+      <TouchableOpacity
+        className="bg-[#441752] px-6 py-3 rounded-full mb-4 flex-row items-center"
+        onPress={pickVideo}>
+        <Image
+        tintColor={"white"}
+          source={require('../assets/Images/camera.png')}
+          className="w-6 h-6 mr-2"
+        />
+        <Text className="text-white">Select Video from Gallery</Text>
+      </TouchableOpacity>
+      </View>
+     
+
+      <View className="py-10">
+        <View className="border-2 border-primary rounded-full px-4 py-2 bg-white mb-3 w-full">
+          <TextInput
+            className="text-black w-full"
+            value={title}
+            onChangeText={setTitle}
+            placeholder="Enter title"
+            placeholderTextColor="#9ca3af"
+          />
+        </View>
+        <View className="border-2 border-primary rounded-full px-4 py-2 bg-white">
+          <TextInput
+            className="text-black"
+            value={description}
+            onChangeText={setDescription}
+            placeholder="Enter description"
+            placeholderTextColor="#9ca3af"
+          />
+        </View>
+      </View>
+
+      {/* Upload Button */}
+      <View className="flex justify-center items-center">
+        <TouchableOpacity
+          className="bg-[#8174A0] px-6 py-3 rounded-full flex-row items-center"
+          onPress={uploadVideo}
+          disabled={isUploading}>
+          
+          <Text className="text-white">
+            {isUploading ? 'Uploading...' : 'Upload Video'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Loader */}
+      {isUploading && (
+        <ActivityIndicator size="large" color="#441752" className="mt-4" />
+      )}
+    </View>
   );
 };
 
-export default ShortsVideoUploade;
+export default ShortVideoUpload;

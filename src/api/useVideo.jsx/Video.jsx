@@ -1,12 +1,16 @@
 import BASE_URL from "../../../config"
 
-export const getAllPostedVideos = async () => {
+export const getAllPostedVideos = async (type) => {
   try {
+   
     const response = await fetch(`${BASE_URL}/api/videos/list`, {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        type: type
+      }),
     });
 
     const data = await response.json();

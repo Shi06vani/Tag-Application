@@ -83,15 +83,18 @@ const TabNavigator = () => {
             fontSize: 12,
             fontWeight: 'bold',
             paddingTop: 6,
+            border: "1px solid ",
+            borderTopColor:"black"
           },
         })}>
         {TabsRoutes.map((tabs, index) => (
-          <Tab.Screen
+            <Tab.Screen
             key={index}
             name={tabs.name}
             component={tabs.Component}
             options={tabs.options}
           />
+          
         ))}
       </Tab.Navigator>
     </View>

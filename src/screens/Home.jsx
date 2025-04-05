@@ -20,7 +20,6 @@ import LinearGradient from 'react-native-linear-gradient';
 const Home = () => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [paused, setPaused] = useState(true);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -30,7 +29,7 @@ const Home = () => {
   const fetchVideos = async () => {
     setLoading(true);
     try {
-      const result = await getAllPostedVideos();
+      const result = await getAllPostedVideos("video");
       console.log('Fetched Videos:', result);
 
       if (result && Array.isArray(result)) {
@@ -51,7 +50,7 @@ const Home = () => {
 
   return (
     <ScrollView
-      className="bg-white mt-16 mb-5"
+      className="bg-white mt-16 "
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{flexGrow: 1}}>
       <View className="flex flex-row items-center p-3 ">
@@ -76,50 +75,10 @@ const Home = () => {
             extraData={videos}
             renderItem={({item}) => {
               return (
-                // <View className="mb-5">
-                //   <TouchableOpacity>
-                //     <VideoPlayer
-                //       source={{uri: item.videoUrl}}
-                //       style={{width: '100%', height: 200}}
-                //       resizeMode="cover"
-                //       paused={true}
-                //       showOnStart={true}
-                //       tapAnywhereToPause={true}
-                //       seekColor="#441752"
-                //       controlTimeout={3000}
-                //       disableBack={false}
-                //       disableVolume={false}
-                //       disableFullscreen={true}
-                //       fullscreenOrientation="landscape"
-                //     />
-                //   </TouchableOpacity>
-                //   <TouchableOpacity
-                //     onPress={() => navigation.navigate('User-Details')}>
-                //     <View className="flex flex-row justify-between pb-5 border-b-8 border-gray-200 pt-3 px-3">
-                //       <TouchableOpacity>
-                //         <Image
-                //           source={require('../assets/Images/user.png')}
-                //           className="w-10 h-10 rounded-full"
-                //         />
-                //       </TouchableOpacity>
-                //       <View className="flex flex-col gap-1 flex-1 ml-2">
-                //         <Text className="text-sm font-medium text-black">
-                //           {item?.title}
-                //         </Text>
-                //         <Text className="text-gray-500 text-xs font-medium">
-                //           {item?.creatorId?.name} •{' '}
-                //           {new Date(item.createdAt).toDateString()}
-                //         </Text>
-                //       </View>
-                //       <TouchableOpacity>
-                //         <Image source={require('../assets/Images/more.png')} />
-                //       </TouchableOpacity>
-                //     </View>
-                //   </TouchableOpacity>
-                // </View>
+              
                 <View className="mb-5">
                   <TouchableOpacity>
-                    <View className="rounded-lg overflow-hidden">
+                    <View className="rounded-xl overflow-hidden  border-4 border-primary">
                       {/* Video Player */}
                       <VideoPlayer
                         source={{uri: item.videoUrl}}
@@ -149,8 +108,7 @@ const Home = () => {
                           flexDirection: 'row',
                           alignItems: 'center',
                           paddingHorizontal: 15,
-                          borderBottomLeftRadius: 10,
-                          borderBottomRightRadius: 10,
+                        
                           
                         }}>
                         {/* User Image */}
@@ -203,9 +161,9 @@ const Home = () => {
         )}
       </View>
 
-      <View className="px-1">
+      {/* <View className="px-1">
         <HomeShorts />
-      </View>
+      </View> */}
     </ScrollView>
   );
 };
@@ -222,10 +180,51 @@ export default Home;
                       onLoad={() => console.log('Video Loaded:', item.videoUrl)}
                       onError={error =>
                         console.log('Video Load Error:', error, item.videoUrl)
-                      }
+                      }  // <View className="mb-5">
+                //   <TouchableOpacity>
+                //     <VideoPlayer
+                //       source={{uri: item.videoUrl}}
+                //       style={{width: '100%', height: 200}}
+                //       resizeMode="cover"
+                //       paused={true}
+                //       showOnStart={true}
+                //       tapAnywhereToPause={true}
+                //       seekColor="#441752"
+                //       controlTimeout={3000}
+                //       disableBack={false}
+                //       disableVolume={false}
+                //       disableFullscreen={true}
+                //       fullscreenOrientation="landscape"
+                //     />
+                //   </TouchableOpacity>
+                //   <TouchableOpacity
+                //     onPress={() => navigation.navigate('User-Details')}>
+                //     <View className="flex flex-row justify-between pb-5 border-b-8 border-gray-200 pt-3 px-3">
+                //       <TouchableOpacity>
+                //         <Image
+                //           source={require('../assets/Images/user.png')}
+                //           className="w-10 h-10 rounded-full"
+                //         />
+                //       </TouchableOpacity>
+                //       <View className="flex flex-col gap-1 flex-1 ml-2">
+                //         <Text className="text-sm font-medium text-black">
+                //           {item?.title}
+                //         </Text>
+                //         <Text className="text-gray-500 text-xs font-medium">
+                //           {item?.creatorId?.name} •{' '}
+                //           {new Date(item.createdAt).toDateString()}
+                //         </Text>
+                //       </View>
+                //       <TouchableOpacity>
+                //         <Image source={require('../assets/Images/more.png')} />
+                //       </TouchableOpacity>
+                //     </View>
+                //   </TouchableOpacity>
+                // </View>
                       paused={true}
                       repeat={true}
                     /> */
 }
 
-<ActivityIndicator size="large" color="#441752" />;
+
+

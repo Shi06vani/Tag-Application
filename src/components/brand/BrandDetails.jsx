@@ -15,7 +15,11 @@ import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import Video from 'react-native-video';
 
 import {useNavigation} from '@react-navigation/native';
-import {followUser, getFollowCounts, unfollowUser} from '../../api/useFollow/FollowUser';
+import {
+  followUser,
+  getFollowCounts,
+  unfollowUser,
+} from '../../api/useFollow/FollowUser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {BrandInfo, BrandVideos} from '../../api/brandRequirements/Requiements';
 import FullScreenVideo from '../FullScreenVideo';
@@ -120,172 +124,178 @@ const BrandDetails = ({route}) => {
 
     fetchData();
   }, [brandid]);
-  
 
   return (
-
-    <ScrollView className='bg-white h-full flex-1'>
+    <ScrollView className="bg-white h-full flex-1">
       <View className="pt-4 px-4  relative f ">
-      {loading ? (
-         <View className='flex-1 justify-center items-center'>
-                <ActivityIndicator size="large" color="#441752" />
-             </View>
-      ) : (
-        <ScrollView className="flex-1  ">
-          <View className=" relative h-full">
-            <Image
-              source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}}
-              className="w-32 h-32 rounded-full border self-center mb-4"
-            />
+        {loading ? (
+          <View className="flex-1 justify-center items-center">
+            <ActivityIndicator size="large" color="#441752" />
+          </View>
+        ) : (
+          <ScrollView className="flex-1  ">
+            <View className=" relative h-full">
+              <Image
+                source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}}
+                className="w-32 h-32 rounded-full border self-center mb-4"
+              />
 
-            <View className="">
-              <View className="flex-row justify-between">
-                <TouchableOpacity onPress={handleFollow}>
-                  <Text className="text-center font-bold"></Text>
-                  <Text
-                    className={`text-sm font-bold px-4 py-2 rounded-md text-white ${
-                      isFollowing ? 'bg-secondary' : 'bg-primary'
-                    }   cursor-pointer`}>
-                    {isFollowing ? 'Unfollow' : 'Follow'}
-                  </Text>
-                </TouchableOpacity>
+              <View className="">
+                <View className="flex-row justify-between">
+                  <TouchableOpacity onPress={handleFollow}>
+                    <Text className="text-center font-bold"></Text>
+                    <Text
+                      className={`text-sm font-bold px-4 py-2 rounded-md text-white ${
+                        isFollowing ? 'bg-secondary' : 'bg-primary'
+                      }   cursor-pointer`}>
+                      {isFollowing ? 'Unfollow' : 'Follow'}
+                    </Text>
+                  </TouchableOpacity>
 
-                <View className="flex-row justify-center items-center gap-6">
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate('Brand-following', {
-                        brand_id: brandid,
-                      })
-                    }>
-                    <Text className="text-center font-bold">{followCounts?.following}</Text>
-                    <Text className="text-primary font-bold">Followings</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate('Brand-followers', {
-                        brand_id: brandid,
-                      })
-                    }>
-                    <Text className="text-center font-bold">{followCounts?.followers}</Text>
-                    <Text className="text-primary font-bold">Followers</Text>
-                  </TouchableOpacity>
+                  <View className="flex-row justify-center items-center gap-6">
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate('Brand-following', {
+                          brand_id: brandid,
+                        })
+                      }>
+                      <Text className="text-center font-bold">
+                        {followCounts?.following}
+                      </Text>
+                      <Text className="text-primary font-bold">Followings</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate('Brand-followers', {
+                          brand_id: brandid,
+                        })
+                      }>
+                      <Text className="text-center font-bold">
+                        {followCounts?.followers}
+                      </Text>
+                      <Text className="text-primary font-bold">Followers</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </View>
 
-            <Text className="text-2xl font-bold text-gray-900 pt-4 pb-1">
-              {brand?.name}
-            </Text>
-            <Text className="text-base text-primary">{brand?.role}</Text>
-
-            <View className="mt-2">
-              <Text className="text-base font-semibold text-primary">
-                Email: {brand?.email}
+              <Text className="text-2xl font-bold text-gray-900 pt-4 pb-1">
+                {brand?.name}
               </Text>
-            </View>
+              <Text className="text-base text-primary">{brand?.role}</Text>
 
-            <View className="mt-3">
-              <Text className="text-base font-semibold text-primary">
-                Topic: {brand?.topic}
-              </Text>
-            </View>
-
-            <View className="flex-row justify-around gap-1 items-center py-3 ">
-              <TouchableOpacity
-                className={`px-4 py-2 rounded-full w-[45%] ${
-                  activeTab === 'Videos' ? 'bg-[#441752]' : 'bg-accent'
-                }`}
-                onPress={() => setActiveTab('Videos')}>
-                <Text className="text-white text-center font-bold">Videos</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className={`px-4 py-2 rounded-full w-[45%] ${
-                  activeTab === 'Shorts' ? 'bg-[#441752]' : 'bg-accent'
-                }`}
-                onPress={() => setActiveTab('Shorts')}>
-                <Text className="text-white text-center font-bold">Shorts</Text>
-              </TouchableOpacity>
-            </View>
-
-            {activeTab === 'Videos' && (
-              <View className="flex-1 px-2">
-                <FlatList
-                  data={videos}
-                  horizontal={true}
-                  keyExtractor={item => item._id}
-                  renderItem={({item}) => (
-                    <View className="px-2">
-                      <Video
-                        source={{uri: item.videoUrl}}
-                        style={{height: 200, marginTop: 10}}
-                        controls={true}
-                        resizeMode="cover"
-                        paused={true}
-                        className="rounded-lg w-32 shadow-lg overflow-hidden"
-                      />
-                      <Text className="text-base font-bold text-black">
-                        {item.title}
-                      </Text>
-                      <Text className="text-gray-500">{item.description}</Text>
-                    </View>
-                  )}
-                />
+              <View className="mt-2">
+                <Text className="text-base font-semibold text-primary">
+                  Email: {brand?.email}
+                </Text>
               </View>
-            )}
 
-            {activeTab === 'Shorts' && (
-              <View className="flex-1 px-2">
-                <FlatList
-                  data={videos}
-                  horizontal={true}
-                  keyExtractor={item => item._id}
-                  renderItem={({item}) => (
-                    <View className="px-2 ">
-                      <Video
-                        source={{uri: item.videoUrl}}
-                        style={{height: 200, marginTop: 10}}
-                        controls={true}
-                        resizeMode="cover"
-                        paused={true}
-                        className="rounded-lg w-32 shadow-lg overflow-hidden"
-                      />
-                      <Text className="text-base font-bold text-black">
-                        {item.title}
-                      </Text>
-                      <Text className="text-gray-500">{item.description}</Text>
-                    </View>
-                  )}
-                />
+              <View className="mt-3">
+                <Text className="text-base font-semibold text-primary">
+                  Topic: {brand?.topic}
+                </Text>
               </View>
-            )}
-          </View>
-        </ScrollView>
-      )}
 
-     
-    </View>
-    <View className="flex  justify-center items-center  mt-20 px-4 ">
-        <TouchableOpacity
-          className="bg-[#441752]   w-full  p-3 rounded-lg "
-          onPress={pickVideo}>
-          <Text className="text-white text-center font-semibold">
-            Upload Video
-          </Text>
-        </TouchableOpacity>
+              <View className=" flex dotted-border-b border-b-primary justify-start items-start py-5  ">
+                <TouchableOpacity
+                  className="text-[#441752] border-b-2 border-b-primary cursor-pointer  py-2  "
+                  onPress={pickVideo}>
+                  <Text className="text-[#441752] text-base text-center font-bold">
+                    Upload Video
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {video && (
+                <View className="">
+                  <Text className="text-[#441752] font-semibold">
+                    Selected Video:
+                  </Text>
+                  <Text className="text-gray-600">{video}</Text>
+                </View>
+              )}
+
+              <View className="flex-row justify-around gap-1 items-center py-3 ">
+                <TouchableOpacity
+                  className={`px-4 py-2.5 rounded-full w-[45%] ${
+                    activeTab === 'Videos' ? 'bg-[#441752]' : 'bg-accent'
+                  }`}
+                  onPress={() => setActiveTab('Videos')}>
+                  <Text className="text-white text-center font-bold">
+                    Videos
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className={`px-4 py-2.5 rounded-full w-[45%] ${
+                    activeTab === 'Shorts' ? 'bg-[#441752]' : 'bg-accent'
+                  }`}
+                  onPress={() => setActiveTab('Shorts')}>
+                  <Text className="text-white text-center font-bold">
+                    Shorts
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {activeTab === 'Videos' && (
+                <View className="flex-1 px-2">
+                  <FlatList
+                    data={videos}
+                    // horizontal={true}
+                    keyExtractor={item => item._id}
+                    renderItem={({item}) => (
+                      <View className="px-2">
+                        <Video
+                          source={{uri: item.videoUrl}}
+                          style={{height: 200, marginTop: 10}}
+                          controls={true}
+                          resizeMode="cover"
+                          paused={true}
+                          className="rounded-lg w-full shadow-lg overflow-hidden"
+                        />
+                        <Text className="text-base font-bold text-black">
+                          {item.title}
+                        </Text>
+                        <Text className="text-gray-500">
+                          {item.description}
+                        </Text>
+                      </View>
+                    )}
+                  />
+                </View>
+              )}
+
+              {activeTab === 'Shorts' && (
+                <View className="flex-1 px-2">
+                  <FlatList
+                    data={videos}
+                    // horizontal={true}
+                    keyExtractor={item => item._id}
+                    renderItem={({item}) => (
+                      <View className="px-2 ">
+                        <Video
+                          source={{uri: item.videoUrl}}
+                          style={{height: 200, marginTop: 10}}
+                          controls={true}
+                          resizeMode="cover"
+                          paused={true}
+                          className="rounded-lg w-full shadow-lg overflow-hidden"
+                        />
+                        <Text className="text-base font-bold text-black">
+                          {item.title}
+                        </Text>
+                        <Text className="text-gray-500">
+                          {item.description}
+                        </Text>
+                      </View>
+                    )}
+                  />
+                </View>
+              )}
+            </View>
+          </ScrollView>
+        )}
       </View>
-
-      {video && (
-        <View className="">
-          <Text className="text-[#441752] font-semibold">Selected Video:</Text>
-          <Text className="text-gray-600">{video}</Text>
-        </View>
-      )}
     </ScrollView>
-
-
-
-   
-  
   );
 };
 
