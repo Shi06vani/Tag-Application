@@ -16,7 +16,7 @@ const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledImage = styled(Image);
 const StyledTouchableOpacity = styled(TouchableOpacity);
-
+import axios from 'axios';
 
 const UserProfile = () => {
   const recentData = [{}, {}, {}, {}, {}];
@@ -30,6 +30,7 @@ const UserProfile = () => {
     setLoading(true);
     try {
       const userId = await AsyncStorage.getItem('loginuser_id');
+
       if (!userId) {
         navigation.navigate("Login")
       }
@@ -114,14 +115,7 @@ const UserProfile = () => {
         <StyledView className="bg-white p-4 rounded-lg">
           <View className="p-[8px]">
             <View className="flex-row justify-between">
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('Update-Profile', {data: userData})
-                }>
-                <View className="bg-slate-100 px-2 py-1 rounded-md">
-                  <Text>Update Profile</Text>
-                </View>
-              </TouchableOpacity>
+              
 
               {/* <TouchableOpacity onPress={shareProfile}>
                 <View className="bg-slate-100 px-2 py-1 rounded-md">
@@ -184,18 +178,7 @@ const UserProfile = () => {
                   Switch account
                 </StyledText>
               </StyledTouchableOpacity> */}
-                <StyledTouchableOpacity className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] pt-[4px] bg-accent 0 rounded-full" onPress={handleLogin}>
-                <StyledImage
-                  tintColor={'white'}
-                  source={require(`../assets/Images/my-video.png`)}
-                  className="w-[18px] h-[18px]"
-                />
-                <StyledText className="text-white text-sm">
-                  Logout
-                </StyledText>
-              </StyledTouchableOpacity>
-
-              <StyledTouchableOpacity
+               <StyledTouchableOpacity
                 className="flex-row items-center gap-[6px] px-[12px] py-[8px] pt-[-2px] bg-accent 0 rounded-full"
                 onPress={() => navigation.navigate('Leaderboard')}>
                 <StyledImage
@@ -207,6 +190,34 @@ const UserProfile = () => {
                   Leaderboard
                 </StyledText>
               </StyledTouchableOpacity>
+
+              <StyledTouchableOpacity
+                className="flex-row items-center gap-[6px] px-[12px] py-[8px] pt-[-2px] bg-accent 0 rounded-full"
+                   onPress={() =>
+                  navigation.navigate('Update-Profile', {data: userData})
+                }>
+                <StyledImage
+                  tintColor={'white'}
+                  source={require(`../assets/Images/clock.png`)}
+                  className="w-[18px] h-[18px]"
+                />
+                <StyledText className="text-white text-sm">
+                  Update Profile
+                </StyledText>
+              </StyledTouchableOpacity>
+
+                <StyledTouchableOpacity className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] pt-[4px] bg-accent 0 rounded-full" onPress={handleLogin}>
+                <StyledImage
+                  tintColor={'white'}
+                  source={require(`../assets/Images/my-video.png`)}
+                  className="w-[18px] h-[18px]"
+                />
+                <StyledText className="text-white text-sm">
+                  Logout
+                </StyledText>
+              </StyledTouchableOpacity>
+
+             
             </ScrollView>
           </StyledView>
         </StyledView>
@@ -285,7 +296,7 @@ const UserProfile = () => {
                   </StyledTouchableOpacity>
                 )}
 
-                <StyledTouchableOpacity>
+                <StyledTouchableOpacity onPress={()=> navigation.navigate("My-Videos")}>
                   <StyledView className="flex-row items-center px-4 py-3 gap-[8px]">
                     <StyledImage
                       source={require(`../assets/Images/my-video.png`)}
@@ -299,7 +310,10 @@ const UserProfile = () => {
                     </StyledView>
                   </StyledView>
                 </StyledTouchableOpacity>
-                <StyledTouchableOpacity>
+
+
+
+                <StyledTouchableOpacity  onPress={()=> navigation.navigate("My-Shorts")} >
                   <StyledView className="flex-row items-center px-4 py-3 gap-[8px]">
                     <StyledImage
                       source={require(`../assets/Images/my-video.png`)}

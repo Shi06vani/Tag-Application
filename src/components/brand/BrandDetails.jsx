@@ -196,11 +196,11 @@ const BrandDetails = ({route}) => {
                 </Text>
               </View>
 
-              <View className=" flex dotted-border-b border-b-primary justify-start items-start py-5  ">
+              <View className=" flex border-dotted border-primary  py-5 mx-5  mb-4">
                 <TouchableOpacity
-                  className="text-[#441752] border-b-2 border-b-primary cursor-pointer  py-2  "
+                  className="bg-[#441752] rounded-full cursor-pointer  py-2 px-6 "
                   onPress={pickVideo}>
-                  <Text className="text-[#441752] text-base text-center font-bold">
+                  <Text className="text-white text-base text-center font-bold">
                     Upload Video
                   </Text>
                 </TouchableOpacity>

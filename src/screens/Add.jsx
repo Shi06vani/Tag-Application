@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ShortVideoUpload from '../components/ShortVideoUpload';
 import {useNavigation} from '@react-navigation/native';
 
-const API_URL = 'https://tag-backend.vercel.app/api'; // Replace with your actual API URL
+const API_URL = 'https://tag-backend.vercel.app/api';
 
 const Add = () => {
   const [activeTab, setActiveTab] = useState('Short Shorts');
@@ -27,6 +27,29 @@ const Add = () => {
 
   const navigation = useNavigation();
 
+  // useEffect(() => {
+  //   const init = async () => {
+  //     try {
+  //       const loginuserid = await AsyncStorage.getItem('loginuser_id');
+  //       const category = await AsyncStorage.getItem('category');
+
+  //       if (!loginuserid) {
+  //         navigation.navigate('Login');
+  //       } else {
+  //         setCreatorId(loginuserid);
+  //       }
+
+  //       if (category) {
+  //         setCategory(category);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error retrieving user data:', error);
+  //     }
+  //   };
+
+  //   init();
+  // }, []);
+
   useEffect(() => {
     const init = async () => {
       try {
@@ -34,7 +57,10 @@ const Add = () => {
         const category = await AsyncStorage.getItem('category');
 
         if (!loginuserid) {
-          navigation.navigate('Login');
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'Login'}],
+          });
         } else {
           setCreatorId(loginuserid);
         }
@@ -121,8 +147,20 @@ const Add = () => {
         <View className="mt-16  ">
           {videoUri && (
             <View className="mb-4">
-              <Text className="text-gray-600">Selected Video:</Text>
-              <Text className="text-blue-500">{videoUri}</Text>
+              <Text className="text-gray-600 mb-2">
+                Selected Video Preview:
+              </Text>
+              <Video
+                source={{uri: videoUri}}
+                style={{width: '100%', height: 200, borderRadius: 12}}
+                resizeMode="cover"
+                controls
+              />
+              <TouchableOpacity
+                className="mt-2 text-sm self-center bg-red-500 px-4 py-2 rounded-full"
+                onPress={() => setVideoUri(null)}>
+                <Text className="text-white font-semibold">Remove Video</Text>
+              </TouchableOpacity>
             </View>
           )}
 

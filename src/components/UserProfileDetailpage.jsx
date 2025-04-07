@@ -13,6 +13,7 @@ import {userProfileInfo} from '../api/userDetail/User';
 import {getFollowCounts} from '../api/useFollow/FollowUser';
 import {BrandVideos} from '../api/brandRequirements/Requiements';
 import Video from 'react-native-video';
+import { useNavigation } from '@react-navigation/native';
 
 export default function UserProfileDetailpage({route}) {
   const [userData, setUserData] = useState(null);
@@ -21,6 +22,8 @@ export default function UserProfileDetailpage({route}) {
   const [followCounts, setFollowCounts] = useState(null);
   const [activeTab, setActiveTab] = useState('Videos');
   const [videos, setVideos] = useState(null);
+
+  const navigation = useNavigation()
 
   // useEffect(() => {
   //   const fetchUserData = async () => {
@@ -105,12 +108,16 @@ export default function UserProfileDetailpage({route}) {
           </View>
 
           {/* Company & Website */}
-          <View className="bg-purple-50 p-4 rounded-lg mb-3">
-            <Text className="text-black font-semibold">
-              Company: {userData?.companyName}
-            </Text>
-            <Text className="text-primary">{userData.website}</Text>
-          </View>
+          {userData?.companyName && (
+            <View className="bg-purple-50 p-4 rounded-lg mb-3">
+              <Text className="text-black font-semibold">
+                Company: {userData.companyName}
+              </Text>
+              {userData?.website && (
+                <Text className="text-primary">{userData.website}</Text>
+              )}
+            </View>
+          )}
 
           {/* User Role & Topic */}
           <View className="bg-purple-50 p-4 rounded-lg mb-3">
@@ -119,22 +126,29 @@ export default function UserProfileDetailpage({route}) {
             </Text>
             <Text className="text-gray-700">Topic: {userData.topic}</Text>
           </View>
-          <View className='flex flex-row gap-3'>
-            <View className="bg-purple-50 p-4 rounded-lg  w-[50%]">
-              <Text className='text-primary text-sm text-center'> {followCounts?.followers}</Text>
-              <Text className="text-black font-semibold text-center">
-                Followers
-              </Text>
-            </View>
+          <View className="flex flex-row gap-3 w-full">
+            <TouchableOpacity onPress={() => navigation.navigate('Followers')} className='w-[48%]' >
+              <View className="bg-purple-50 p-4 rounded-lg  ">
+                <Text className="text-primary text-sm text-center">
+                  {' '}
+                  {followCounts?.followers}
+                </Text>
+                <Text className="text-black font-semibold text-center">
+                  Followers
+                </Text>
+              </View>
+            </TouchableOpacity>
 
-            <View className="bg-purple-50 p-4 rounded-lg w-[50%]">
-              <Text  className='text-primary text-sm text-center'>
-              {followCounts?.following}
-              </Text>
-              <Text className="text-black font-semibold text-center">
-                Following
-              </Text>
-            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('Following')}  className='w-[48%]'>
+              <View className="bg-purple-50 p-4 rounded-lg ">
+                <Text className="text-primary text-sm text-center">
+                  {followCounts?.following}
+                </Text>
+                <Text className="text-black font-semibold text-center">
+                  Following
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
 
           <View className="my-3">
@@ -171,7 +185,7 @@ export default function UserProfileDetailpage({route}) {
                         controls={true}
                         resizeMode="cover"
                         paused={true}
-                        className="rounded-lg w-32 shadow-lg overflow-hidden"
+                        className="rounded-lg w-full shadow-lg overflow-hidden"
                       />
                       <Text className="text-base font-bold text-black">
                         {item.title}
@@ -204,7 +218,7 @@ export default function UserProfileDetailpage({route}) {
                         controls={true}
                         resizeMode="cover"
                         paused={true}
-                        className="rounded-lg w-32 shadow-lg overflow-hidden"
+                        className="rounded-lg w-full shadow-lg overflow-hidden"
                       />
                       <Text className="text-base font-bold text-black">
                         {item.title}

@@ -9,11 +9,8 @@ import {
   FlatList,
 } from 'react-native';
 import TagList from '../components/Home/TagList.jsx';
-import Shorts from '../components/Home/HomeShorts.jsx';
-import HomeShorts from '../components/Home/HomeShorts.jsx';
-import Header from '../components/Header.jsx';
+
 import {getAllPostedVideos} from '../api/useVideo.jsx/Video.jsx';
-import Video from 'react-native-video';
 import {useNavigation} from '@react-navigation/native';
 import VideoPlayer from 'react-native-video-controls';
 import LinearGradient from 'react-native-linear-gradient';
@@ -29,7 +26,7 @@ const Home = () => {
   const fetchVideos = async () => {
     setLoading(true);
     try {
-      const result = await getAllPostedVideos("video");
+      const result = await getAllPostedVideos('video');
       console.log('Fetched Videos:', result);
 
       if (result && Array.isArray(result)) {
@@ -43,10 +40,56 @@ const Home = () => {
     setLoading(false);
   };
 
+  // First, let's create a function to track video views
+  const trackVideoView = async videoId => {
+    try {
+      const response = await fetch(
+        `https://tag-backend.vercel.app/api/videos/onevideo/${videoId}/view`,
+        {
+          method: 'POST', // Assuming it's a POST request to increment view count
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
 
-  console.log(videos,"videos")
+      if (!response.ok) {
+        throw new Error('Failed to track video view');
+      }
 
+      console.log('View tracked successfully for video:', videoId);
+    } catch (error) {
+      console.error('Error tracking video view:', error);
+    }
+  };
 
+  console.log('vvvv', videos);
+  // Add this function in your component
+  const formatDate = dateString => {
+    if (!dateString) return '';
+
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) {
+      return 'Today';
+    } else if (diffDays === 1) {
+      return 'Yesterday';
+    } else if (diffDays < 7) {
+      return `${diffDays} days ago`;
+    } else if (diffDays < 30) {
+      const weeks = Math.floor(diffDays / 7);
+      return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+    } else if (diffDays < 365) {
+      const months = Math.floor(diffDays / 30);
+      return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+    } else {
+      const years = Math.floor(diffDays / 365);
+      return `${years} ${years === 1 ? 'year' : 'years'} ago`;
+    }
+  };
 
   return (
     <ScrollView
@@ -69,17 +112,17 @@ const Home = () => {
         {loading ? (
           <ActivityIndicator size="large" color="#441752" />
         ) : (
+         
           <FlatList
             data={videos}
             keyExtractor={item => item?._id}
             extraData={videos}
             renderItem={({item}) => {
               return (
-              
-                <View className="mb-5">
+                <View className="mb-5 mx-1">
                   <TouchableOpacity>
+                    {/* Video Player */}
                     <View className="rounded-xl overflow-hidden  border-4 border-primary">
-                      {/* Video Player */}
                       <VideoPlayer
                         source={{uri: item.videoUrl}}
                         style={{width: '100%', height: 200}}
@@ -93,64 +136,71 @@ const Home = () => {
                         disableVolume={false}
                         disableFullscreen={true}
                         fullscreenOrientation="landscape"
+                        onPlay={() => trackVideoView(item._id)}
                       />
-
-                      {/* Gradient Background with User Details */}
-                      <TouchableOpacity onPress={()=> navigation.navigate("User-Details",{userId:item?.creatorId?._id})}>
+                      {/* Video Info Section (YouTube-style) */}
                       <LinearGradient
                         colors={['#6a0080', '#441752']}
                         style={{
                           position: '',
-                          
                           bottom: 0,
                           width: '100%',
-                          paddingVertical: 15,
+                          paddingVertical: 10,
                           flexDirection: 'row',
                           alignItems: 'center',
                           paddingHorizontal: 15,
-                        
-                          
                         }}>
-                        {/* User Image */}
-                        <Image
-                          source={require('../assets/Images/user.png')}
-                          style={{
-                            width: 35,
-                            height: 35,
-                            borderRadius: 50,
-                            marginRight: 10,
-                          }}
-                        />
+                        <View className="flex-row mt-3">
+                          {/* Channel Avatar */}
+                          <TouchableOpacity
+                            onPress={() =>
+                              navigation.navigate('User-Details', {
+                                userId: item?.creatorId?._id,
+                              })
+                            }
+                            className="mr-3">
+                            <Image
+                              source={require('../assets/Images/user.png')}
+                              className="w-10 h-10 rounded-full"
+                            />
+                          </TouchableOpacity>
 
-                        <View style={{flex: 1}}>
-                          <Text
-                            style={{
-                              color: 'white',
-                              fontSize: 14,
-                              fontWeight: 'bold',
-                            }}>
-                            {item?.creatorId?.name}
-                          </Text>
-                          <Text
-                            style={{
-                              color: 'white',
-                              fontSize: 12,
-                              opacity: 0.8,
-                            }}>
-                            {new Date(item.createdAt).toDateString()}
-                          </Text>
-                        </View>
+                          {/* Video Details */}
+                          <View className="flex-1">
+                            {/* Video Title */}
+                            <Text
+                              className="text-base text-white font-bold mb-0.5"
+                              numberOfLines={2}>
+                              {item?.title || 'Untitled Video'}
+                            </Text>
 
-                        {/* More Options */}
-                        {/* <TouchableOpacity>
+                            {/* Channel Name & Video Stats */}
+                            {/* <TouchableOpacity
+                              onPress={() =>
+                                navigation.navigate('User-Details', {
+                                  userId: item?.creatorId?._id,
+                                })
+                              }>
+                              <Text className="text-sm text-gray-300">
+                                {item?.creatorId?.name || 'Unknown creator'}
+                              </Text>
+                            </TouchableOpacity> */}
+
+                            {/* Views & Date */}
+                            <Text className="text-sm text-gray-200">
+                              {item?.views || 0} views •{' '}
+                              {formatDate(item?.createdAt)}
+                            </Text>
+                          </View>
+
+                          {/* <TouchableOpacity>
                           <Image
                           tintColor={"white"}
                             source={require('../assets/Images/more.png')}
                           />
                         </TouchableOpacity> */}
+                        </View>
                       </LinearGradient>
-                      </TouchableOpacity>
-                     
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -228,3 +278,94 @@ export default Home;
 
 
 
+ // <FlatList
+          //   data={videos}
+          //   keyExtractor={item => item?._id}
+          //   extraData={videos}
+          //   renderItem={({item}) => {
+          //     return (
+          //       <View className="mb-5">
+          //         <TouchableOpacity>
+          //           <View className="rounded-xl overflow-hidden  border-4 border-primary">
+
+          //             <VideoPlayer
+          //               source={{uri: item.videoUrl}}
+          //               style={{width: '100%', height: 200}}
+          //               resizeMode="cover"
+          //               paused={true}
+          //               showOnStart={true}
+          //               tapAnywhereToPause={true}
+          //               seekColor="#441752"
+          //               controlTimeout={3000}
+          //               disableBack={false}
+          //               disableVolume={false}
+          //               disableFullscreen={true}
+          //               fullscreenOrientation="landscape"
+          //               onPlay={() => trackVideoView(item._id)}
+          //             />
+
+          //             {/* Gradient Background with User Details */}
+          //             <TouchableOpacity
+          //               onPress={() =>
+          //                 navigation.navigate('User-Details', {
+          //                   userId: item?.creatorId?._id,
+          //                 })
+          //               }>
+          //               <LinearGradient
+          //                 colors={['#6a0080', '#441752']}
+          //                 style={{
+          //                   position: '',
+
+          //                   bottom: 0,
+          //                   width: '100%',
+          //                   paddingVertical: 15,
+          //                   flexDirection: 'row',
+          //                   alignItems: 'center',
+          //                   paddingHorizontal: 15,
+          //                 }}>
+          //                 {/* User Image */}
+          //                 <Image
+          //                   source={require('../assets/Images/user.png')}
+          //                   style={{
+          //                     width: 35,
+          //                     height: 35,
+          //                     borderRadius: 50,
+          //                     marginRight: 10,
+          //                   }}
+          //                 />
+
+          //                 <View style={{flex: 1}}>
+          //                   <Text
+          //                     style={{
+          //                       color: 'white',
+          //                       fontSize: 14,
+          //                       fontWeight: 'bold',
+          //                     }}>
+          //                     {item?.creatorId?.name}
+          //                   </Text>
+          //                   <Text
+          //                     style={{
+          //                       color: 'white',
+          //                       fontSize: 12,
+          //                       opacity: 0.8,
+          //                     }}>
+          //                     {new Date(item.createdAt).toDateString()}
+          //                   </Text>
+          //                 </View>
+
+          //                 {/* More Options */}
+          //                 {/* <TouchableOpacity>
+          //                 <Image
+          //                 tintColor={"white"}
+          //                   source={require('../assets/Images/more.png')}
+          //                 />
+          //               </TouchableOpacity> */}
+          //               </LinearGradient>
+          //             </TouchableOpacity>
+          //           </View>
+          //         </TouchableOpacity>
+          //       </View>
+          //     );
+          //   }}
+          //   nestedScrollEnabled={true}
+          // />

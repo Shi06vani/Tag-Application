@@ -93,8 +93,11 @@ const BrandRequirementScreen = ({navigation}) => {
     const checkLogin= async()=>{
       const loginUser = await AsyncStorage.getItem('loginuser_id');
 
-      if(!loginUser) {
-        navigation.navigate("Login")
+      if (!loginUser) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Login" }],
+        });
       }
     
     }

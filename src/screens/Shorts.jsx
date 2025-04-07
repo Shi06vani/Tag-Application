@@ -139,11 +139,13 @@ const Shorts = () => {
                   fontWeight: 'bold',
                   marginBottom: 10,
                 }}>
-                {item.title}
+                {item.creatorId.name}
               </Text>
-              <Text style={{color: 'white', fontSize: 14}}>
-                {item.hashtags}
+              <Text className="mb-3 text-white text-sm">{item.title}</Text>
+              <Text className="mb-3  text-white text-sm">
+                {item.description}
               </Text>
+              <Text className="mb-3  text-white text-sm">{item.category}</Text>
             </View>
           </View>
         </TouchableOpacity>

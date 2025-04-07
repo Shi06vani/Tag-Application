@@ -3,14 +3,14 @@ import Tags from '../ui/tags/Tags';
 import {FlatList, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
-const tags = ['News', 'Comedy', 'Romentic', 'Informative'];
+const tags = ['News', 'Comedy', 'Romentic', 'Informative',"Music"];
 
 const TagList = () => {
   const [selectedTag, setSelectedTag] = useState('News');
   const navigation = useNavigation();
 
   return (
-    <View className=" flex flex-row    p-3 ">
+    <View className=" flex flex-row  p-3 ">
       <FlatList
         className="max-w-full flex "
         data={tags}

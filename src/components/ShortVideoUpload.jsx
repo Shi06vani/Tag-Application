@@ -102,25 +102,34 @@ const ShortVideoUpload = () => {
     <View className="flex-1 bg-purple-50 mt-16  p-4">
       {videoUri && (
         <View className="mb-4">
-          <Text className="text-gray-600">Selected Short Video:</Text>
-          <Text className="text-blue-500">{videoUri}</Text>
+          <Text className="text-gray-600 mb-2">Selected Short Preview:</Text>
+          <Video
+            source={{uri: videoUri}}
+            style={{width: '100%', height: 200, borderRadius: 12}}
+            resizeMode="cover"
+            controls
+          />
+          <TouchableOpacity
+            className="mt-2 text-sm self-center bg-red-500 px-4 py-2 rounded-full"
+            onPress={() => setVideoUri(null)}>
+            <Text className="text-white font-semibold">Remove Video</Text>
+          </TouchableOpacity>
         </View>
       )}
 
       {/* Upload from Gallery */}
-      <View className='flex justify-center items-center'>
-      <TouchableOpacity
-        className="bg-[#441752] px-6 py-3 rounded-full mb-4 flex-row items-center"
-        onPress={pickVideo}>
-        <Image
-        tintColor={"white"}
-          source={require('../assets/Images/camera.png')}
-          className="w-6 h-6 mr-2"
-        />
-        <Text className="text-white">Select Video from Gallery</Text>
-      </TouchableOpacity>
+      <View className="flex justify-center items-center">
+        <TouchableOpacity
+          className="bg-[#441752] px-6 py-3 rounded-full mb-4 flex-row items-center"
+          onPress={pickVideo}>
+          <Image
+            tintColor={'white'}
+            source={require('../assets/Images/camera.png')}
+            className="w-6 h-6 mr-2"
+          />
+          <Text className="text-white">Select Video from Gallery</Text>
+        </TouchableOpacity>
       </View>
-     
 
       <View className="py-10">
         <View className="border-2 border-primary rounded-full px-4 py-2 bg-white mb-3 w-full">
@@ -149,7 +158,6 @@ const ShortVideoUpload = () => {
           className="bg-[#8174A0] px-6 py-3 rounded-full flex-row items-center"
           onPress={uploadVideo}
           disabled={isUploading}>
-          
           <Text className="text-white">
             {isUploading ? 'Uploading...' : 'Upload Video'}
           </Text>

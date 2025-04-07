@@ -33,6 +33,8 @@ import BrandFollowers from './src/components/brand/BrandFollowers';
 import UserDetails from './src/components/UserDetails';
 import UserProfileDetailpage from './src/components/UserProfileDetailpage';
 import CategoryVideos from './src/components/CategoryVideos';
+import UserVideos from './src/components/UserVideos';
+import MyShorts from './src/components/MyShorts';
 
 const Stack = createNativeStackNavigator();
 
@@ -73,7 +75,9 @@ function App(): React.JSX.Element {
 
         <Stack.Screen name="Category-videos" component={CategoryVideos} />
 
-        
+        <Stack.Screen name="My-Videos" component={UserVideos} />
+        <Stack.Screen name="My-Shorts" component={MyShorts} />
+
         
 
         {/* <Stack.Screen name="Shorts" component={Shorts} options={{ headerShown: true, }}/> */}
