@@ -11,6 +11,7 @@ import {
 import {launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
 
 const API_URL = 'https://tag-backend.vercel.app/api';
 
@@ -21,6 +22,7 @@ const ShortVideoUpload = () => {
   const [description, setDescription] = useState('');
   const [creatorId, setCreatorId] = useState(null);
   const [category, setCategory] = useState(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -62,6 +64,21 @@ const ShortVideoUpload = () => {
       return;
     }
 
+    // Validation step
+    const missingFields = [];
+    if (!title) missingFields.push('Title');
+    if (!description) missingFields.push('Description');
+    if (!category) missingFields.push('Category');
+    if (!creatorId) missingFields.push('Creator ID');
+
+    if (missingFields.length > 0) {
+      Alert.alert(
+        'Missing Fields',
+        `Please fill the following field(s):\n${missingFields.join(', ')}`,
+      );
+      return;
+    }
+
     setIsUploading(true);
 
     const formData = new FormData();
@@ -87,6 +104,7 @@ const ShortVideoUpload = () => {
 
       Alert.alert('Success', response.data.message);
       setVideoUri(null);
+      navigation.replace('Main');
     } catch (error) {
       console.error('Upload Error:', error);
       Alert.alert('Upload Failed', 'Something went wrong.');
@@ -102,8 +120,8 @@ const ShortVideoUpload = () => {
     <View className="flex-1 bg-purple-50 mt-16  p-4">
       {videoUri && (
         <View className="mb-4">
-          <Text className="text-gray-600 mb-2">Selected Short Preview:</Text>
-          <Video
+          {/* <Text className="text-gray-600 mb-2">Selected Short Preview:</Text> */}
+          {/* <Video
             source={{uri: videoUri}}
             style={{width: '100%', height: 200, borderRadius: 12}}
             resizeMode="cover"
@@ -113,7 +131,16 @@ const ShortVideoUpload = () => {
             className="mt-2 text-sm self-center bg-red-500 px-4 py-2 rounded-full"
             onPress={() => setVideoUri(null)}>
             <Text className="text-white font-semibold">Remove Video</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          <View className="flex-row items-center justify-center gap- border  border-primary bg-purple-50 rounded-lg my-3">
+            <Image
+              source={require('../assets/Images/right-click-arrow.png')}
+              className="w-14 h-14 border border-primary"
+            />
+            <Text className="text-primary text-base font-semibold">
+              Video Selected Successfully
+            </Text>
+          </View>
         </View>
       )}
 

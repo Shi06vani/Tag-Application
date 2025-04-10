@@ -187,7 +187,7 @@ const BrandRequirementScreen = ({navigation}) => {
             <Text className="text-primary font-semibold mt-2">Budget: {item.budget}</Text>
             <Text className="text-primary font-semibold mt-2">Total need: {item.totalNeed}</Text>
 
-            <TouchableOpacity className="bg-primary p-2.5 rounded-lg mt-3 items-center">
+            <TouchableOpacity className="bg-primary p-2.5 rounded-lg mt-3 items-center" onPress={() => navigation.navigate("Brand-details", { brandid: item?.brandId?._id })}>
               <Text className="text-white text-base font-semibold">Apply Now</Text>
             </TouchableOpacity>
           </View>

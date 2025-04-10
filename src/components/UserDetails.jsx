@@ -7,12 +7,20 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from 'react-native';
 import {userProfileInfo} from '../api/userDetail/User';
-import {getFollowCounts} from '../api/useFollow/FollowUser';
+import {
+  followUser,
+  getFollowCounts,
+  unfollowUser,
+} from '../api/useFollow/FollowUser';
 import LinearGradient from 'react-native-linear-gradient';
-import { BrandVideos } from '../api/brandRequirements/Requiements';
+import {BrandVideos} from '../api/brandRequirements/Requiements';
 import Video from 'react-native-video';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
+import BASE_URL from "../../config"
 
 export default function UserDetails({route}) {
   const [userData, setUserData] = useState(null);
@@ -21,8 +29,20 @@ export default function UserDetails({route}) {
   const [followCounts, setFollowCounts] = useState(null);
   const [activeTab, setActiveTab] = useState('Videos');
   const [videos, setVideos] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [loginUserId, setLoginUserId] = useState('');
 
+  const navigation = useNavigation();
+  const creatorId = userId;
   useEffect(() => {
+    const getUserLoginId = async () => {
+      const loginUserId = await AsyncStorage.getItem('loginuser_id');
+      if (loginUserId) {
+        setLoginUserId(loginUserId);
+      } else {
+        Alert.alert('login user id not found');
+      }
+    };
     const fetchUserData = async () => {
       const data = await userProfileInfo(userId);
       setUserData(data?.user);
@@ -30,6 +50,7 @@ export default function UserDetails({route}) {
     };
 
     fetchUserData();
+    getUserLoginId();
   }, [userId]);
 
   useEffect(() => {
@@ -41,18 +62,98 @@ export default function UserDetails({route}) {
     fetchData();
   }, [userId]);
 
+  useEffect(() => {
+    const getBrandVideos = async () => {
+      const videoData = await BrandVideos(userId);
+      if (videoData) {
+        setVideos(videoData.videos);
+      }
+      setLoadingVideos(false);
+    };
 
-   useEffect(() => {
-      const getBrandVideos = async () => {
-        const videoData = await BrandVideos(userId);
-        if (videoData) {
-          setVideos(videoData.videos);
+    getBrandVideos();
+  }, [userId]);
+
+
+  const handleFollow = async () => {
+    const result = await followUser(loginUserId, creatorId);
+    if (!result.error) {
+    } else {
+      console.error('Error following user:', result.error);
+    }
+  };
+
+  const handleUnFollow = async () => {
+    const result = await unfollowUser(loginUserId, creatorId);
+    if (!result.error) {
+    } else {
+      console.error('Error unfollowing user:', result.error);
+    }
+  };
+
+  // useEffect(() => {
+  //   const CheckUserFollowing = async () => {
+  //     const userId = loginUserId;
+  //     if (!userId) {
+  //       console.error('User ID not found');
+  //       return;
+  //     }
+
+  //     try {
+  //       const response = await fetch(
+  //         `${BASE_URL}/api/friend/is-following/${creatorId}/${userId}`,
+  //         {
+  //           method: 'GET',
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //           },
+  //         },
+  //       );
+
+  //       if (!response.ok) {
+  //         throw new Error(`Request failed with status ${response.status}`);
+  //       }
+
+  //       const result = await response.json();
+  //       setIsFollowing(result?.isFollowing);
+  //       return result;
+  //     } catch (error) {
+  //       console.error('Error checking follow status:', error);
+  //       return null;
+  //     }
+  //   };
+
+  //   CheckUserFollowing();
+  // }, [creatorId, loginUserId]);
+
+  useEffect(() => {
+    if (!loginUserId || !creatorId) return;
+
+    const CheckUserFollowing = async () => {
+      try {
+        const response = await fetch(
+          `${BASE_URL}/api/friend/is-following/${creatorId}/${loginUserId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
         }
-        setLoadingVideos(false);
-      };
-  
-      getBrandVideos();
-    }, [userId]);
+
+        const result = await response.json();
+        setIsFollowing(result?.isFollowing);
+      } catch (error) {
+        console.error('Error checking follow status:', error);
+      }
+    };
+
+    CheckUserFollowing();
+  }, [creatorId, loginUserId]);
 
   if (loading) {
     return (
@@ -64,17 +165,9 @@ export default function UserDetails({route}) {
     );
   }
 
+
   return (
     <ScrollView className="flex-1">
-      {/* Header Section */}
-      {/* <View className="bg-primary pb-8 pt-12 items-center rounded-b-3xl shadow-lg">
-          <Image
-            source={require("../assets/Images/user.png")}
-            className="w-28 h-28 rounded-full border-4 border-white"
-          />
-          <Text className="text-xl font-bold text-white mt-3">{userData?.name}</Text>
-          <Text className="text-gray-200 text-sm">{userData?.email}</Text>
-        </View> */}
       <View>
         <LinearGradient
           colors={['#6a0080', '#441752']}
@@ -94,31 +187,61 @@ export default function UserDetails({route}) {
       ;
       <View className="p-5">
         {/* Role & Topic Card */}
-        <View className="bg-purple-50 p-5 rounded-2xl shadow-md mb-4">
-          <View className="flex-row items-center">
-            {/* <Ionicons name="person" size={22} color="#441752" /> */}
-            <Text className="text-black font-semibold ml-2">
-              Role:{' '}
-              {userData?.role.charAt(0).toUpperCase() + userData?.role.slice(1)}
-            </Text>
+        <View className="bg-purple-50 p-5 rounded-2xl shadow-md mb-4 flex-row justify-between">
+          <View>
+            <View className="flex-row items-center">
+              <Text className="text-black font-semibold ml-2">
+                Role:{' '}
+                {userData?.role.charAt(0).toUpperCase() +
+                  userData?.role.slice(1)}
+              </Text>
+            </View>
+            <Text className="text-gray-600 mt-1">Topic: {userData?.topic}</Text>
           </View>
-          <Text className="text-gray-600 mt-1">Topic: {userData?.topic}</Text>
+
+          <View className="shadow-lg">
+            {isFollowing ? (
+              <TouchableOpacity onPress={handleFollow}>
+                <Text className="text-sm font-bold px-4 py-2 rounded-md text-white bg-primary cursor-pointer">
+                  Follow
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={handleUnFollow} className="">
+                <Text className="bg-secondary text-sm font-bold px-4 py-2 rounded-md text-white  cursor-pointer">
+                  UnFollow
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         {/* Following & Followers */}
         <View className="flex-row justify-between">
-          <View className="bg-purple-50 p-5 rounded-2xl shadow-md w-[48%] items-center">
-            <Text className="text-gray-700 text-lg font-bold">
-              {followCounts?.following}
-            </Text>
-            <Text className="text-black font-semibold mt-2">Following</Text>
-          </View>
-          <View className="bg-purple-50 p-5 rounded-2xl shadow-md w-[48%] items-center">
-            <Text className="text-gray-700 text-lg font-bold">
-              {followCounts?.followers}
-            </Text>
-            <Text className="text-black font-semibold mt-2">Followers</Text>
-          </View>
+          <TouchableOpacity
+            className="w-[48%]"
+            onPress={() =>
+              navigation.navigate('User-Followings', {user_id: userId})
+            }>
+            <View className="bg-purple-50 p-5 rounded-2xl shadow-md  items-center">
+              <Text className="text-gray-700 text-lg font-bold">
+                {followCounts?.following}
+              </Text>
+              <Text className="text-black font-semibold mt-2">Following</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="w-[48%]"
+            onPress={() =>
+              navigation.navigate('User-Followers', {user_id: userId})
+            }>
+            <View className="bg-purple-50 p-5 rounded-2xl shadow-md items-center">
+              <Text className="text-gray-700 text-lg font-bold">
+                {followCounts?.followers}
+              </Text>
+              <Text className="text-black font-semibold mt-2">Followers</Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* tabs */}
@@ -140,42 +263,40 @@ export default function UserDetails({route}) {
             </TouchableOpacity>
           </View>
           {activeTab === 'Videos' && (
-            
             <View className="flex-1 px-2">
-            <FlatList
-              data={videos}
-              // horizontal={true}
-              keyExtractor={item => item._id}
-              renderItem={({item}) => (
-                <View className="">
-                  <Video
-                    source={{uri: item.videoUrl}}
-                    style={{height: 200, marginTop: 15}}
-                    controls={true}
-                    resizeMode="cover"
-                    paused={true}
-                    className="rounded-lg w-full shadow-lg overflow-hidden"
-                  />
-                  <Text className="text-base font-bold text-black">
-                    {item.title}
-                  </Text>
-                  <Text className="text-gray-500">{item.description}</Text>
-                </View>
-              )}
-              ListEmptyComponent={() => (
-                <View className="flex-1 items-center justify-center mt-10">
-                  <Text className="text-gray-500 text-lg">No videos</Text>
-                </View>
-              )}
-            />
-          </View>
+              <FlatList
+                data={videos}
+                // horizontal={true}
+                keyExtractor={item => item._id}
+                renderItem={({item}) => (
+                  <View className="">
+                    <Video
+                      source={{uri: item.videoUrl}}
+                      style={{height: 200, marginTop: 15}}
+                      controls={true}
+                      resizeMode="cover"
+                      paused={true}
+                      className="rounded-lg w-full shadow-lg overflow-hidden"
+                    />
+                    <Text className="text-base font-bold text-black">
+                      {item.title}
+                    </Text>
+                    <Text className="text-gray-500">{item.description}</Text>
+                  </View>
+                )}
+                ListEmptyComponent={() => (
+                  <View className="flex-1 items-center justify-center mt-10">
+                    <Text className="text-gray-500 text-lg">No videos</Text>
+                  </View>
+                )}
+              />
+            </View>
           )}
 
           {activeTab === 'Shorts' && (
             <View className="flex-1 px-2">
               <FlatList
                 data={videos}
-               
                 keyExtractor={item => item._id}
                 renderItem={({item}) => (
                   <View className=" mb-5">
@@ -200,7 +321,6 @@ export default function UserDetails({route}) {
                 )}
               />
             </View>
-          
           )}
         </View>
       </View>
@@ -295,25 +415,25 @@ export default function UserDetails({route}) {
 // </View>
 
 // <View className="flex-1 px-2">
-            //   <FlatList
-            //     data={videos}
-            //     horizontal={true}
-            //     keyExtractor={item => item._id}
-            //     renderItem={({item}) => (
-            //       <View className="px-2">
-            //         <Video
-            //           source={{uri: item.videoUrl}}
-            //           style={{height: 200, marginTop: 10}}
-            //           controls={true}
-            //           resizeMode="cover"
-            //           paused={true}
-            //           className="rounded-lg w-32 shadow-lg overflow-hidden"
-            //         />
-            //         <Text className="text-base font-bold text-black">
-            //           {item.title}
-            //         </Text>
-            //         <Text className="text-gray-500">{item.description}</Text>
-            //       </View>
-            //     )}
-            //   />
-            // </View>
+//   <FlatList
+//     data={videos}
+//     horizontal={true}
+//     keyExtractor={item => item._id}
+//     renderItem={({item}) => (
+//       <View className="px-2">
+//         <Video
+//           source={{uri: item.videoUrl}}
+//           style={{height: 200, marginTop: 10}}
+//           controls={true}
+//           resizeMode="cover"
+//           paused={true}
+//           className="rounded-lg w-32 shadow-lg overflow-hidden"
+//         />
+//         <Text className="text-base font-bold text-black">
+//           {item.title}
+//         </Text>
+//         <Text className="text-gray-500">{item.description}</Text>
+//       </View>
+//     )}
+//   />
+// </View>

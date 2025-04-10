@@ -94,8 +94,7 @@ const Home = () => {
   return (
     <ScrollView
       className="bg-white mt-16 "
-      keyboardShouldPersistTaps="handled"
-      contentContainerStyle={{flexGrow: 1}}>
+     >
       <View className="flex flex-row items-center p-3 ">
         {/* <View className="border-r-2 border-r-[#ECECEC] px-3">
           <Text className="text-sm font-medium px-4 py-2 rounded-lg bg-[#441752] text-white border-gray-300">
@@ -112,38 +111,39 @@ const Home = () => {
         {loading ? (
           <ActivityIndicator size="large" color="#441752" />
         ) : (
-         
           <FlatList
             data={videos}
             keyExtractor={item => item?._id}
+              contentContainerStyle={{ paddingBottom: 100 }}
             extraData={videos}
             renderItem={({item}) => {
               return (
                 <View className="mb-5 mx-1">
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={()=> navigation.navigate("Video")}>
+                     
                     {/* Video Player */}
                     <View className="rounded-xl overflow-hidden  border-4 border-primary">
-                      <VideoPlayer
-                        source={{uri: item.videoUrl}}
-                        style={{width: '100%', height: 200}}
-                        resizeMode="cover"
-                        paused={true}
-                        showOnStart={true}
-                        tapAnywhereToPause={true}
-                        seekColor="#441752"
-                        controlTimeout={3000}
-                        disableBack={false}
-                        disableVolume={false}
-                        disableFullscreen={true}
-                        fullscreenOrientation="landscape"
-                        onPlay={() => trackVideoView(item._id)}
-                      />
-                      {/* Video Info Section (YouTube-style) */}
+                      <View className="w-full ">
+                        <VideoPlayer
+                          style={{width: '100%', height: 200}}
+                          source={{uri: item.videoUrl}}
+                          resizeMode="contain"
+                          paused={true}
+                          showOnStart={true}
+                          tapAnywhereToPause={true}
+                          seekColor="#441752"
+                          controlTimeout={3000}
+                          disableBack={false}
+                          disableVolume={false}
+                          disableFullscreen={true}
+                          fullscreenOrientation="landscape"
+                          onPlay={() => trackVideoView(item._id)}
+                        />
+                      </View>
+
                       <LinearGradient
                         colors={['#6a0080', '#441752']}
                         style={{
-                          position: '',
-                          bottom: 0,
                           width: '100%',
                           paddingVertical: 10,
                           flexDirection: 'row',
@@ -151,7 +151,6 @@ const Home = () => {
                           paddingHorizontal: 15,
                         }}>
                         <View className="flex-row mt-3">
-                          {/* Channel Avatar */}
                           <TouchableOpacity
                             onPress={() =>
                               navigation.navigate('User-Details', {
@@ -165,28 +164,13 @@ const Home = () => {
                             />
                           </TouchableOpacity>
 
-                          {/* Video Details */}
                           <View className="flex-1">
-                            {/* Video Title */}
                             <Text
                               className="text-base text-white font-bold mb-0.5"
                               numberOfLines={2}>
                               {item?.title || 'Untitled Video'}
                             </Text>
 
-                            {/* Channel Name & Video Stats */}
-                            {/* <TouchableOpacity
-                              onPress={() =>
-                                navigation.navigate('User-Details', {
-                                  userId: item?.creatorId?._id,
-                                })
-                              }>
-                              <Text className="text-sm text-gray-300">
-                                {item?.creatorId?.name || 'Unknown creator'}
-                              </Text>
-                            </TouchableOpacity> */}
-
-                            {/* Views & Date */}
                             <Text className="text-sm text-gray-200">
                               {item?.views || 0} views •{' '}
                               {formatDate(item?.createdAt)}
@@ -276,96 +260,94 @@ export default Home;
                     /> */
 }
 
+// <FlatList
+//   data={videos}
+//   keyExtractor={item => item?._id}
+//   extraData={videos}
+//   renderItem={({item}) => {
+//     return (
+//       <View className="mb-5">
+//         <TouchableOpacity>
+//           <View className="rounded-xl overflow-hidden  border-4 border-primary">
 
+//             <VideoPlayer
+//               source={{uri: item.videoUrl}}
+//               style={{width: '100%', height: 200}}
+//               resizeMode="cover"
+//               paused={true}
+//               showOnStart={true}
+//               tapAnywhereToPause={true}
+//               seekColor="#441752"
+//               controlTimeout={3000}
+//               disableBack={false}
+//               disableVolume={false}
+//               disableFullscreen={true}
+//               fullscreenOrientation="landscape"
+//               onPlay={() => trackVideoView(item._id)}
+//             />
 
- // <FlatList
-          //   data={videos}
-          //   keyExtractor={item => item?._id}
-          //   extraData={videos}
-          //   renderItem={({item}) => {
-          //     return (
-          //       <View className="mb-5">
-          //         <TouchableOpacity>
-          //           <View className="rounded-xl overflow-hidden  border-4 border-primary">
+//             {/* Gradient Background with User Details */}
+//             <TouchableOpacity
+//               onPress={() =>
+//                 navigation.navigate('User-Details', {
+//                   userId: item?.creatorId?._id,
+//                 })
+//               }>
+//               <LinearGradient
+//                 colors={['#6a0080', '#441752']}
+//                 style={{
+//                   position: '',
 
-          //             <VideoPlayer
-          //               source={{uri: item.videoUrl}}
-          //               style={{width: '100%', height: 200}}
-          //               resizeMode="cover"
-          //               paused={true}
-          //               showOnStart={true}
-          //               tapAnywhereToPause={true}
-          //               seekColor="#441752"
-          //               controlTimeout={3000}
-          //               disableBack={false}
-          //               disableVolume={false}
-          //               disableFullscreen={true}
-          //               fullscreenOrientation="landscape"
-          //               onPlay={() => trackVideoView(item._id)}
-          //             />
+//                   bottom: 0,
+//                   width: '100%',
+//                   paddingVertical: 15,
+//                   flexDirection: 'row',
+//                   alignItems: 'center',
+//                   paddingHorizontal: 15,
+//                 }}>
+//                 {/* User Image */}
+//                 <Image
+//                   source={require('../assets/Images/user.png')}
+//                   style={{
+//                     width: 35,
+//                     height: 35,
+//                     borderRadius: 50,
+//                     marginRight: 10,
+//                   }}
+//                 />
 
-          //             {/* Gradient Background with User Details */}
-          //             <TouchableOpacity
-          //               onPress={() =>
-          //                 navigation.navigate('User-Details', {
-          //                   userId: item?.creatorId?._id,
-          //                 })
-          //               }>
-          //               <LinearGradient
-          //                 colors={['#6a0080', '#441752']}
-          //                 style={{
-          //                   position: '',
+//                 <View style={{flex: 1}}>
+//                   <Text
+//                     style={{
+//                       color: 'white',
+//                       fontSize: 14,
+//                       fontWeight: 'bold',
+//                     }}>
+//                     {item?.creatorId?.name}
+//                   </Text>
+//                   <Text
+//                     style={{
+//                       color: 'white',
+//                       fontSize: 12,
+//                       opacity: 0.8,
+//                     }}>
+//                     {new Date(item.createdAt).toDateString()}
+//                   </Text>
+//                 </View>
 
-          //                   bottom: 0,
-          //                   width: '100%',
-          //                   paddingVertical: 15,
-          //                   flexDirection: 'row',
-          //                   alignItems: 'center',
-          //                   paddingHorizontal: 15,
-          //                 }}>
-          //                 {/* User Image */}
-          //                 <Image
-          //                   source={require('../assets/Images/user.png')}
-          //                   style={{
-          //                     width: 35,
-          //                     height: 35,
-          //                     borderRadius: 50,
-          //                     marginRight: 10,
-          //                   }}
-          //                 />
-
-          //                 <View style={{flex: 1}}>
-          //                   <Text
-          //                     style={{
-          //                       color: 'white',
-          //                       fontSize: 14,
-          //                       fontWeight: 'bold',
-          //                     }}>
-          //                     {item?.creatorId?.name}
-          //                   </Text>
-          //                   <Text
-          //                     style={{
-          //                       color: 'white',
-          //                       fontSize: 12,
-          //                       opacity: 0.8,
-          //                     }}>
-          //                     {new Date(item.createdAt).toDateString()}
-          //                   </Text>
-          //                 </View>
-
-          //                 {/* More Options */}
-          //                 {/* <TouchableOpacity>
-          //                 <Image
-          //                 tintColor={"white"}
-          //                   source={require('../assets/Images/more.png')}
-          //                 />
-          //               </TouchableOpacity> */}
-          //               </LinearGradient>
-          //             </TouchableOpacity>
-          //           </View>
-          //         </TouchableOpacity>
-          //       </View>
-          //     );
-          //   }}
-          //   nestedScrollEnabled={true}
-          // />
+//                 {/* More Options */}
+//                 {/* <TouchableOpacity>
+//                 <Image
+//                 tintColor={"white"}
+//                   source={require('../assets/Images/more.png')}
+//                 />
+//               </TouchableOpacity> */}
+//               </LinearGradient>
+//             </TouchableOpacity>
+//           </View>
+//         </TouchableOpacity>
+//       </View>
+//     );
+//   }}
+//   nestedScrollEnabled={true}
+// />

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, FlatList, ScrollView } from "react-native";
 import { styled } from "nativewind";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getFollowingList } from "../../api/useFollow/FollowUser";
+import {getFollowers } from "../api/useFollow/FollowUser";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -13,9 +13,10 @@ const StyledTouchableOpacity = styled(TouchableOpacity);
 
 
 
-const BrandFollowing = ({route}) => {
+const UserFollowers = ({route}) => {
 
-  const {brand_id} = route.params;
+
+  const {user_id} = route.params;
   const [isFollowing, setIsFollowing] = useState(false);
   const [followers, setFollowers] = useState([]);
 
@@ -24,18 +25,22 @@ const BrandFollowing = ({route}) => {
 
   }, []);
 
+
+
   const fetchFollowingList = async () => {
     try {
-      const result = await getFollowingList(brand_id);
+      const result = await getFollowers(user_id);
       if (!result.error) {
 
-        setFollowers(result.following);
+        setFollowers(result.followers);
         // setIsFollowing(result.includes(brand.id)); 
       }
     } catch (error) {
       console.error("Error fetching following list:", error);
     }
   };
+
+
 
 
   return (
@@ -51,7 +56,7 @@ const BrandFollowing = ({route}) => {
           renderItem={({ item }) => (
             <StyledView className="flex-row items-center px-4 py-3 border-b border-gray-200">
               <StyledImage
-                source={{ uri: item.image }}
+                source={require("../assets/Images/user.png")}
                 className="w-12 h-12 rounded-full"
               />
               
@@ -77,5 +82,5 @@ const BrandFollowing = ({route}) => {
   );
 };
 
-export default BrandFollowing;
+export default UserFollowers;
 

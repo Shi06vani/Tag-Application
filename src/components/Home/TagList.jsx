@@ -3,7 +3,9 @@ import Tags from '../ui/tags/Tags';
 import {FlatList, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
-const tags = ['News', 'Comedy', 'Romentic', 'Informative',"Music"];
+const tags = ['News','Game',"Music", 'Comedy', 'Dance','General', 'Informative'];
+
+
 
 const TagList = () => {
   const [selectedTag, setSelectedTag] = useState('News');

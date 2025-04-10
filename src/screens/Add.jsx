@@ -79,8 +79,8 @@ const Add = () => {
   // Function to pick video from gallery
   const pickVideo = () => {
     let options = {
-      mediaType: 'video', // Only allow videos
-      quality: 1, // High quality
+      mediaType: 'video',
+      quality: 1,
     };
 
     launchImageLibrary(options, response => {
@@ -98,6 +98,20 @@ const Add = () => {
   const uploadVideo = async () => {
     if (!videoUri) {
       Alert.alert('Error', 'Please select a video first.');
+      return;
+    }
+
+    const missingFields = [];
+    if (!title) missingFields.push('Title');
+    if (!description) missingFields.push('Description');
+    if (!category) missingFields.push('Category');
+    if (!creatorId) missingFields.push('Creator ID');
+
+    if (missingFields.length > 0) {
+      Alert.alert(
+        'Missing Fields',
+        `Please fill the following field(s):\n${missingFields.join(', ')}`,
+      );
       return;
     }
 
@@ -126,6 +140,7 @@ const Add = () => {
 
       Alert.alert('Success', response.data.message);
       setVideoUri(null);
+      navigation.replace('Main');
     } catch (error) {
       console.error('Upload Error:', error);
       Alert.alert('Upload Failed', 'Something went wrong.');
@@ -146,21 +161,26 @@ const Add = () => {
       {activeTab === 'Long Shorts' && (
         <View className="mt-16  ">
           {videoUri && (
-            <View className="mb-4">
-              <Text className="text-gray-600 mb-2">
+            <View className="">
+              {/* <Text className="text-gray-600 mb-2">
                 Selected Video Preview:
-              </Text>
-              <Video
+              </Text> */}
+
+              {/* <Video
                 source={{uri: videoUri}}
                 style={{width: '100%', height: 200, borderRadius: 12}}
                 resizeMode="cover"
                 controls
-              />
-              <TouchableOpacity
+              /> */}
+              {/* <TouchableOpacity
                 className="mt-2 text-sm self-center bg-red-500 px-4 py-2 rounded-full"
                 onPress={() => setVideoUri(null)}>
                 <Text className="text-white font-semibold">Remove Video</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+             <View className='flex-row items-center justify-center gap- border  border-primary bg-purple-50 rounded-lg my-3'>
+                <Image  source={require("../assets/Images/right-click-arrow.png")} className='w-14 h-14 border border-primary'/>
+                <Text className='text-primary text-base font-semibold'>Video Selected Successfully</Text>
+              </View>
             </View>
           )}
 
@@ -243,6 +263,7 @@ const Add = () => {
           </TouchableOpacity>
         </View>
       </View>
+     
     </View>
   );
 };
