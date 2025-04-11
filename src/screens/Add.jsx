@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Alert,
   TextInput,
+  ScrollView,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
@@ -24,9 +25,9 @@ const Add = () => {
   const [description, setDescription] = useState('');
   const [creatorId, setCreatorId] = useState(null);
   const [category, setCategory] = useState(null);
-
+  const categories = ['News', 'Game', 'Music', 'Comedy', 'Dance'];
   const navigation = useNavigation();
-
+  const [categoryActiveTab, setCategoryActiveTab] = useState('News');
   // useEffect(() => {
   //   const init = async () => {
   //     try {
@@ -154,9 +155,55 @@ const Add = () => {
 
   return (
     <View className="flex-1 bg-purple-50 mt-16  p-4">
-      <Text className="text-xl font-bold mb-4 text-center">
+      <Text className="text-xl font-bold mb-3 text-center">
         Upload or Record {activeTab}
       </Text>
+
+        {/* Bottom Tabs */}
+        <View className=" py-6 w-full flex justify-center items-center">
+        <View className="flex-row gap-6">
+          <TouchableOpacity
+            className={`px-4 py-2 rounded-full ${
+              activeTab === 'Long Shorts' ? 'bg-[#441752]' : 'bg-[#A888B5]'
+            }`}
+            onPress={() => setActiveTab('Long Shorts')}>
+            <Text className="text-white font-bold">Long Shorts</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className={`px-4 py-2 rounded-full ${
+              activeTab === 'Short Shorts' ? 'bg-[#441752]' : 'bg-[#A888B5]'
+            }`}
+            onPress={() => setActiveTab('Short Shorts')}>
+            <Text className="text-white font-bold">Short Shorts</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View className="flex-row space-x-3 px-4">
+            {categories.map((category, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => setCategoryActiveTab(category)}
+                className={`px-5 py-2 rounded-full border items-center justify-center  ${
+                  categoryActiveTab === category
+                    ? 'bg-[#441752] border-[#441752]'
+                    : 'bg-[#fdf0ff] border-[#441752]'
+                }`}>
+                <Text
+                  className={`text-xs font-semibold ${
+                    categoryActiveTab === category
+                      ? 'text-white'
+                      : 'text-[#441752]'
+                  }`}>
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      </View>
 
       {activeTab === 'Long Shorts' && (
         <View className="mt-16  ">
@@ -177,9 +224,14 @@ const Add = () => {
                 onPress={() => setVideoUri(null)}>
                 <Text className="text-white font-semibold">Remove Video</Text>
               </TouchableOpacity> */}
-             <View className='flex-row items-center justify-center gap- border  border-primary bg-purple-50 rounded-lg my-3'>
-                <Image  source={require("../assets/Images/right-click-arrow.png")} className='w-14 h-14 border border-primary'/>
-                <Text className='text-primary text-base font-semibold'>Video Selected Successfully</Text>
+              <View className="flex-row items-center justify-center gap- border  border-primary bg-purple-50 rounded-lg my-3">
+                <Image
+                  source={require('../assets/Images/right-click-arrow.png')}
+                  className="w-14 h-14 border border-primary"
+                />
+                <Text className="text-primary text-base font-semibold">
+                  Video Selected Successfully
+                </Text>
               </View>
             </View>
           )}
@@ -244,26 +296,7 @@ const Add = () => {
         </>
       )}
 
-      {/* Bottom Tabs */}
-      <View className="absolute bottom-4 w-full flex justify-center items-center">
-        <View className="flex-row gap-6">
-          <TouchableOpacity
-            className={`px-4 py-2 rounded-full ${
-              activeTab === 'Long Shorts' ? 'bg-[#441752]' : 'bg-[#A888B5]'
-            }`}
-            onPress={() => setActiveTab('Long Shorts')}>
-            <Text className="text-white font-bold">Long Shorts</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className={`px-4 py-2 rounded-full ${
-              activeTab === 'Short Shorts' ? 'bg-[#441752]' : 'bg-[#A888B5]'
-            }`}
-            onPress={() => setActiveTab('Short Shorts')}>
-            <Text className="text-white font-bold">Short Shorts</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-     
+    
     </View>
   );
 };

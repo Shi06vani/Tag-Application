@@ -57,20 +57,35 @@ const TabNavigator = () => {
             }
 
             return (
-              <Image
-                source={iconSource}
-                style={{width: 35, height: 35, resizeMode: 'contain'}}
-              />
+              // <Image
+              //   source={iconSource}
+              //   style={{width: 35, height: 35, resizeMode: 'contain'}}
+              // />
+              <View
+                style={{
+                  width:48,
+                  position:"absolute",
+                  borderTopWidth: focused ? 3 : 0, // 👈 underline when focused
+                  borderTopColor: '#441752', // 👈 your primary color
+                  paddingTop: 15,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Image
+                  source={iconSource}
+                  style={{width: 32, height: 32, resizeMode: 'contain'}}
+                />
+              </View>
             );
           },
           tabBarActiveTintColor: '#441752',
+          tabBarShowLabel: false,
           tabBarInactiveTintColor: '#000000',
           tabBarStyle:
             route.name === 'Shorts'
               ? {display: 'none'}
               : {
                   fontWeight: 'bold',
-                  // backgroundColor: '#ffffff',
                   height: 75,
                   borderTopLeftRadius: 15,
                   borderTopRightRadius: 15,
@@ -83,18 +98,17 @@ const TabNavigator = () => {
             fontSize: 12,
             fontWeight: 'bold',
             paddingTop: 6,
-            border: "1px solid ",
-            borderTopColor:"black"
+            border: '1px solid ',
+            borderTopColor: 'black',
           },
         })}>
         {TabsRoutes.map((tabs, index) => (
-            <Tab.Screen
+          <Tab.Screen
             key={index}
             name={tabs.name}
             component={tabs.Component}
             options={tabs.options}
           />
-          
         ))}
       </Tab.Navigator>
     </View>

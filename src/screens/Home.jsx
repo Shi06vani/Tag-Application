@@ -41,7 +41,7 @@ const Home = () => {
   };
 
   // First, let's create a function to track video views
-  const trackVideoView = async videoId => {
+  const trackVideoView = async (videoId,item) => {
     try {
       const response = await fetch(
         `https://tag-backend.vercel.app/api/videos/onevideo/${videoId}/view`,
@@ -56,6 +56,7 @@ const Home = () => {
       if (!response.ok) {
         throw new Error('Failed to track video view');
       }
+      navigation.navigate('Videos',{videoData:item})
 
       console.log('View tracked successfully for video:', videoId);
     } catch (error) {
@@ -92,9 +93,7 @@ const Home = () => {
   };
 
   return (
-    <ScrollView
-      className="bg-white mt-16 "
-     >
+    <ScrollView className="bg-white mt-16 ">
       <View className="flex flex-row items-center p-3 ">
         {/* <View className="border-r-2 border-r-[#ECECEC] px-3">
           <Text className="text-sm font-medium px-4 py-2 rounded-lg bg-[#441752] text-white border-gray-300">
@@ -114,13 +113,13 @@ const Home = () => {
           <FlatList
             data={videos}
             keyExtractor={item => item?._id}
-              contentContainerStyle={{ paddingBottom: 100 }}
+            contentContainerStyle={{paddingBottom: 100}}
             extraData={videos}
             renderItem={({item}) => {
               return (
                 <View className="mb-5 mx-1">
-                  <TouchableOpacity onPress={()=> navigation.navigate("Video")}>
-                     
+                  <TouchableOpacity
+                  >
                     {/* Video Player */}
                     <View className="rounded-xl overflow-hidden  border-4 border-primary">
                       <View className="w-full ">
@@ -137,7 +136,7 @@ const Home = () => {
                           disableVolume={false}
                           disableFullscreen={true}
                           fullscreenOrientation="landscape"
-                          onPlay={() => trackVideoView(item._id)}
+                          onPlay={() => trackVideoView(item._id,item)}
                         />
                       </View>
 

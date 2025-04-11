@@ -19,8 +19,8 @@ const BrandListScreen = () => {
   );
 
   return (
-    <View className="flex-1 bg-purple-100 p-[15px]">
-      <Text className="text-3xl font-bold text-center text-primary mb-3">Popular Brands</Text>
+    <View className="flex-1 bg-purple-50 p-[15px]">
+      <Text className="text-2xl font-bold text-center text-primary mb-3">Popular Brands</Text>
       <TextInput
         className="w-full p-3 border border-gray-300 rounded-lg mb-3 text-lg bg-white"
         placeholder="Search brands..."
@@ -31,13 +31,13 @@ const BrandListScreen = () => {
         data={filteredBrands}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity className="bg-white px-3 py-2 mb-2 rounded-2xl shadow-lg flex-row items-center"
+          <TouchableOpacity className="bg-white px-3 py-3 mb-2 rounded-2xl shadow-lg flex-row items-center"
           onPress={() => navigation.navigate('Chat')} 
           >
-            <Image source={item.logo} className="w-16 h-16 rounded-lg mr-4" />
+            <Image source={item.logo} className="w-12 h-12 rounded-lg mr-4" />
             <View>
-              <Text className="text-xl font-semibold text-primary">{item.name}</Text>
-              <Text className="text-secondary">{item.category}</Text>
+              <Text className="text-base font-semibold text-primary">{item.name}</Text>
+              <Text className="text-secondary text-sm">{item.category}</Text>
             </View>
           </TouchableOpacity>
         )}

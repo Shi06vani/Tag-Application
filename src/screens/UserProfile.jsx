@@ -24,7 +24,7 @@ const UserProfile = () => {
   const navigation = useNavigation();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const  [userId,setUserId] = useState(null)
+  const [userId, setUserId] = useState(null);
 
   const fetchUserData = async (setUserData, setLoading) => {
     setLoading(true);
@@ -32,10 +32,10 @@ const UserProfile = () => {
       const userId = await AsyncStorage.getItem('loginuser_id');
 
       if (!userId) {
-        navigation.navigate("Login")
+        navigation.navigate('Login');
       }
-      setUserId(userId)
-  
+      setUserId(userId);
+
       const response = await fetch(`${BASE_URL}/api/auth/profile/${userId}`);
       const data = await response.json();
       setUserData(data.user);
@@ -44,17 +44,16 @@ const UserProfile = () => {
     }
     setLoading(false);
   };
-  
 
   useEffect(() => {
     if (!userData && !loading) {
-      navigation.replace('Login'); 
+      navigation.replace('Login');
     }
   }, [userData]);
 
   useEffect(() => {
     const fetchRole = async () => {
-      const storedRole = await AsyncStorage.getItem("role");
+      const storedRole = await AsyncStorage.getItem('role');
       setRole(storedRole);
     };
 
@@ -66,8 +65,6 @@ const UserProfile = () => {
       fetchUserData(setUserData, setLoading);
     }, []),
   );
-
-
 
   if (loading) {
     return (
@@ -83,7 +80,6 @@ const UserProfile = () => {
     try {
       const shareOptions = {
         title: 'Check out this tag App!',
-       
       };
 
       await Share.share(shareOptions);
@@ -92,70 +88,65 @@ const UserProfile = () => {
     }
   };
 
-  const handleLogin =async()=>{
-    await AsyncStorage.removeItem("token")
-    await AsyncStorage.removeItem("loginuser_id")
-    await AsyncStorage.removeItem("role")
-    await AsyncStorage.removeItem("category")
+  const handleLogin = async () => {
+    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('loginuser_id');
+    await AsyncStorage.removeItem('role');
+    await AsyncStorage.removeItem('category');
 
-    navigation.navigate("Login")
-  }
+    navigation.navigate('Login');
+  };
 
   return (
-    <ScrollView>
-      <View className="p-[8px]">
+    <ScrollView className='bg-purple-50'>
+      <View className="p-[8px] mt-16  flex-1">
+
         <TouchableOpacity
           onPress={() => navigation.navigate('Brands-list')}
-          className="bg-secondary p-3 rounded-lg w-full items-center mb-3">
-          <Text className="text-primary text-lg">All Brands</Text>
+          className="bg-primary p-2 rounded-full w-full items-center mb-3">
+          <Text className="text-white text-lg">All Brands</Text>
         </TouchableOpacity>
 
-       
-
-        <StyledView className="bg-white p-4 rounded-lg">
+        <StyledView className="bg-white rounded-lg">
           <View className="p-[8px]">
-            <View className="flex-row justify-between">
-              
+           
+            <StyledTouchableOpacity  onPress={() =>
+                      navigation.navigate('Profile-details', {userId: userId})
+                    }>
+              <StyledView className=" p-3 rounded-lg shadow-md">
+                <StyledView className="flex-row items-center space-x-3">
+                  <StyledTouchableOpacity
+                   >
+                    <StyledImage
+                      source={require('../assets/Images/user.png')}
+                      className="w-12 h-12 rounded-full"
+                    />
+                  </StyledTouchableOpacity>
 
-              {/* <TouchableOpacity onPress={shareProfile}>
-                <View className="bg-slate-100 px-2 py-1 rounded-md">
-                  <Text>Share Profile</Text>
-                </View>
-              </TouchableOpacity> */}
-            </View>
-
-            <StyledView className="bg-white p-4 rounded-lg shadow-md">
-              <StyledView className="flex-row items-center space-x-3">
-                <StyledTouchableOpacity onPress={()=> navigation.navigate("Profile-details",{userId:userId})}>
-                <StyledImage
-                  source={require('../assets/Images/user.png')}
-                  className="w-12 h-12 rounded-full"
-                />
-                </StyledTouchableOpacity>
-               
-                <StyledView>
-                  <StyledText className="text-black text-lg font-bold">
-                    {userData?.name}
-                  </StyledText>
-                  <StyledText className="text-gray-500 text-sm">
-                    {userData?.email}
-                  </StyledText>
-                  <StyledText className="text-gray-500 text-sm">
-                    {userData?.role} - {userData?.companyName}
-                  </StyledText>
+                  <StyledView>
+                    <StyledText className="text-black text-lg font-bold">
+                      {userData?.name}
+                    </StyledText>
+                    <StyledText className="text-gray-500 text-sm">
+                      {userData?.email}
+                    </StyledText>
+                    <StyledText className="text-gray-500 text-sm">
+                      {userData?.role} - {userData?.companyName}
+                    </StyledText>
+                  </StyledView>
                 </StyledView>
+                <StyledText className="text-gray-600 mt-2">
+                  {userData?.bio}
+                </StyledText>
+                <StyledText className="text-gray-600 mt-2">
+                  {userData?.topic}
+                </StyledText>
               </StyledView>
-              <StyledText className="text-gray-600 mt-2">
-                {userData?.bio}
-              </StyledText>
-              <StyledText className="text-gray-600 mt-2">
-                {userData?.topic}
-              </StyledText>
-            </StyledView>
+            </StyledTouchableOpacity>
           </View>
 
           {/* Buttons Section */}
-          <StyledView className="mt-4">
+          <StyledView className="my-4 pl-4">
             <ScrollView
               horizontal={true}
               showsHorizontalScrollIndicator={false}
@@ -178,7 +169,7 @@ const UserProfile = () => {
                   Switch account
                 </StyledText>
               </StyledTouchableOpacity> */}
-               <StyledTouchableOpacity
+              <StyledTouchableOpacity
                 className="flex-row items-center gap-[6px] px-[12px] py-[8px] pt-[-2px] bg-accent 0 rounded-full"
                 onPress={() => navigation.navigate('Leaderboard')}>
                 <StyledImage
@@ -193,7 +184,7 @@ const UserProfile = () => {
 
               <StyledTouchableOpacity
                 className="flex-row items-center gap-[6px] px-[12px] py-[8px] pt-[-2px] bg-accent 0 rounded-full"
-                   onPress={() =>
+                onPress={() =>
                   navigation.navigate('Update-Profile', {data: userData})
                 }>
                 <StyledImage
@@ -206,18 +197,16 @@ const UserProfile = () => {
                 </StyledText>
               </StyledTouchableOpacity>
 
-                <StyledTouchableOpacity className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] pt-[4px] bg-accent 0 rounded-full" onPress={handleLogin}>
+              <StyledTouchableOpacity
+                className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] pt-[4px] bg-accent 0 rounded-full"
+                onPress={handleLogin}>
                 <StyledImage
                   tintColor={'white'}
                   source={require(`../assets/Images/my-video.png`)}
                   className="w-[18px] h-[18px]"
                 />
-                <StyledText className="text-white text-sm">
-                  Logout
-                </StyledText>
+                <StyledText className="text-white text-sm">Logout</StyledText>
               </StyledTouchableOpacity>
-
-             
             </ScrollView>
           </StyledView>
         </StyledView>
@@ -296,7 +285,8 @@ const UserProfile = () => {
                   </StyledTouchableOpacity>
                 )}
 
-                <StyledTouchableOpacity onPress={()=> navigation.navigate("My-Videos")}>
+                <StyledTouchableOpacity
+                  onPress={() => navigation.navigate('My-Videos')}>
                   <StyledView className="flex-row items-center px-4 py-3 gap-[8px]">
                     <StyledImage
                       source={require(`../assets/Images/my-video.png`)}
@@ -311,9 +301,8 @@ const UserProfile = () => {
                   </StyledView>
                 </StyledTouchableOpacity>
 
-
-
-                <StyledTouchableOpacity  onPress={()=> navigation.navigate("My-Shorts")} >
+                <StyledTouchableOpacity
+                  onPress={() => navigation.navigate('My-Shorts')}>
                   <StyledView className="flex-row items-center px-4 py-3 gap-[8px]">
                     <StyledImage
                       source={require(`../assets/Images/my-video.png`)}
@@ -383,9 +372,8 @@ export default UserProfile;
 //   setLoading(false);
 // };
 
-
 // message: `Hey, check out this profile:
-        
+
 // // Name: ${userData?.name}
 // // Company: ${userData?.companyName}
 // // Website: ${userData?.website}

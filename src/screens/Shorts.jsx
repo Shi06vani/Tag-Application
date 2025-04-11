@@ -289,6 +289,7 @@ const Shorts = () => {
                     source={require('../assets/Images/thumbs-up.png')}
                     className="w-7 h-7"
                   />
+                  <Text className='text-white font-semibold'>21.1k</Text>
                 </TouchableOpacity>
                 <TouchableOpacity>
                   <Image
