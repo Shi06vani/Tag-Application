@@ -59,7 +59,9 @@ const Following = () => {
             renderItem={({item}) => (
               <StyledView className="flex-row items-center px-4 py-3 border-b border-gray-200">
                 <StyledImage
-                  source={{uri: item.image}}
+                  // source={{uri: item.image}}
+                  source={require("../assets/Images/default-image.png")}
+
                   className="w-12 h-12 rounded-full"
                 />
 

@@ -1,12 +1,18 @@
-
-
-
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import BASE_URL from "../../config"
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+  Image,
+} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import BASE_URL from '../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Header from '../components/Header';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -24,11 +30,11 @@ const LoginScreen = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({email, password}),
       });
 
       const data = await response.json();
-       console.log("logindata",data.token ,data.user.id ,data?.user?.topic)
+      console.log('logindata', data.token, data.user.id, data?.user?.topic);
 
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
@@ -36,11 +42,10 @@ const LoginScreen = () => {
 
       Alert.alert('Success', 'Logged in successfully');
       navigation.replace('Main');
-      await AsyncStorage.setItem('token',data?.token);
-      await AsyncStorage.setItem('loginuser_id',data?.user?.id);
-      await AsyncStorage.setItem('role',data?.user?.role);
-      await AsyncStorage.setItem('category',data?.user?.topic);
-
+      await AsyncStorage.setItem('token', data?.token);
+      await AsyncStorage.setItem('loginuser_id', data?.user?.id);
+      await AsyncStorage.setItem('role', data?.user?.role);
+      await AsyncStorage.setItem('category', data?.user?.topic);
     } catch (error) {
       Alert.alert('Login Failed', error.message);
     }
@@ -48,18 +53,38 @@ const LoginScreen = () => {
 
   return (
     <View className="flex-1 justify-center items-center px-5 bg-purple-100">
+      <View
+        style={{position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10}}>
+        {/* <Header /> */}
+
+        <View className="bg-white py-5 px-5 ">
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Main')}
+            className="flex-row items-center gap-5">
+            <Image
+              tintColor={''}
+              source={require('../assets/Images/arrow-left.png')}
+              className="w-5 h-5"
+            />
+
+            <Text className="font-medium text-gray-700 text-lg">Home</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
       <View className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm">
-        <Text className="text-3xl font-bold text-center mb-6 text-primary">Welcome Back</Text>
+        <Text className="text-3xl font-bold text-center mb-6 text-primary">
+          Welcome Back
+        </Text>
         <TextInput
           className="w-full p-4 border border-gray-300 rounded-[50px] mb-4 text-lg"
-          placeholder='Email'
-          keyboardType='email-address'
+          placeholder="Email"
+          keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
         />
         <TextInput
           className="w-full p-4 border border-gray-300 rounded-[50px] mb-4 text-lg"
-          placeholder='Password'
+          placeholder="Password"
           secureTextEntry
           value={password}
           onChangeText={setPassword}
@@ -73,6 +98,14 @@ const LoginScreen = () => {
           <Text className="text-gray-600 text-lg">Don't have an account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
             <Text className="text-accent text-lg font-semibold">Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+        <View className="w-full items-end mt-3">
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Forget-Password')}>
+            <Text className="text-sm text-primary font-semibold underline">
+              Forget password?
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

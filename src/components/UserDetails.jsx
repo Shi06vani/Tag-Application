@@ -173,9 +173,9 @@ export default function UserDetails({route}) {
           colors={['#6a0080', '#441752']}
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
-          className="pb-8 pt-7 items-center rounded-b-full shadow-lg">
+          className="pb-8 pt-8 items-center rounded-b-full shadow-lg">
           <Image
-            source={require('../assets/Images/user.png')}
+            source={require('../assets/Images/default-image.png')}
             className="w-24 h-24 rounded-full border-4 border-white"
           />
           <Text className="text-xl font-bold text-white mt-3">

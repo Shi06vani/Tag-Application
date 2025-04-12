@@ -175,7 +175,7 @@ const SignupScreen = () => {
   };
 
   return (
-    <View className="flex-1 justify-center items-center px-5 bg-[#f8e7ff]">
+    <View className="flex-1 justify-center items-center px-5 bg-purple-50">
       <View className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm">
         <Text className="text-3xl font-bold text-center mb-6 text-primary">
           Create an Account
@@ -213,7 +213,7 @@ const SignupScreen = () => {
           onChangeText={setPassword}
         />
 
-        <View className="relative">
+        {/* <View className="relative">
           <Pressable
             onPress={() => setDropdownOpen(!dropdownOpen)}
             className={` p-4 border rounded-[50px] border-gray-500 mb-4 ${
@@ -250,7 +250,7 @@ const SignupScreen = () => {
               ))}
             </View>
           )}
-        </View>
+        </View> */}
 
         {userType === 'creator' ? (
           <TextInput
@@ -278,15 +278,30 @@ const SignupScreen = () => {
 
         <TouchableOpacity
           onPress={handleSignup}
-          className="bg-primary p-4 rounded-[50px] w-full items-center mb-4">
+          className="bg-primary py-3 px-1 rounded-[50px] w-full items-center mb-4">
           <Text className="text-white text-lg font-semibold">Sign Up</Text>
         </TouchableOpacity>
-        <View className="flex-row justify-center">
-          <Text className="text-gray-600 text-lg">
-            Already have an account?{' '}
+
+        <View className="flex-row gap-1 items-center justify-center mb-2 px-2">
+          <Text className="text-gray-600 text-base">
+            Already have an account?
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-            <Text className="text-primary text-lg font-semibold">Login</Text>
+            <Text className="text-primary cursor-pointer text-base border-b border-b-primary font-semibold">
+              Login
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Verify Email Section */}
+        <View className= " flex-row gap-1 items-center justify-center px-2">
+          <Text className="text-gray-600 text-base ">
+            But not verified email?
+          </Text>
+          <TouchableOpacity onPress={()=> navigation.navigate("Verify-Email")}>
+            <Text className="text-primary text-base font-medium underline  cursor-pointer">
+              Click here to verify Email
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

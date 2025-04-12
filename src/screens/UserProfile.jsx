@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import BASE_URL from '../../config';
-import {Share} from 'react-native';
+import {Alert, Share} from 'react-native';
 import {
   View,
   Text,
@@ -40,6 +40,8 @@ const UserProfile = () => {
       const data = await response.json();
       setUserData(data.user);
     } catch (error) {
+      Alert.alert('Error fetching user data', error.message);
+
       console.error('Error fetching user data:', error);
     }
     setLoading(false);
@@ -84,6 +86,8 @@ const UserProfile = () => {
 
       await Share.share(shareOptions);
     } catch (error) {
+      Alert.alert('Login Failed', error.message);
+
       console.error('Error sharing:', error);
     }
   };
@@ -98,25 +102,24 @@ const UserProfile = () => {
   };
 
   return (
-    <ScrollView className='bg-purple-50'>
+    <ScrollView className="bg-purple-50">
       <View className="p-[8px] mt-16  flex-1">
-
+        {/* 
         <TouchableOpacity
           onPress={() => navigation.navigate('Brands-list')}
           className="bg-primary p-2 rounded-full w-full items-center mb-3">
           <Text className="text-white text-lg">All Brands</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <StyledView className="bg-white rounded-lg">
           <View className="p-[8px]">
-           
-            <StyledTouchableOpacity  onPress={() =>
-                      navigation.navigate('Profile-details', {userId: userId})
-                    }>
+            <StyledTouchableOpacity
+              onPress={() =>
+                navigation.navigate('Profile-details', {userId: userId})
+              }>
               <StyledView className=" p-3 rounded-lg shadow-md">
                 <StyledView className="flex-row items-center space-x-3">
-                  <StyledTouchableOpacity
-                   >
+                  <StyledTouchableOpacity>
                     <StyledImage
                       source={require('../assets/Images/user.png')}
                       className="w-12 h-12 rounded-full"
@@ -151,31 +154,13 @@ const UserProfile = () => {
               horizontal={true}
               showsHorizontalScrollIndicator={false}
               className="flex flex-row gap-[10px]">
-              {/* <StyledTouchableOpacity className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] text-white pt-[-2px] bg-accent 0 rounded-full">
-                <StyledImage
-                  tintColor={'white'}
-                  source={require(`../assets/Images/my-video.png`)}
-                  className="w-[18px] h-[18px]"
-                />
-                <StyledText className="text-white text-sm">Settings</StyledText>
-              </StyledTouchableOpacity>
-              <StyledTouchableOpacity className="flex-row items-center justify-center gap-[6px] px-[12px] py-[8px] pt-[4px] bg-accent 0 rounded-full">
-                <StyledImage
-                  tintColor={'white'}
-                  source={require(`../assets/Images/my-video.png`)}
-                  className="w-[18px] h-[18px]"
-                />
-                <StyledText className="text-white text-sm">
-                  Switch account
-                </StyledText>
-              </StyledTouchableOpacity> */}
               <StyledTouchableOpacity
                 className="flex-row items-center gap-[6px] px-[12px] py-[8px] pt-[-2px] bg-accent 0 rounded-full"
                 onPress={() => navigation.navigate('Leaderboard')}>
                 <StyledImage
                   tintColor={'white'}
-                  source={require(`../assets/Images/clock.png`)}
-                  className="w-[18px] h-[18px]"
+                  source={require(`../assets/Images/leaderboard.png`)}
+                  className="w-[20px] h-[20px]"
                 />
                 <StyledText className="text-white text-sm">
                   Leaderboard
@@ -189,8 +174,8 @@ const UserProfile = () => {
                 }>
                 <StyledImage
                   tintColor={'white'}
-                  source={require(`../assets/Images/clock.png`)}
-                  className="w-[18px] h-[18px]"
+                  source={require(`../assets/Images/update-profile.png`)}
+                  className="w-[22px] h-[22px] font-bold"
                 />
                 <StyledText className="text-white text-sm">
                   Update Profile
@@ -202,7 +187,7 @@ const UserProfile = () => {
                 onPress={handleLogin}>
                 <StyledImage
                   tintColor={'white'}
-                  source={require(`../assets/Images/my-video.png`)}
+                  source={require(`../assets/Images/logout-icon.png`)}
                   className="w-[18px] h-[18px]"
                 />
                 <StyledText className="text-white text-sm">Logout</StyledText>

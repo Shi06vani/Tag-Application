@@ -1,5 +1,5 @@
 import BASE_URL from "../../../config"
-
+import axios from "axios";
 export const getAllPostedVideos = async (type) => {
   try {
    
@@ -20,6 +20,17 @@ export const getAllPostedVideos = async (type) => {
     }
 
     return data; 
+  } catch (error) {
+    console.error("Error fetching posted videos:", error.message);
+    return { error: error.message };
+  }
+};
+
+
+export const getRelatedVideos = async (videoId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/social/videos/${videoId}/related`);
+    return response.data; 
   } catch (error) {
     console.error("Error fetching posted videos:", error.message);
     return { error: error.message };

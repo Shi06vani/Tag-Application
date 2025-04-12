@@ -90,7 +90,7 @@ export const getFollowers = async userId => {
     return data;
   } catch (error) {
     console.error('Error fetching followers:', error);
-    return null;
+    return {error: error.message};;
   }
 };
 
@@ -114,6 +114,6 @@ export const getFollowCounts = async userId => {
     return data; // Assuming the API returns follow count in JSON format
   } catch (error) {
     console.error('Failed to fetch follow counts:', error);
-    return null;
+    return {error: error.message};;
   }
 };

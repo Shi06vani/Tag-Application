@@ -46,7 +46,7 @@ const UserFollowing = ({route}) => {
           renderItem={({item}) => (
             <StyledView className="flex-row items-center px-4 py-3 border-b border-gray-200">
               <StyledImage
-                source={require("../assets/Images/user.png")}
+                source={require("../assets/Images/default-image.png")}
                 className="w-12 h-12 rounded-full"
               />
 

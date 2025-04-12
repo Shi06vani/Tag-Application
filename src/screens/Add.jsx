@@ -274,7 +274,7 @@ const Add = () => {
           {/* Upload Button */}
           <View className="flex justify-center items-center">
             <TouchableOpacity
-              className="bg-[#8174A0] px-6 py-3 rounded-full flex-row items-center"
+              className="bg-primary px-6 py-3 rounded-full flex-row items-center shadow-lg shadow-black/20"
               onPress={uploadVideo}
               disabled={isUploading}>
               <Text className="text-white">

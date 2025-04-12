@@ -27,7 +27,7 @@ const Header = () => {
     };
   
   return (
-    <View className="flex flex-row justify-between py-4 px-[10px]  border-b-4  border-b-[#ECECEC] bg-white ">
+    <View className="flex flex-row justify-between py-4 px-[15px]  border-b-4  border-b-[#ECECEC] bg-white ">
       <TouchableOpacity onPress={()=> navigation.replace("Main")}>
       <View className="flex flex-row gap-2 items-center justify-center">
         <Image

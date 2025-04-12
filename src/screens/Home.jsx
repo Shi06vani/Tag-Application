@@ -7,6 +7,7 @@ import {
   ScrollView,
   ActivityIndicator,
   FlatList,
+  Alert,
 } from 'react-native';
 import TagList from '../components/Home/TagList.jsx';
 
@@ -41,12 +42,12 @@ const Home = () => {
   };
 
   // First, let's create a function to track video views
-  const trackVideoView = async (videoId,item) => {
+  const trackVideoView = async (videoId, item) => {
     try {
       const response = await fetch(
         `https://tag-backend.vercel.app/api/videos/onevideo/${videoId}/view`,
         {
-          method: 'POST', // Assuming it's a POST request to increment view count
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -56,15 +57,14 @@ const Home = () => {
       if (!response.ok) {
         throw new Error('Failed to track video view');
       }
-      navigation.navigate('Videos',{videoData:item})
-
-      console.log('View tracked successfully for video:', videoId);
+      navigation.navigate('Videos', {videoData: item});
     } catch (error) {
+      Alert.alert(' Failed', error.message);
+
       console.error('Error tracking video view:', error);
     }
   };
 
-  console.log('vvvv', videos);
   // Add this function in your component
   const formatDate = dateString => {
     if (!dateString) return '';
@@ -93,111 +93,107 @@ const Home = () => {
   };
 
   return (
-    <ScrollView className="bg-white mt-16 ">
-      <View className="flex flex-row items-center p-3 ">
-        {/* <View className="border-r-2 border-r-[#ECECEC] px-3">
-          <Text className="text-sm font-medium px-4 py-2 rounded-lg bg-[#441752] text-white border-gray-300">
-            Explore
-          </Text>
-        </View> */}
+    <View className="bg-white flex-1">
+      <View className="flex flex-row items-center pt-20 pb-4  ">
+        
         <View className="w-full">
           <TagList />
         </View>
       </View>
 
-      {/* Video List Section */}
-      <View className="bg-white p-4">
-        {loading ? (
-          <ActivityIndicator size="large" color="#441752" />
-        ) : (
-          <FlatList
-            data={videos}
-            keyExtractor={item => item?._id}
-            contentContainerStyle={{paddingBottom: 100}}
-            extraData={videos}
-            renderItem={({item}) => {
-              return (
-                <View className="mb-5 mx-1">
-                  <TouchableOpacity
-                  >
-                    {/* Video Player */}
-                    <View className="rounded-xl overflow-hidden  border-4 border-primary">
-                      <View className="w-full ">
-                        <VideoPlayer
-                          style={{width: '100%', height: 200}}
-                          source={{uri: item.videoUrl}}
-                          resizeMode="contain"
-                          paused={true}
-                          showOnStart={true}
-                          tapAnywhereToPause={true}
-                          seekColor="#441752"
-                          controlTimeout={3000}
-                          disableBack={false}
-                          disableVolume={false}
-                          disableFullscreen={true}
-                          fullscreenOrientation="landscape"
-                          onPlay={() => trackVideoView(item._id,item)}
-                        />
-                      </View>
+        <View className="bg-white px-3">
+          {loading ? (
+            <View className=" h-full flex-1 justify-center items-center">
+              <ActivityIndicator size="large" color="#441752" />
+            </View>
+          ) : (
+            <FlatList
+              data={videos}
+              keyExtractor={item => item?._id}
+              contentContainerStyle={{paddingBottom: 100}}
+              extraData={videos}
+              renderItem={({item}) => {
+                return (
+                  <View className="mb-5 mx-1">
+                    <TouchableOpacity>
+                      {/* Video Player */}
+                      <View className="rounded-xl overflow-hidden  border-2 border-primary">
+                        <View className="w-full ">
+                          <VideoPlayer
+                            style={{width: '100%', height: 200}}
+                            source={{uri: item.videoUrl}}
+                            resizeMode="contain"
+                            paused={true}
+                            showOnStart={true}
+                            tapAnywhereToPause={true}
+                            seekColor="#441752"
+                            controlTimeout={3000}
+                            disableBack={false}
+                            disableVolume={false}
+                            disableFullscreen={true}
+                            fullscreenOrientation="landscape"
+                            onPlay={() => trackVideoView(item._id, item)}
+                          />
+                        </View>
 
-                      <LinearGradient
-                        colors={['#6a0080', '#441752']}
-                        style={{
-                          width: '100%',
-                          paddingVertical: 10,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingHorizontal: 15,
-                        }}>
-                        <View className="flex-row mt-3">
-                          <TouchableOpacity
-                            onPress={() =>
-                              navigation.navigate('User-Details', {
-                                userId: item?.creatorId?._id,
-                              })
-                            }
-                            className="mr-3">
-                            <Image
-                              source={require('../assets/Images/user.png')}
-                              className="w-10 h-10 rounded-full"
-                            />
-                          </TouchableOpacity>
+                        <LinearGradient
+                          colors={['#6a0080', '#441752']}
+                          style={{
+                            width: '100%',
+                            paddingVertical: 10,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingHorizontal: 15,
+                          }}>
+                          <View className="flex-row mt-3">
+                            <TouchableOpacity
+                              onPress={() =>
+                                navigation.navigate('User-Details', {
+                                  userId: item?.creatorId?._id,
+                                })
+                              }
+                              className="mr-3">
+                              <Image
+                                source={require('../assets/Images/user.png')}
+                                className="w-10 h-10 rounded-full"
+                              />
+                            </TouchableOpacity>
 
-                          <View className="flex-1">
-                            <Text
-                              className="text-base text-white font-bold mb-0.5"
-                              numberOfLines={2}>
-                              {item?.title || 'Untitled Video'}
-                            </Text>
+                            <View className="flex-1">
+                              <Text
+                                className="text-base text-white font-bold mb-0.5"
+                                numberOfLines={2}>
+                                {item?.title || 'Untitled Video'}
+                              </Text>
 
-                            <Text className="text-sm text-gray-200">
-                              {item?.views || 0} views •{' '}
-                              {formatDate(item?.createdAt)}
-                            </Text>
-                          </View>
+                              <Text className="text-sm text-gray-200">
+                                {item?.views || 0} views •{' '}
+                                {formatDate(item?.createdAt)}
+                              </Text>
+                            </View>
 
-                          {/* <TouchableOpacity>
+                            {/* <TouchableOpacity>
                           <Image
                           tintColor={"white"}
                             source={require('../assets/Images/more.png')}
                           />
                         </TouchableOpacity> */}
-                        </View>
-                      </LinearGradient>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              );
-            }}
-            nestedScrollEnabled={true}
-          />
-        )}
-      </View>
+                          </View>
+                        </LinearGradient>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                );
+              }}
+              nestedScrollEnabled={true}
+            />
+          )}
+        </View>
 
-      {/* <View className="px-1">
+        {/* <View className="px-1">
         <HomeShorts />
       </View> */}
-    </ScrollView>
+    </View>
   );
 };
 

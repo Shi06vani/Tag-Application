@@ -1,16 +1,21 @@
-import React, {useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
   Image,
-  Dimensions,
   TextInput,
+  Alert,
 } from 'react-native';
 import Video from 'react-native-video';
-
-const {width} = Dimensions.get('window');
+import {getVideoLikeCount, likeVideo} from '../api/Likes';
+import {getVideoComments, postComment} from '../api/comment';
+import {groupByUser} from '../components/common/Comment';
+import {getRelatedVideos} from '../api/useVideo.jsx/Video';
+import {getTimeAgo} from '../components/common/GetTime';
+import RelatedVideos from '../components/RelatedVideos';
 
 const suggestedVideos = [
   {
@@ -60,43 +65,110 @@ const formatDate = dateString => {
 const VideoPlayerScreen = ({route}) => {
   const [showDescription, setShowDescription] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [totalLikes, setTotalLike] = useState(0);
   const {videoData} = route.params;
-  console.log('videoUrl', videoData);
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      name: 'Anjali',
-      image: require('../assets/Images/user.png'),
-      text: 'Nice video!',
-    },
-    {
-      id: 2,
-      name: 'Raj',
-      image: require('../assets/Images/user.png'),
-      text: 'Great content 👏',
-    },
-  ]);
+  const [commentCount, setCommentCount] = useState();
+  const [comments, setComments] = useState([]);
+  const [expandedUsers, setExpandedUsers] = useState([]);
+  const groupedComments = groupByUser(comments);
+  const [hasError, setHasError] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [showInput, setShowInput] = useState(false);
+
+  useEffect(() => {
+    fetchLikes();
+    fetchComments();
+  }, [videoData._id]);
+
+  const fetchLikes = async () => {
+    const likeData = await getVideoLikeCount(videoData._id);
+    if (likeData) {
+      console.log('likeData', likeData.likeCount);
+      setTotalLike(likeData?.likeCount);
+    }
+  };
+
+  const fetchComments = async () => {
+    const comments = await getVideoComments(videoData._id);
+    if (comments) {
+      setCommentCount(comments.commentCount);
+      setComments(comments.comments);
+    } else {
+      console.log(error, 'no comments list');
+    }
+
+    console.log('Comments list:', comments);
+  };
+
   const currentUser = {
     name: videoData.name,
     image: require('../assets/Images/man.png'),
   };
 
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      const comment = {
-        id: Date.now(),
-        name: currentUser.name,
-        image: currentUser.image,
-        text: newComment,
-      };
-      setComments([comment, ...comments]);
-      setNewComment('');
-      setShowInput(false);
+  const handleLike = async videoId => {
+    const userId = await AsyncStorage.getItem('loginuser_id');
+    console.log(userId);
+    setLiked(!liked);
+    try {
+      const result = await likeVideo(videoId, userId);
+      console.log('result', result);
+    } catch (error) {
+      Alert.alert(' Failed', error.message);
+
+      console.error(
+        'API Error:',
+        error?.response?.data || error.message || error,
+      );
     }
   };
 
+  const handleComment = async () => {
+    const videoId = videoData._id;
+    const userId = await AsyncStorage.getItem('loginuser_id');
+    const commentText = newComment;
+
+    if (!videoId || !userId || !commentText.trim()) {
+      Alert.alert(
+        'Missing Data',
+        'Video ID, User ID, and Comment cannot be empty.',
+      );
+      return;
+    }
+
+    const result = await postComment(videoId, userId, commentText);
+
+    if (result) {
+      setNewComment('');
+    } else {
+      console.log('Failed to post comment.');
+    }
+  };
+
+  // const getTimeAgo = timestamp => {
+  //   const now = new Date();
+  //   const created = new Date(timestamp);
+  //   const diffInSeconds = Math.floor((now - created) / 1000);
+
+  //   const minutes = Math.floor(diffInSeconds / 60);
+  //   const hours = Math.floor(diffInSeconds / 3600);
+  //   const days = Math.floor(diffInSeconds / 86400);
+  //   const weeks = Math.floor(diffInSeconds / 604800);
+
+  //   if (diffInSeconds < 60) return 'Just now';
+  //   else if (minutes < 60) return `${minutes} min ago`;
+  //   else if (hours < 24) return `${hours} hr ago`;
+  //   else if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+  //   else return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+  // };
+
+  const toggleExpand = userId => {
+    setExpandedUsers(prev =>
+      prev.includes(userId)
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId],
+    );
+  };
+console.log(totalLikes,"totalike---")
   return (
     <View className="flex-1 bg-purple-50">
       {/* Video Player */}
@@ -143,16 +215,22 @@ const VideoPlayerScreen = ({route}) => {
         {/* Like */}
         <TouchableOpacity
           className="flex-row items-center space-x-1"
-          onPress={() => setLiked(!liked)}>
+          onPress={() => {
+            handleLike(videoData._id);
+          }}>
           <Image
             source={
               liked
-                ? require('../assets/Images/heart-filled.png') // filled FlatIcon
-                : require('../assets/Images/heart-outline.png') // outline FlatIcon
+                ? require('../assets/Images/heart-filled.png')
+                : require('../assets/Images/heart-outline.png')
             }
             className="w-6 h-6"
           />
-          <Text className="text-gray-600 text-sm">{liked ? '1.1k' : '1k'}</Text>
+          <Text className="text-gray-600 text-sm">
+            {totalLikes > 999
+              ? (totalLikes/ 1000).toFixed(1) + 'k'
+              : totalLikes || 0}
+          </Text>
         </TouchableOpacity>
 
         {/* Comment */}
@@ -165,7 +243,7 @@ const VideoPlayerScreen = ({route}) => {
             className="w-6 h-6"
             source={require('../assets/Images/video-comment.png')}
           />
-          <Text className="text-gray-600 text-sm">125</Text>
+          <Text className="text-gray-600 text-sm">{commentCount}</Text>
         </TouchableOpacity>
 
         {/* Share */}
@@ -186,19 +264,61 @@ const VideoPlayerScreen = ({route}) => {
         </Text>
 
         <FlatList
-          data={comments}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({item}) => (
-            <TouchableOpacity onPress={() => setShowInput(true)}>
-              <View className="flex-row items-start mt-3 space-x-2 shadow-sm">
-                <Image source={item.image} className="w-8 h-8 rounded-full" />
-                <View className="flex-1 bg-gray-50 p-2 rounded-lg">
-                  <Text className="font-semibold text-sm">{item.name}</Text>
-                  <Text className="text-sm text-gray-700">{item.text}</Text>
+          data={groupedComments}
+          keyExtractor={item => item[0].user._id}
+          renderItem={({item}) => {
+            const userId = item[0].user._id;
+            const isExpanded = expandedUsers.includes(userId);
+            const commentsToRender = isExpanded ? item : [item[0]];
+
+            return (
+              <View className="mb-3">
+                {commentsToRender.map((comment, index) => (
+                  <View key={index} className="flex-row gap-2 mt-2">
+                     <Image
+                    
+                    source={
+                      hasError || !imageUri
+                        ? require('../assets/Images/default-image.png') 
+                        : {uri: comment.imageUri}
+                    }
+                    className="w-8 h-8 rounded-full"
+                    onError={() => setHasError(true)}
+                  />
+                    <View className="flex-1 bg-white p-3 rounded-lg">
+                      <View className="flex-row gap-1 items-center">
+                        <Text className="font-semibold text-sm">
+                          {comment.user.name}
+                        </Text>
+                        <Text className="text-xs text-gray-500">
+                          • {getTimeAgo(comment.createdAt)}
+                        </Text>
+                      </View>
+                      <Text className="text-sm text-gray-800">
+                        {comment.text}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+
+                <View className="flex justify-end items-end">
+                  {item.length > 1 && (
+                    <TouchableOpacity onPress={() => toggleExpand(userId)}>
+                      <View className=" rounded-full p-2">
+                        <Text className="text-xs font-semibold text-primary ">
+                          {!isExpanded
+                            ? `View ${item.length - 1} more comment${
+                                item.length - 1 > 1 ? 's' : ''
+                              }`
+                            : 'View less comments'}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
-            </TouchableOpacity>
-          )}
+            );
+          }}
         />
 
         {/* Add Comment Input */}
@@ -214,7 +334,7 @@ const VideoPlayerScreen = ({route}) => {
               onChangeText={setNewComment}
               className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm"
             />
-            <TouchableOpacity onPress={handleAddComment}>
+            <TouchableOpacity onPress={handleComment}>
               <Text className="text-[#441752] font-bold">Post</Text>
             </TouchableOpacity>
           </View>
@@ -228,34 +348,12 @@ const VideoPlayerScreen = ({route}) => {
         </Text>
 
         {/* <FlatList
-          data={suggestedVideos}
-          keyExtractor={item => item.id}
-          showsVerticalScrollIndicator={false}
-          renderItem={({item}) => (
-            <TouchableOpacity className="flex-row mb-4 bg-white rounded-xl p-2 shadow-sm">
-              <Image
-                source={item.thumbnail}
-                className="w-28 h-24 rounded-lg"
-                resizeMode="cover"
-              />
-              <View className="ml-3 justify-center">
-                <Text
-                  className="text-base font-semibold text-[#441752]"
-                  numberOfLines={1}>
-                  {item.title}
-                </Text>
-                <Text className="text-sm text-gray-600">@{item.creator}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        /> */}
-        <FlatList
-          data={suggestedVideos}
+          data={relatedVideos}
           keyExtractor={item => item.id.toString()}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) => (
             <TouchableOpacity className="flex-row mb-5 bg-white">
-              <View className='relative'>
+              <View className="relative">
                 <Image
                   source={item.thumbnail}
                   className="w-36 h-28 rounded-lg"
@@ -263,14 +361,13 @@ const VideoPlayerScreen = ({route}) => {
                 />
                 <View className="absolute left-14 top-10 inset-0 flex justify-center items-center ">
                   <Image
-                  tintColor={"white"}
+                    tintColor={'white'}
                     source={require('../assets/Images/play.png')}
                     className="w-5 h-5 p-3 rounded-full opacity-80"
                   />
                 </View>
               </View>
 
-              {/* Right Content */}
               <View className="ml-3 flex-1 justify-between py-3">
                 <Text
                   className="text-base font-medium text-black"
@@ -286,7 +383,9 @@ const VideoPlayerScreen = ({route}) => {
               </View>
             </TouchableOpacity>
           )}
-        />
+        /> */}
+
+        <RelatedVideos videoId={videoData._id} />
       </View>
     </View>
   );

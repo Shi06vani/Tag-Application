@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {styled} from 'nativewind';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -28,6 +29,8 @@ const Following = () => {
         }
       })
       .catch(error => {
+        Alert.alert(' Failed', error.message);
+
         console.error('Error retrieving login user ID:', error);
       });
   }, []);
@@ -57,7 +60,8 @@ const Following = () => {
             renderItem={({item}) => (
               <StyledView className="flex-row items-center px-4 py-3 border-b border-gray-200">
                 <StyledImage
-                  source={{uri: item.image}}
+                  // source={{uri: item.image}}
+                  source={require("../assets/Images/default-image.png")}
                   className="w-12 h-12 rounded-full"
                 />
 
