@@ -103,7 +103,7 @@ const LoginScreen = () => {
         <View className="w-full items-end mt-3">
           <TouchableOpacity
             onPress={() => navigation.navigate('Forget-Password')}>
-            <Text className="text-sm text-primary font-semibold underline">
+            <Text className="text-sm text-primary font-semibold underline cursor-pointer">
               Forget password?
             </Text>
           </TouchableOpacity>

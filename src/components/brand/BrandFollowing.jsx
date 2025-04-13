@@ -40,14 +40,25 @@ const BrandFollowing = ({route}) => {
 
   return (
     <StyledView className="flex-1 bg-white">
-      {/* <StyledText className="text-xl font-bold text-black px-4 py-2">
-       Br Following
-      </StyledText> */}
+     
       
         <View>
         <FlatList
           data={followers}
           keyExtractor={(item) => item._id}
+          ListEmptyComponent={
+            <View className="flex-1 items-center justify-center py-20">
+              <StyledImage
+                source={require('../../assets/Images/out-of-stock.png')} // Optional: Add your own placeholder image
+                className="w-24 h-24 mb-4 opacity-60"
+                resizeMode="contain"
+              />
+              <StyledText className="text-gray-500 text-lg font-medium">
+                No followers to show.
+              </StyledText>
+             
+            </View>
+          }
           renderItem={({ item }) => (
             <StyledView className="flex-row items-center px-4 py-3 border-b border-gray-200">
               <StyledImage

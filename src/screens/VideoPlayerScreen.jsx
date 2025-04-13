@@ -180,6 +180,7 @@ console.log(totalLikes,"totalike---")
           controls
         />
       </View>
+      <View className='px-3'>
       <View className="px-3">
         {/* Title */}
         <Text className="text-lg font-bold text-black mt-4">
@@ -236,7 +237,7 @@ console.log(totalLikes,"totalike---")
         {/* Comment */}
         <TouchableOpacity
           className="flex-row items-center space-x-1"
-          onPress={() => setShowInput(true)}>
+          onPress={() => {setShowInput(!showInput)}}>
           {/* <MessageCircle size={20} color="#6b7280" /> */}
           <Image
             tintColor={'#6b7280'}
@@ -259,9 +260,12 @@ console.log(totalLikes,"totalike---")
 
       {/* Comments Section */}
       <View className="px-3">
-        <Text className="mt-5 text-base font-semibold text-black">
-          Comments
-        </Text>
+        {
+          groupedComments && ( <Text className="mt-5 text-base font-semibold text-black">
+            Comments
+          </Text>)
+        }
+       
 
         <FlatList
           data={groupedComments}
@@ -274,11 +278,12 @@ console.log(totalLikes,"totalike---")
             return (
               <View className="mb-3">
                 {commentsToRender.map((comment, index) => (
-                  <View key={index} className="flex-row gap-2 mt-2">
+                  <TouchableOpacity key={index}  onPress={() => {setShowInput(!showInput)}}>
+                     <View key={index} className="flex-row gap-2 mt-2">
                      <Image
                     
                     source={
-                      hasError || !imageUri
+                      hasError || !comment.imageUri
                         ? require('../assets/Images/default-image.png') 
                         : {uri: comment.imageUri}
                     }
@@ -299,6 +304,8 @@ console.log(totalLikes,"totalike---")
                       </Text>
                     </View>
                   </View>
+                  </TouchableOpacity>
+                 
                 ))}
 
                 <View className="flex justify-end items-end">
@@ -340,10 +347,12 @@ console.log(totalLikes,"totalike---")
           </View>
         )}
       </View>
+      </View>
+      
 
       {/* Suggested Videos */}
-      <View className="flex-1 px-4 py-4">
-        <Text className="text-xl font-bold text-[#441752] mb-2">
+      <View className="flex-1 px-4 py-2">
+        <Text className="text-xl font-bold text-[#441752] mb-4">
           Suggested Videos
         </Text>
 

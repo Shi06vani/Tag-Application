@@ -14,6 +14,9 @@ import {getFollowCounts} from '../api/useFollow/FollowUser';
 import {BrandVideos} from '../api/brandRequirements/Requiements';
 import Video from 'react-native-video';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import BASE_URL from '../../config';
+
 
 export default function UserProfileDetailpage({route}) {
   const [userData, setUserData] = useState(null);
@@ -22,7 +25,7 @@ export default function UserProfileDetailpage({route}) {
   const [followCounts, setFollowCounts] = useState(null);
   const [activeTab, setActiveTab] = useState('Videos');
   const [videos, setVideos] = useState(null);
-
+  const[shorts,setShorts]=  useState([])
   const navigation = useNavigation()
 
   // useEffect(() => {
@@ -69,6 +72,7 @@ export default function UserProfileDetailpage({route}) {
         setUserData(userDataRes?.user);
         setFollowCounts(followCountsRes);
         if (brandVideosRes) {
+          console.log("my video",brandVideosRes.videos)
           setVideos(brandVideosRes.videos);
         }
       } catch (error) {
@@ -81,6 +85,35 @@ export default function UserProfileDetailpage({route}) {
 
     fetchAllData();
   }, [userId]);
+
+
+  const fetchUserShorts = async () => {
+    try {
+      const userId = await AsyncStorage.getItem('loginuser_id');
+      if (!userId) return;
+
+      const response = await fetch(
+        `${BASE_URL}/api/videos/user-sorts/${userId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      const data = await response.json();
+
+      setShorts(data.videos || []);
+    } catch (error) {
+      console.error('Error fetching shorts:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserShorts();
+  }, []);
 
   if (loading) {
     return (
@@ -95,7 +128,8 @@ export default function UserProfileDetailpage({route}) {
   return (
     <View className="flex-1 bg-white">
       {userData ? (
-        <ScrollView className="px-5 pb-5">
+        <ScrollView className=" pb-5">
+        <>
           <View className="items-center mb-5 rounded-b-full bg-primary py-8">
             <Image
               source={require('../assets/Images/user.png')}
@@ -107,7 +141,8 @@ export default function UserProfileDetailpage({route}) {
             <Text className="text-gray-300 text-sm">{userData?.bio}</Text>
           </View>
 
-          {/* Company & Website */}
+        <View className='px-4'>
+      
           {userData?.companyName && (
             <View className="bg-purple-50 p-4 rounded-lg mb-3">
               <Text className="text-black font-semibold">
@@ -119,13 +154,13 @@ export default function UserProfileDetailpage({route}) {
             </View>
           )}
 
-          {/* User Role & Topic */}
           <View className="bg-purple-50 p-4 rounded-lg mb-3">
             <Text className="text-black font-semibold">
               Role: {userData.role}
             </Text>
             <Text className="text-gray-700">Topic: {userData.topic}</Text>
           </View>
+
           <View className="flex flex-row gap-3 w-full">
             <TouchableOpacity onPress={() => navigation.navigate('Followers')} className='w-[48%]' >
               <View className="bg-purple-50 p-4 rounded-lg  ">
@@ -150,9 +185,11 @@ export default function UserProfileDetailpage({route}) {
               </View>
             </TouchableOpacity>
           </View>
+        </View>
+        
 
-          <View className="my-3">
-            <View className="flex-row justify-around gap-1 items-center py-3 ">
+          <View className="my-3 mx-1">
+            <View className="flex-row justify-around  items-center py-3 ">
               <TouchableOpacity
                 className={`px-4 py-2 rounded-full w-[45%] ${
                   activeTab === 'Videos' ? 'bg-[#441752]' : 'bg-accent'
@@ -172,7 +209,7 @@ export default function UserProfileDetailpage({route}) {
             </View>
 
             {activeTab === 'Videos' && (
-              <View className="flex-1 px-2">
+              <View className=" px-2">
                 <FlatList
                   data={videos}
                   // horizontal={true}
@@ -205,9 +242,10 @@ export default function UserProfileDetailpage({route}) {
             )}
 
             {activeTab === 'Shorts' && (
-              <View className="flex-1 px-2">
+              <View className=" px-2">
                 <FlatList
-                  data={videos}
+                  data={shorts}
+                  className=''
                   // horizontal={true}
                   keyExtractor={item => item._id}
                   renderItem={({item}) => (
@@ -235,7 +273,10 @@ export default function UserProfileDetailpage({route}) {
               </View>
             )}
           </View>
-        </ScrollView>
+          </>
+       </ScrollView>
+
+
       ) : (
         <View className="flex-1 items-center justify-center">
           <Text className="text-gray-500">Loading user details...</Text>

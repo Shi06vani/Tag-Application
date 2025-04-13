@@ -44,7 +44,7 @@ const RelatedVideos = ({ videoId }) => {
           </View>
         </View>
         {/* Right Content */}
-        <View className="flex-1 px-3 py-2 justify-between">
+        <View className="flex-1 px-4 py-2 justify-between">
           <Text className="text-sm font-semibold text-black" numberOfLines={2}>
             {item.title}
           </Text>

@@ -60,8 +60,6 @@
 //     fetchVideos();
 //   }, []);
 
- 
-
 //   const getDaysAgo = dateString => {
 //     const uploadedDate = new Date(dateString);
 //     const now = new Date();
@@ -283,13 +281,6 @@
 
 // export default Shorts;
 
-
-
-
-
-
-
-
 import React, {useRef, useState, useEffect} from 'react';
 import {
   View,
@@ -417,7 +408,7 @@ const Shorts = () => {
   return (
     <FlatList
       data={videos}
-      keyExtractor={item => item._id} // Updated to use _id instead of id
+      keyExtractor={item => item._id}
       pagingEnabled
       viewabilityConfig={viewabilityConfig}
       onViewableItemsChanged={onViewableItemsChanged.current}
@@ -428,9 +419,9 @@ const Shorts = () => {
           index,
           playing,
           videoUrl: item.videoUrl,
-          isPaused: currentIndex !== index || !playing
+          isPaused: currentIndex !== index || !playing,
         });
-        
+
         return (
           <TouchableOpacity
             activeOpacity={1}
@@ -464,28 +455,44 @@ const Shorts = () => {
                     handleViewTracking(item);
                   }
                 }}
-                onError={(error) => {
+                onError={error => {
                   console.error('Video error:', error);
                 }}
               />
-              
+
               {/* Full screen touchable area for play/pause */}
-              <TouchableOpacity
-                onPress={() => {
-                  console.log('Video tapped, toggling play state');
-                  setPlaying(prev => !prev);
-                }}
-                className="absolute inset-0 justify-center items-center"
-                activeOpacity={1}>
-                {!playing && currentIndex === index && (
-                  <View className="bg-black/30 rounded-full p-4">
-                    <Image 
-                      source={require("../assets/Images/play.png")}
-                      style={{width: 50, height: 50, tintColor: "white"}}
-                    />
-                  </View>
-                )}
-              </TouchableOpacity>
+              {/* <View className='absolute z-50 top-20 inset-0 justify-center items-center'>
+                <TouchableOpacity
+                  onPress={() => {
+                    console.log('Video tapped, toggling play state');
+                    setPlaying(prev => !prev);
+                  }}
+                  className=""
+                  activeOpacity={1}>
+                  {!playing && currentIndex === index && (
+                    <View className="bg-black/30 rounded-full p-4">
+                      <Image
+                        source={require('../assets/Images/play.png')}
+                        style={{width: 50, height: 50, tintColor: 'black'}}
+                      />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              </View> */}
+{!playing && currentIndex === index && (
+  <View className="absolute z-50 top-0 left-0 right-0 bottom-0 justify-center items-center">
+    <TouchableOpacity
+      onPress={() => setPlaying(prev => !prev)}
+      activeOpacity={0.8}>
+      <View className="bg-black/40 rounded-full p-4">
+        <Image
+          source={require('../assets/Images/play.png')}
+          style={{width: 50, height: 50, tintColor: 'white'}}
+        />
+      </View>
+    </TouchableOpacity>
+  </View>
+)}
 
               {/* Overlay content - Bottom info section */}
               <View className="absolute bottom-10 left-0 right-0 px-4 pb-6 flex-row justify-between items-end">
@@ -524,7 +531,9 @@ const Shorts = () => {
                 </View>
 
                 {/* Right: Action Icons */}
-                <View className="flex flex-col  items-center space-y-6" pointerEvents="box-none">
+                <View
+                  className="flex flex-col  items-center space-y-6"
+                  pointerEvents="box-none">
                   {/* Like */}
                   <View className="items-center">
                     <TouchableOpacity className="items-center">
@@ -532,7 +541,9 @@ const Shorts = () => {
                         source={require('../assets/Images/thumbs-up.png')}
                         className="w-8 h-8"
                       />
-                      <Text className="text-white text-xs mt-1">{item.likes || '0'}</Text>
+                      <Text className="text-white text-xs mt-1">
+                        {item.likes || '0'}
+                      </Text>
                     </TouchableOpacity>
                   </View>
 
@@ -554,7 +565,9 @@ const Shorts = () => {
                         source={require('../assets/Images/comment.png')}
                         className="w-8 h-8"
                       />
-                      <Text className="text-white text-xs mt-1">{item.comments?.length || '0'}</Text>
+                      <Text className="text-white text-xs mt-1">
+                        {item.comments?.length || '0'}
+                      </Text>
                     </TouchableOpacity>
                   </View>
 
@@ -588,7 +601,7 @@ const Shorts = () => {
                   </View>
                 </View>
               </View>
-              
+
               {/* Sound/Music ticker at bottom */}
               {/* <View className="absolute bottom-20 right-0 bg-black/50 rounded-l-full px-3 py-1.5 flex-row items-center">
                 <Image
@@ -608,52 +621,6 @@ const Shorts = () => {
 };
 
 export default Shorts;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // <TouchableOpacity
 //   activeOpacity={1}

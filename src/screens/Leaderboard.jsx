@@ -11,8 +11,9 @@ const Leaderboard = () => {
     const fetchData = async () => {
       try {
         const data = await getLeaderboard();
-        if (data.success) {
-          setLeaderboard(data.leaderboard);
+        if (data) {
+          console.log("leaderboard",data)
+          setLeaderboard(data);
         } else {
           console.error('Failed to fetch leaderboard');
         }

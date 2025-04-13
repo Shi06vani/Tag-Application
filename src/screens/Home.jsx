@@ -18,6 +18,7 @@ import LinearGradient from 'react-native-linear-gradient';
 const Home = () => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const[isVideoPressed, setIsVideoPressed]=  useState(false)
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -95,30 +96,29 @@ const Home = () => {
   return (
     <View className="bg-white flex-1">
       <View className="flex flex-row items-center pt-20 pb-4  ">
-        
         <View className="w-full">
           <TagList />
         </View>
       </View>
 
-        <View className="bg-white px-3">
-          {loading ? (
-            <View className=" h-full flex-1 justify-center items-center">
-              <ActivityIndicator size="large" color="#441752" />
-            </View>
-          ) : (
-            <FlatList
-              data={videos}
-              keyExtractor={item => item?._id}
-              contentContainerStyle={{paddingBottom: 100}}
-              extraData={videos}
-              renderItem={({item}) => {
-                return (
-                  <View className="mb-5 mx-1">
-                    <TouchableOpacity>
-                      {/* Video Player */}
-                      <View className="rounded-xl overflow-hidden  border-2 border-primary">
-                        <View className="w-full ">
+      <View className="bg-white px-3 pb-10">
+        {loading ? (
+          <View className=" h-full flex-1 justify-center items-center">
+            <ActivityIndicator size="large" color="#441752" />
+          </View>
+        ) : (
+          <FlatList
+            data={videos}
+            keyExtractor={item => item?._id}
+            contentContainerStyle={{paddingBottom: 100}}
+            extraData={videos}
+            renderItem={({item}) => {
+              return (
+                <View className="mb-5 mx-1">
+                  <TouchableOpacity>
+                    {/* Video Player */}
+                    <View className="rounded-xl overflow-hidden  border-2 border-primary">
+                      {/* <View className="w-full ">
                           <VideoPlayer
                             style={{width: '100%', height: 200}}
                             source={{uri: item.videoUrl}}
@@ -134,63 +134,85 @@ const Home = () => {
                             fullscreenOrientation="landscape"
                             onPlay={() => trackVideoView(item._id, item)}
                           />
-                        </View>
-
-                        <LinearGradient
-                          colors={['#6a0080', '#441752']}
-                          style={{
-                            width: '100%',
-                            paddingVertical: 10,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            paddingHorizontal: 15,
-                          }}>
-                          <View className="flex-row mt-3">
-                            <TouchableOpacity
-                              onPress={() =>
-                                navigation.navigate('User-Details', {
-                                  userId: item?.creatorId?._id,
-                                })
-                              }
-                              className="mr-3">
+                        </View> */}
+                      <View>
+                        <TouchableOpacity>
+                          <Image
+                            style={{width: '100%', height: 200}}
+                            source={require('../assets/Images/thnumnail2.jpg')}
+                          />
+                        </TouchableOpacity>
+                        <View className="  absolute top-20 left-40 ">
+                          <TouchableOpacity
+                            onPress={() => {setIsVideoPressed(!isVideoPressed);trackVideoView(item._id, item)}}>
+                            <View className="bg-black opacity-75 p-2 rounded-full">
                               <Image
-                                source={require('../assets/Images/user.png')}
-                                className="w-10 h-10 rounded-full"
+                                tintColor={'white'}
+                                className=" w-6 h-6"
+                                source={   require('../assets/Images/play.png')}
+
+                                // source={  isVideoPressed ? require('../assets/Images/pause.png'): require("../assets/Images/play.png")}
                               />
-                            </TouchableOpacity>
-
-                            <View className="flex-1">
-                              <Text
-                                className="text-base text-white font-bold mb-0.5"
-                                numberOfLines={2}>
-                                {item?.title || 'Untitled Video'}
-                              </Text>
-
-                              <Text className="text-sm text-gray-200">
-                                {item?.views || 0} views •{' '}
-                                {formatDate(item?.createdAt)}
-                              </Text>
                             </View>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
 
-                            {/* <TouchableOpacity>
+                      <LinearGradient
+                        colors={['#6a0080', '#441752']}
+                        style={{
+                          width: '100%',
+                          paddingVertical: 15,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          paddingHorizontal: 15,
+                        }}>
+                        <View className="flex-row ">
+                          <TouchableOpacity
+                            onPress={() =>
+                              navigation.navigate('User-Details', {
+                                userId: item?.creatorId?._id,
+                              })
+                            }
+                            className="mr-3">
+                            <Image
+                              source={require('../assets/Images/user.png')}
+                              className="w-10 h-10 rounded-full"
+                            />
+                          </TouchableOpacity>
+
+                          <View className="flex-1">
+                            <Text
+                              className="text-base text-white font-bold mb-0.5"
+                              numberOfLines={2}>
+                              {item?.title || 'Untitled Video'}
+                            </Text>
+
+                            <Text className="text-sm text-gray-200">
+                              {item?.views || 0} views •{' '}
+                              {formatDate(item?.createdAt)}
+                            </Text>
+                          </View>
+
+                          {/* <TouchableOpacity>
                           <Image
                           tintColor={"white"}
                             source={require('../assets/Images/more.png')}
                           />
                         </TouchableOpacity> */}
-                          </View>
-                        </LinearGradient>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                );
-              }}
-              nestedScrollEnabled={true}
-            />
-          )}
-        </View>
+                        </View>
+                      </LinearGradient>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+            nestedScrollEnabled={true}
+          />
+        )}
+      </View>
 
-        {/* <View className="px-1">
+      {/* <View className="px-1">
         <HomeShorts />
       </View> */}
     </View>

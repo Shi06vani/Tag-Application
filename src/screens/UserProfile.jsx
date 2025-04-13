@@ -119,12 +119,10 @@ const UserProfile = () => {
               }>
               <StyledView className=" p-3 rounded-lg shadow-md">
                 <StyledView className="flex-row items-center space-x-3">
-                  <StyledTouchableOpacity>
                     <StyledImage
-                      source={require('../assets/Images/user.png')}
+                      source={require('../assets/Images/man.png')}
                       className="w-12 h-12 rounded-full"
                     />
-                  </StyledTouchableOpacity>
 
                   <StyledView>
                     <StyledText className="text-black text-lg font-bold">

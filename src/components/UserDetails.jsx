@@ -31,7 +31,7 @@ export default function UserDetails({route}) {
   const [videos, setVideos] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loginUserId, setLoginUserId] = useState('');
-
+ const[shorts,setShorts]= useState([])
   const navigation = useNavigation();
   const creatorId = userId;
   useEffect(() => {
@@ -155,6 +155,36 @@ export default function UserDetails({route}) {
     CheckUserFollowing();
   }, [creatorId, loginUserId]);
 
+
+    const fetchUserShorts = async () => {
+      try {
+      if(!creatorId){
+       Alert.alert("createrId  not found")
+      }
+        const response = await fetch(
+          `${BASE_URL}/api/videos/user-sorts/${creatorId}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+        const data = await response.json();
+  
+        setShorts(data.videos || []);
+      } catch (error) {
+        console.error('Error fetching shorts:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      fetchUserShorts();
+    }, []);
+  
+
   if (loading) {
     return (
       <ActivityIndicator
@@ -164,6 +194,8 @@ export default function UserDetails({route}) {
       />
     );
   }
+
+  console.log("video user shorts",shorts)
 
 
   return (
@@ -296,7 +328,7 @@ export default function UserDetails({route}) {
           {activeTab === 'Shorts' && (
             <View className="flex-1 px-2">
               <FlatList
-                data={videos}
+                data={shorts}
                 keyExtractor={item => item._id}
                 renderItem={({item}) => (
                   <View className=" mb-5">

@@ -104,6 +104,7 @@ import {
   TouchableOpacity,
   Alert,
   Pressable,
+  Image,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import BASE_URL from '../../config';
@@ -176,6 +177,24 @@ const SignupScreen = () => {
 
   return (
     <View className="flex-1 justify-center items-center px-5 bg-purple-50">
+       <View
+              style={{position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10}}>
+              {/* <Header /> */}
+      
+              <View className="bg-white py-5 px-5 ">
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Main')}
+                  className="flex-row items-center gap-5">
+                  <Image
+                    tintColor={''}
+                    source={require('../assets/Images/arrow-left.png')}
+                    className="w-5 h-5"
+                  />
+      
+                  <Text className="font-medium text-gray-700 text-lg">Home</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
       <View className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm">
         <Text className="text-3xl font-bold text-center mb-6 text-primary">
           Create an Account
@@ -282,7 +301,7 @@ const SignupScreen = () => {
           <Text className="text-white text-lg font-semibold">Sign Up</Text>
         </TouchableOpacity>
 
-        <View className="flex-row gap-1 items-center justify-center mb-2 px-2">
+        <View className="flex-row gap-1 items-center justify-center mb-1 px-2">
           <Text className="text-gray-600 text-base">
             Already have an account?
           </Text>

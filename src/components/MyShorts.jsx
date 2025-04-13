@@ -44,6 +44,10 @@ const MyShorts = () => {
   useEffect(() => {
     fetchUserShorts();
   }, []);
+
+
+
+  
   const timeAgo = date => {
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
 
