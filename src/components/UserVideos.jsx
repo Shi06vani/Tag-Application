@@ -12,6 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Video from 'react-native-video';
 import BASE_URL from '../../config';
+import {deleteVideo} from '../api/useVideo.jsx/Video';
 
 const UserVideos = () => {
   const [videos, setVideos] = useState([]);
@@ -107,7 +108,7 @@ const UserVideos = () => {
                     {item?.category}
                   </Text>
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={()=> deleteVideo(item._id)}>
                   <View>
                     <Text className="text-white text-xs bg-red-500 px-3 py-1 rounded-lg">
                       Delete
