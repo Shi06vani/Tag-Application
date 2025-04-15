@@ -76,6 +76,12 @@ const UserVideos = () => {
     return 'just now';
   };
 
+  const handleDelete = async (videoId) => {
+    const userId = await AsyncStorage.getItem('loginuser_id');
+    const response = deleteVideo(videoId, userId);
+    console.log(response, 'delete response');
+  };
+
   return (
     <View className="flex-1 bg-purple-50">
       <FlatList
@@ -108,7 +114,7 @@ const UserVideos = () => {
                     {item?.category}
                   </Text>
                 </View>
-                <TouchableOpacity onPress={()=> deleteVideo(item._id)}>
+                <TouchableOpacity onPress={()=>handleDelete(item._id)}>
                   <View>
                     <Text className="text-white text-xs bg-red-500 px-3 py-1 rounded-lg">
                       Delete

@@ -5,12 +5,12 @@ import {
   FlatList,
   ActivityIndicator,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Video from 'react-native-video';
 import BASE_URL from '../../config';
-import { deleteVideo } from '../api/useVideo.jsx/Video';
+import {deleteVideo} from '../api/useVideo.jsx/Video';
 
 const {width} = Dimensions.get('window');
 
@@ -46,9 +46,6 @@ const MyShorts = () => {
     fetchUserShorts();
   }, []);
 
-
-
-  
   const timeAgo = date => {
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
 
@@ -70,6 +67,13 @@ const MyShorts = () => {
     }
     return 'just now';
   };
+
+  const handleDelete = async shortId => {
+    const userId = await AsyncStorage.getItem('loginuser_id');
+    const response = deleteVideo(shortId, userId);
+    console.log(response, 'delete response');
+  };
+
   return (
     <View className="flex-1 bg-white">
       {loading ? (
@@ -153,7 +157,7 @@ const MyShorts = () => {
                       {item?.category}
                     </Text>
                   </View>
-                  <TouchableOpacity onPress={()=> deleteVideo(item._id)}>
+                  <TouchableOpacity onPress={() => handleDelete(item._id)}>
                     <View>
                       <Text className="text-white text-xs bg-red-500 px-3 py-1 rounded-lg">
                         Delete
