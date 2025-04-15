@@ -28,6 +28,7 @@ export const likeVideo = async (videoId, loginUserId) => {
 
 
 export const getVideoLikeCount = async (videoId) => {
+  
   try {
     const response = await axios.get(`${BASE_URL}/api/social/videos/${videoId}/likes`);
     

@@ -135,8 +135,8 @@ const Home = () => {
                             onPlay={() => trackVideoView(item._id, item)}
                           />
                         </View> */}
-                      <View>
-                        <TouchableOpacity>
+                      <View className='relative'>
+                        <TouchableOpacity     onPress={() => {setIsVideoPressed(!isVideoPressed);trackVideoView(item._id, item)}}>
                           <Image
                             style={{width: '100%', height: 200}}
                             source={require('../assets/Images/thnumnail2.jpg')}
@@ -144,7 +144,7 @@ const Home = () => {
                         </TouchableOpacity>
                         <View className="  absolute top-20 left-40 ">
                           <TouchableOpacity
-                            onPress={() => {setIsVideoPressed(!isVideoPressed);trackVideoView(item._id, item)}}>
+                        >
                             <View className="bg-black opacity-75 p-2 rounded-full">
                               <Image
                                 tintColor={'white'}

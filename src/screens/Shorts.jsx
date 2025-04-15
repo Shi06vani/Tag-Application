@@ -292,21 +292,39 @@ import {
   AppState,
   ActivityIndicator,
   Alert,
+  TextInput,
 } from 'react-native';
 import Video from 'react-native-video';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getAllPostedVideos} from '../api/useVideo.jsx/Video';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getVideoLikeCount, likeVideo} from '../api/Likes';
+import {getVideoComments, postComment} from '../api/comment';
+import {getTimeAgo} from '../components/common/GetTime';
+import {groupByUser} from '../components/common/Comment';
 const {height, width} = Dimensions.get('window');
 
 const Shorts = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [playing, setPlaying] = useState(true);
   const appState = useRef(AppState.currentState);
-  const [showControls, setShowControls] = useState(true);
   const videoRefs = useRef([]);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [viewedVideos, setViewedVideos] = useState([]);
+  const [liked, setLiked] = useState(true);
+  const [commentCount, setCommentCount] = useState();
+  const [comments, setComments] = useState([]);
+  const [shortId, setShortId] = useState('');
+  const [showControls, setShowControls] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [showCommentInputIndex, setShowCommentInputIndex] = useState(null);
+  const [commentText, setCommentText] = useState('');
+  const [userName, setUserName] = useState('');
+  const groupedComments = groupByUser(comments);
+  const [expandedUsers, setExpandedUsers] = useState([]);
+  const[totalLikes,setTotalLike] = useState(1) 
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
@@ -319,6 +337,41 @@ const Shorts = () => {
       subscription.remove();
     };
   }, []);
+
+
+//   useEffect(() => {
+//   fetchLikes();
+// }, [shortId]);
+
+const fetchLikes = async (shortId) => {
+  const likeData = await getVideoLikeCount(shortId);
+  if (likeData) {
+    console.log('likeData', likeData.likeCount);
+    setTotalLike(likeData?.likeCount);
+  }
+};
+
+console.log("shortId",shortId)
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      const name = await AsyncStorage.getItem('loginuser_id');
+      setUserName('you' || 'Guest');
+    };
+    fetchUserName();
+  }, []);
+
+  const fetchComments = async shortId => {
+    const comments = await getVideoComments(shortId);
+    if (comments) {
+      setCommentCount(comments.commentCount);
+      setComments(comments.comments);
+    } else {
+      console.log(error, 'no comments list');
+    }
+
+    console.log('Comments list:', comments);
+  };
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -345,17 +398,6 @@ const Shorts = () => {
 
     fetchVideos();
   }, []);
-
-  const getDaysAgo = dateString => {
-    const uploadedDate = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now - uploadedDate);
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return '1 day ago';
-    return `${diffDays} days ago`;
-  };
 
   const handleViewTracking = item => {
     if (!viewedVideos.includes(item._id)) {
@@ -388,12 +430,12 @@ const Shorts = () => {
 
   const viewabilityConfig = {itemVisiblePercentThreshold: 80};
 
-  const onViewableItemsChanged = useRef();
-  onViewableItemsChanged.current = ({viewableItems}) => {
+  const onViewableItemsChanged = useRef(({viewableItems}) => {
     if (viewableItems && viewableItems.length > 0) {
       setCurrentIndex(viewableItems[0].index);
+      setIsPaused(false); // auto-play new video
     }
-  };
+  });
 
   if (loading) {
     return (
@@ -405,6 +447,75 @@ const Shorts = () => {
     );
   }
 
+  const handleLike = async ShortId => {
+    const userId = await AsyncStorage.getItem('loginuser_id');
+   
+    try {
+      const result = await likeVideo(ShortId, userId);
+      if(result){
+      setLiked(!liked);
+      }
+      fetchLikes(ShortId);
+    } catch (error) {
+      Alert.alert(' Failed', error.message);
+
+      console.error(
+        'API Error:',
+        error?.response?.data || error.message || error,
+      );
+    }
+  };
+
+  console.log('liked', liked);
+
+  const handleVideoTap = () => {
+    setShowControls(true);
+    setIsPaused(prev => !prev); // toggle pause
+
+    setTimeout(() => {
+      setShowControls(false);
+    }, 2000);
+  };
+  onViewableItemsChanged.current = ({viewableItems}) => {
+    if (viewableItems && viewableItems.length > 0) {
+      setCurrentIndex(viewableItems[0].index);
+      setIsPaused(false); // autoplay on new video
+    }
+  };
+
+  const handleComment = async shortId => {
+    const userId = await AsyncStorage.getItem('loginuser_id');
+    // const commentText = commentText;
+
+    if (!shortId || !userId || !commentText.trim()) {
+      Alert.alert(
+        'Missing Data',
+        'Video ID, User ID, and Comment cannot be empty.',
+      );
+      return;
+    }
+
+    const result = await postComment(shortId, userId, commentText);
+
+    if (result) {
+      Alert.alert('sucess', result.message);
+
+      setCommentText('');
+    } else {
+      console.log('Failed to post comment.');
+    }
+  };
+
+  const toggleExpand = userId => {
+    setExpandedUsers(prev =>
+      prev.includes(userId)
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId],
+    );
+  };
+
+  
+
   return (
     <FlatList
       data={videos}
@@ -413,18 +524,17 @@ const Shorts = () => {
       viewabilityConfig={viewabilityConfig}
       onViewableItemsChanged={onViewableItemsChanged.current}
       renderItem={({item, index}) => {
-        // Debug current video state
         console.log('Video state:', {
           currentIndex,
           index,
           playing,
-          videoUrl: item.videoUrl,
           isPaused: currentIndex !== index || !playing,
         });
 
         return (
           <TouchableOpacity
             activeOpacity={1}
+            onPress={handleVideoTap}
             style={{
               width,
               height,
@@ -443,15 +553,19 @@ const Shorts = () => {
               <Video
                 ref={ref => (videoRefs.current[index] = ref)}
                 source={{uri: item.videoUrl}}
-                style={{width: '100%', height: height}}
+                style={{width: '100%', height: 300}}
                 resizeMode="cover"
                 repeat
                 muted={currentIndex !== index}
                 playInBackground={false}
                 playWhenInactive={false}
-                paused={currentIndex !== index || !playing}
+                paused={isPaused || currentIndex !== index}
                 onProgress={({currentTime}) => {
-                  if (currentIndex === index && playing && currentTime >= 2) {
+                  if (
+                    currentIndex === index &&
+                    currentTime >= 2 &&
+                    isPaused !== index
+                  ) {
                     handleViewTracking(item);
                   }
                 }}
@@ -461,38 +575,21 @@ const Shorts = () => {
               />
 
               {/* Full screen touchable area for play/pause */}
-              {/* <View className='absolute z-50 top-20 inset-0 justify-center items-center'>
-                <TouchableOpacity
-                  onPress={() => {
-                    console.log('Video tapped, toggling play state');
-                    setPlaying(prev => !prev);
-                  }}
-                  className=""
-                  activeOpacity={1}>
-                  {!playing && currentIndex === index && (
-                    <View className="bg-black/30 rounded-full p-4">
-                      <Image
-                        source={require('../assets/Images/play.png')}
-                        style={{width: 50, height: 50, tintColor: 'black'}}
-                      />
-                    </View>
-                  )}
-                </TouchableOpacity>
-              </View> */}
-{!playing && currentIndex === index && (
-  <View className="absolute z-50 top-0 left-0 right-0 bottom-0 justify-center items-center">
-    <TouchableOpacity
-      onPress={() => setPlaying(prev => !prev)}
-      activeOpacity={0.8}>
-      <View className="bg-black/40 rounded-full p-4">
-        <Image
-          source={require('../assets/Images/play.png')}
-          style={{width: 50, height: 50, tintColor: 'white'}}
-        />
-      </View>
-    </TouchableOpacity>
-  </View>
-)}
+
+              {showControls && currentIndex && (
+                <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center">
+                  <View className="bg-black/40 rounded-full p-4">
+                    <Image
+                      source={
+                        isPaused
+                          ? require('../assets/Images/play.png')
+                          : require('../assets/Images/pause.png')
+                      }
+                      style={{width: 30, height: 30, tintColor: 'white'}}
+                    />
+                  </View>
+                </View>
+              )}
 
               {/* Overlay content - Bottom info section */}
               <View className="absolute bottom-10 left-0 right-0 px-4 pb-6 flex-row justify-between items-end">
@@ -514,12 +611,6 @@ const Shorts = () => {
                     <Text className="text-white text-sm font-medium">
                       @{item.creatorId?.name}
                     </Text>
-                    {/* Subscribe button */}
-                    <TouchableOpacity className="bg-white rounded-full px-3 py-1 ml-1">
-                      <Text className="text-black text-xs font-bold">
-                        Subscribe
-                      </Text>
-                    </TouchableOpacity>
                   </View>
 
                   {/* Description - Optional */}
@@ -536,31 +627,32 @@ const Shorts = () => {
                   pointerEvents="box-none">
                   {/* Like */}
                   <View className="items-center">
-                    <TouchableOpacity className="items-center">
+                    <TouchableOpacity
+                      className="items-center"
+                      onPress={() => handleLike(item._id)}>
                       <Image
-                        source={require('../assets/Images/thumbs-up.png')}
+                        source={
+                          liked
+                            ? require('../assets/Images/thumbs-up.png')
+                            : require('../assets/Images/thumb-down.png')
+                        }
                         className="w-8 h-8"
                       />
                       <Text className="text-white text-xs mt-1">
-                        {item.likes || '0'}
+                        {totalLikes}
                       </Text>
                     </TouchableOpacity>
                   </View>
 
-                  {/* Dislike */}
                   <View className="items-center">
-                    <TouchableOpacity className="items-center">
-                      <Image
-                        source={require('../assets/Images/thumb-down.png')}
-                        className="w-8 h-8"
-                      />
-                      <Text className="text-white text-xs mt-1">Dislike</Text>
-                    </TouchableOpacity>
-                  </View>
-
-                  {/* Comments */}
-                  <View className="items-center">
-                    <TouchableOpacity className="items-center">
+                    <TouchableOpacity
+                      className="items-center"
+                      onPress={() => {
+                        fetchComments(item._id);
+                        setShowCommentInputIndex(
+                          showCommentInputIndex === index ? null : index,
+                        );
+                      }}>
                       <Image
                         source={require('../assets/Images/comment.png')}
                         className="w-8 h-8"
@@ -589,29 +681,105 @@ const Shorts = () => {
                         source={require('../assets/Images/wave-sound.png')}
                         className="w-8 h-8"
                       />
-                      <Text className="text-white text-xs mt-1">Remix</Text>
-                    </TouchableOpacity>
-                  </View>
-
-                  {/* More (3 dots) */}
-                  <View className="items-center">
-                    <TouchableOpacity className="items-center">
-                      <Text className="text-white text-2xl font-bold">⋯</Text>
+                      {/* <Text className="text-white text-xs mt-1">Remix</Text> */}
                     </TouchableOpacity>
                   </View>
                 </View>
-              </View>
+                {showCommentInputIndex === index && (
+                  <View className="absolute bottom-2  px-4 w-screen">
+                    <View className='flex justify-end items-end py-2'>
+                      <TouchableOpacity onPress={()=>setShowCommentInputIndex(null)}>
+                      <Image source={require("../assets/Images/close.png")} className='w-6 h-6'/>
 
-              {/* Sound/Music ticker at bottom */}
-              {/* <View className="absolute bottom-20 right-0 bg-black/50 rounded-l-full px-3 py-1.5 flex-row items-center">
-                <Image
-                  source={require('../assets/Images/wave-sound.png')}
-                  className="w-4 h-4 mr-2"
-                />
-                <Text className="text-white text-xs" numberOfLines={1}>
-                  Original sound • {item.creatorId?.name}
-                </Text>
-              </View> */}
+                      </TouchableOpacity>
+                      </View>
+                    <View className="bg-slate-50 rounded-t-3xl p-2">
+                      <FlatList
+                        data={groupedComments}
+                        keyExtractor={item => item[0].user._id}
+                        renderItem={({item}) => {
+                          const userId = item[0].user._id;
+                          const isExpanded = expandedUsers.includes(userId);
+                          const commentsToRender = isExpanded
+                            ? item
+                            : [item[0]];
+
+                          return (
+                            <View className="my-5 mx-3">
+                              {commentsToRender.map((comment, index) => (
+                                <TouchableOpacity key={index}>
+                                  <View
+                                    key={index}
+                                    className="flex-row gap-2 mt-2">
+                                    <Image
+                                      onError={() => setHasError(true)}
+                                      source={
+                                        hasError || !comment.imageUri
+                                          ? require('../assets/Images/default-image.png')
+                                          : {uri: comment.imageUri}
+                                      }
+                                      className="w-8 h-8 rounded-full"
+                                    />
+                                    <View className="flex-1 bg-white p-3 rounded-lg">
+                                      <View className="flex-row gap-1 items-center">
+                                        <Text className="font-semibold text-sm">
+                                          {comment.user.name}
+                                        </Text>
+                                        <Text className="text-xs text-gray-500">
+                                          • {getTimeAgo(comment.createdAt)}
+                                        </Text>
+                                      </View>
+                                      <Text className="text-sm text-gray-800">
+                                        {comment.text}
+                                      </Text>
+                                    </View>
+                                  </View>
+                                </TouchableOpacity>
+                              ))}
+
+                              <View className="flex justify-end items-end">
+                                {item.length > 1 && (
+                                  <TouchableOpacity
+                                    onPress={() => toggleExpand(userId)}>
+                                    <View className=" rounded-full p-2">
+                                      <Text className="text-xs font-semibold text-primary ">
+                                        {!isExpanded
+                                          ? `View ${
+                                              item.length - 1
+                                            } more comment${
+                                              item.length - 1 > 1 ? 's' : ''
+                                            }`
+                                          : 'View less comments'}
+                                      </Text>
+                                    </View>
+                                  </TouchableOpacity>
+                                )}
+                              </View>
+                            </View>
+                          );
+                        }}
+                      />
+
+                      <Text className="text-black font-bold my-3 mx-3">
+                        {userName}
+                      </Text>
+                      <View className="flex-row items-center justify-between">
+                        <TextInput
+                          value={commentText}
+                          onChangeText={setCommentText}
+                          placeholder="Write a comment..."
+                          className="w-28 flex-1 text-black bg-gray-100 px-3 py-3 rounded-lg"
+                        />
+                        <TouchableOpacity
+                          onPress={() => handleComment(item._id)}
+                          className="ml-2 bg-primary px-4 py-2 rounded-lg">
+                          <Text className="text-white font-bold">Post</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                )}
+              </View>
             </View>
           </TouchableOpacity>
         );
@@ -621,6 +789,29 @@ const Shorts = () => {
 };
 
 export default Shorts;
+
+// const getDaysAgo = dateString => {
+//   const uploadedDate = new Date(dateString);
+//   const now = new Date();
+//   const diffTime = Math.abs(now - uploadedDate);
+//   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+//   if (diffDays === 0) return 'Today';
+//   if (diffDays === 1) return '1 day ago';
+//   return `${diffDays} days ago`;
+// };
+
+// useEffect(() => {
+//   fetchLikes();
+// }, [shortId]);
+
+// const fetchLikes = async () => {
+//   const likeData = await getVideoLikeCount(shortId);
+//   if (likeData) {
+//     console.log('likeData', likeData.likeCount);
+//     setTotalLike(likeData?.likeCount);
+//   }
+// };
 
 // <TouchableOpacity
 //   activeOpacity={1}

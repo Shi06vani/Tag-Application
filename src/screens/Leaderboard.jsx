@@ -13,7 +13,7 @@ const Leaderboard = () => {
         const data = await getLeaderboard();
         if (data) {
           console.log("leaderboard",data)
-          setLeaderboard(data);
+          setLeaderboard(data.leaderboard);
         } else {
           console.error('Failed to fetch leaderboard');
         }
@@ -40,42 +40,39 @@ const Leaderboard = () => {
           <ActivityIndicator size="large" color="#441752" />
         </View>
       ) : (
-        // <ScrollView className="bg-white rounded-lg shadow-lg py-3 px-3 flex-1">
-        //   {leaderboard.map((creator, index) => (
-        //     <View key={creator.creatorId} className="flex-row items-center justify-between p-2 border-b border-purple-300">
-        //       <View className="flex-row items-center">
-        //         <Image source={require('../assets/Images/user.png')} className="w-12 h-12 rounded-full mr-4" />
-        //         <View>
-        //           <Text className="text-xl font-semibold text-primary">{creator.name}</Text>
-        //           <Text className="text-md text-secondary">{creator.followerCount} Followers</Text>
-        //         </View>
-        //       </View>
-        //       <Text className="text-xl font-bold text-purple-900">{creator.totalScore} pts</Text>
-        //     </View>
-        //   ))}
-        // </ScrollView>
+     
         <ScrollView className="bg-white rounded-lg shadow-lg py-3 px-3 flex-1">
           {leaderboard?.length > 0 ? (
             leaderboard.map((creator, index) => (
               <View
                 key={creator.creatorId}
                 className="flex-row items-center justify-between p-2 border-b border-purple-50">
-                <View className="flex-row items-center">
-                  <Image
+                <View className="flex-row items-start">
+                <Image
                     source={require('../assets/Images/user.png')}
                     className="w-12 h-12 rounded-full mr-4"
                   />
+                  <View className='flex-col'>
+                
                   <View>
                     <Text className="text-xl font-semibold text-primary">
                       {creator.name}
                     </Text>
                     <Text className="text-md text-secondary">
-                      {creator.followerCount} Followers
+                      {creator.email} 
                     </Text>
                   </View>
+                   
+                  <View className='flex-row gap-3'>
+                    <Text className='text-sm text-gray-400 font-medium'> • comments {creator?.totalComments ||0}</Text>
+                    <Text className='text-sm text-gray-400 font-medium'> • likes {creator?.totalLikes||0}</Text>
+                  </View>
+                  </View>
+                
+
                 </View>
                 <Text className="text-xl font-bold text-purple-900">
-                  {creator.totalScore} pts
+                  {creator.totalPoints} points
                 </Text>
               </View>
             ))
@@ -119,21 +116,21 @@ export default Leaderboard;
 //   </ScrollView>
 // </View>
 
-// const creators = [
-//   { name: 'John Doe', points: 1200, followers: 50, profilePic: '../assets/Images/user.png' },
-//   { name: 'Jane Smith', points: 1100, followers: 45, profilePic: '../assets/Images/user.png' },
-//   { name: 'Alex Johnson', points: 1050, followers: 40, profilePic: '../assets/Images/user.png' },
-//   { name: 'Chris Brown', points: 980, followers: 35, profilePic: '../assets/Images/user.png' },
-//   { name: 'Emma Wilson', points: 950, followers: 30, profilePic: '../assets/Images/user.png' },
-//   { name: 'John Doe', points: 1200, followers: 50, profilePic: '../assets/Images/user.png' },
-//   { name: 'Jane Smith', points: 1100, followers: 45, profilePic: '../assets/Images/user.png' },
-//   { name: 'Alex Johnson', points: 1050, followers: 40, profilePic: '../assets/Images/user.png' },
-//   { name: 'Chris Brown', points: 980, followers: 35, profilePic: '../assets/Images/user.png' },
-//   { name: 'Emma Wilson', points: 950, followers: 30, profilePic: '../assets/Images/user.png' },
-//   { name: 'Emma Wilson', points: 950, followers: 30, profilePic: '../assets/Images/user.png' },
-//   { name: 'John Doe', points: 1200, followers: 50, profilePic: '../assets/Images/user.png' },
-//   { name: 'Jane Smith', points: 1100, followers: 45, profilePic: '../assets/Images/user.png' },
-//   { name: 'Alex Johnson', points: 1050, followers: 40, profilePic: '../assets/Images/user.png' },
-//   { name: 'Chris Brown', points: 980, followers: 35, profilePic: '../assets/Images/user.png' },
-//   { name: 'Emma Wilson', points: 950, followers: 30, profilePic: '../assets/Images/user.png' },
+
 // ];
+
+
+   // <ScrollView className="bg-white rounded-lg shadow-lg py-3 px-3 flex-1">
+        //   {leaderboard.map((creator, index) => (
+        //     <View key={creator.creatorId} className="flex-row items-center justify-between p-2 border-b border-purple-300">
+        //       <View className="flex-row items-center">
+        //         <Image source={require('../assets/Images/user.png')} className="w-12 h-12 rounded-full mr-4" />
+        //         <View>
+        //           <Text className="text-xl font-semibold text-primary">{creator.name}</Text>
+        //           <Text className="text-md text-secondary">{creator.followerCount} Followers</Text>
+        //         </View>
+        //       </View>
+        //       <Text className="text-xl font-bold text-purple-900">{creator.totalScore} pts</Text>
+        //     </View>
+        //   ))}
+        // </ScrollView>

@@ -36,3 +36,13 @@ export const getRelatedVideos = async (videoId) => {
     return { error: error.message };
   }
 };
+
+export const deleteVideo = async (videoId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/social/videos/${videoId}/related`);
+    return response.data; 
+  } catch (error) {
+    console.error("Error deleted posted videos:", error.message);
+    return { error: error.message };
+  }
+};

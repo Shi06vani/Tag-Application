@@ -6,6 +6,7 @@ import Video from 'react-native-video';
 
 const RelatedVideos = ({ videoId }) => {
   const [relatedVideos, setRelatedVideos] = useState([]);
+  
   useEffect(() => {
     if (videoId) {
       fetchRelatedVideos();

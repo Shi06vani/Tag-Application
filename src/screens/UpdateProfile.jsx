@@ -107,18 +107,23 @@ const UpdateProfileScreen = ({route}) => {
     }
 
     try {
-      const response = await axios.put(`${BASE_URL}/api/auth/update`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const response = await axios.put(
+        `${BASE_URL}/api/auth/update`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
-      });
+      );
+      console.log(response, 'updat profile data');
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Failed to update');
-
-      Alert.alert('Success', 'Profile updated successfully!');
-      navigation.goBack();
+      if (!response) throw new Error(data.message || 'Failed to update');
+      Alert.alert('Success', response.data.message);
+      navigation.goBack()
     } catch (error) {
+      Alert.alert('error', error.message);
+
       console.log('Error', error.message);
     }
   };
@@ -126,7 +131,6 @@ const UpdateProfileScreen = ({route}) => {
   return (
     <ScrollView>
       <View className="flex-1 bg-white p-6">
-
         <View className="mb-5 flex justify-center items-center">
           <TouchableOpacity
             onPress={pickImage}
@@ -149,10 +153,10 @@ const UpdateProfileScreen = ({route}) => {
                 </Text>
               </View>
             )}
-
           </TouchableOpacity>
-          <Text className="text-xl text-primary font-bold my-4 text-center">Select Image</Text>
-
+          <Text className="text-xl text-primary font-bold my-4 text-center">
+            Select Image
+          </Text>
         </View>
         <Text className="text-primary mb-1 text-base font-semibold">Name</Text>
         <TextInput

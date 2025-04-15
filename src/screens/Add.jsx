@@ -180,6 +180,7 @@ const Add = () => {
       </View>
 
       <View>
+        <Text className='text-primary text-base font-semibold py-2'>Category</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View className="flex-row space-x-3 px-4">
             {categories.map((category, index) => (
