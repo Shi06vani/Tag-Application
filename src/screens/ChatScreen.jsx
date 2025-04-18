@@ -19,7 +19,7 @@ const ChatScreen = () => {
   };
 
   return (
-    <View className="flex-1 bg-purple-100 p-5">
+    <View className="flex-1 bg-purple-50 p-5">
       {/* <Text className="text-3xl font-bold text-center text-primary mb-4">Chat</Text> */}
       <FlatList
         data={messages}

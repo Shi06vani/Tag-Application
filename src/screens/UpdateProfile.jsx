@@ -50,7 +50,7 @@ const UpdateProfileScreen = ({route}) => {
     companyName: data?.companyName || '',
     website: data?.website || '',
     bio: data?.bio || '',
-    topic: data?.topic || '',
+    // topic: data?.topic || '',
     email: data?.email || '',
   });
 
@@ -72,8 +72,8 @@ const UpdateProfileScreen = ({route}) => {
     if (
       !userData?.name ||
       !userData?.email ||
-      !userData?.bio ||
-      !userData?.topic
+      !userData?.bio
+      
     ) {
       Alert.alert('Please fill out all required fields');
       return;
@@ -93,7 +93,6 @@ const UpdateProfileScreen = ({route}) => {
     formData.append('name', userData?.name);
     formData.append('email', userData?.email);
     formData.append('bio', userData?.bio);
-    formData.append('topic', userData?.topic);
 
     formData.append('image', {
       uri: selectedImage.uri,
@@ -116,11 +115,11 @@ const UpdateProfileScreen = ({route}) => {
           },
         },
       );
-      console.log(response, 'updat profile data');
+      console.log(response.data.user.image, 'updat profile data');
 
       if (!response) throw new Error(data.message || 'Failed to update');
       Alert.alert('Success', response.data.message);
-      navigation.goBack()
+      navigation.goBack();
     } catch (error) {
       Alert.alert('error', error.message);
 
@@ -129,8 +128,8 @@ const UpdateProfileScreen = ({route}) => {
   };
 
   return (
-    <ScrollView>
-      <View className="flex-1 bg-white p-6">
+    <ScrollView className='flex-1 bg-white'>
+      <View className=" p-6">
         <View className="mb-5 flex justify-center items-center">
           <TouchableOpacity
             onPress={pickImage}
@@ -172,19 +171,19 @@ const UpdateProfileScreen = ({route}) => {
           value={userData?.email}
           onChangeText={text => handleChange('email', text)}
         />
-        <Text className="text-primary mb-2 text-base font-semibold">Topic</Text>
+        {/* <Text className="text-primary mb-2 text-base font-semibold">Topic</Text>
         <TextInput
           className="border-2 border-secondary p-3 shadow-xl mb-4 text-base rounded-full focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder="Topic"
           value={userData.topic}
           onChangeText={text => handleChange('topic', text)}
-        />
+        /> */}
         <Text className="text-primary mb-2 text-base font-semibold">Bio</Text>
 
         <TextInput
           className="border-2 border-secondary p-3 shadow-xl mb-4 text-base rounded-full focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder="Bio"
-          value={userData.bio}
+          value={userData?.bio}
           onChangeText={text => handleChange('bio', text)}
         />
 

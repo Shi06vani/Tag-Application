@@ -323,7 +323,7 @@ const Shorts = () => {
   const [userName, setUserName] = useState('');
   const groupedComments = groupByUser(comments);
   const [expandedUsers, setExpandedUsers] = useState([]);
-  const[totalLikes,setTotalLike] = useState(1) 
+  const [totalLikes, setTotalLike] = useState(1);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
@@ -338,20 +338,25 @@ const Shorts = () => {
     };
   }, []);
 
+  //   useEffect(() => {
+  //   fetchLikes();
+  // }, [shortId]);
 
-//   useEffect(() => {
-//   fetchLikes();
-// }, [shortId]);
+  useEffect(() => {
+    const currentVideo = videos[currentIndex];
+    if (currentVideo && currentVideo._id) {
+      handleViewTracking(currentVideo);
+      console.log('CURRENT INDEX CHANGED TO:', currentIndex);
+    }
+  }, [currentIndex]);
 
-const fetchLikes = async (shortId) => {
-  const likeData = await getVideoLikeCount(shortId);
-  if (likeData) {
-    console.log('likeData', likeData.likeCount);
-    setTotalLike(likeData?.likeCount);
-  }
-};
-
-console.log("shortId",shortId)
+  const fetchLikes = async shortId => {
+    const likeData = await getVideoLikeCount(shortId);
+    if (likeData) {
+      console.log('likeData', likeData.likeCount);
+      setTotalLike(likeData?.likeCount);
+    }
+  };
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -401,12 +406,12 @@ console.log("shortId",shortId)
 
   const handleViewTracking = item => {
     if (!viewedVideos.includes(item._id)) {
-      trackVideoView(item._id, item);
+      trackVideoView(item._id);
       setViewedVideos(prev => [...prev, item._id]);
     }
   };
 
-  const trackVideoView = async (shortId, item) => {
+  const trackVideoView = async shortId => {
     try {
       const response = await fetch(
         `https://tag-backend.vercel.app/api/videos/onevideo/${shortId}/view`,
@@ -419,9 +424,17 @@ console.log("shortId",shortId)
       );
 
       if (!response.ok) {
+        console.log(
+          'shortsview ===============================',
+          response.json(),
+        );
+
         throw new Error('Failed to track video view');
       }
-      console.log('shortsview', response);
+      console.log(
+        'shortsview ===============================',
+        response.json(),
+      );
     } catch (error) {
       Alert.alert('Failed', error.message);
       console.error('Error tracking video view:', error);
@@ -449,11 +462,11 @@ console.log("shortId",shortId)
 
   const handleLike = async ShortId => {
     const userId = await AsyncStorage.getItem('loginuser_id');
-   
+
     try {
       const result = await likeVideo(ShortId, userId);
-      if(result){
-      setLiked(!liked);
+      if (result) {
+        setLiked(!liked);
       }
       fetchLikes(ShortId);
     } catch (error) {
@@ -476,6 +489,7 @@ console.log("shortId",shortId)
       setShowControls(false);
     }, 2000);
   };
+
   onViewableItemsChanged.current = ({viewableItems}) => {
     if (viewableItems && viewableItems.length > 0) {
       setCurrentIndex(viewableItems[0].index);
@@ -514,15 +528,13 @@ console.log("shortId",shortId)
     );
   };
 
-  
-
   return (
     <FlatList
       data={videos}
       keyExtractor={item => item._id}
       pagingEnabled
-      viewabilityConfig={viewabilityConfig}
       onViewableItemsChanged={onViewableItemsChanged.current}
+      viewabilityConfig={viewabilityConfig}
       renderItem={({item, index}) => {
         console.log('Video state:', {
           currentIndex,
@@ -560,14 +572,15 @@ console.log("shortId",shortId)
                 playInBackground={false}
                 playWhenInactive={false}
                 paused={isPaused || currentIndex !== index}
-                onProgress={({currentTime}) => {
-                  if (
-                    currentIndex === index &&
-                    currentTime >= 2 &&
-                    isPaused !== index
-                  ) {
-                    handleViewTracking(item);
+                onLoad={() => {
+                  if (currentIndex === index && !isPaused) {
+                    // Track view when video is loaded and ready to play
+                    trackVideoView(item.id); // Assuming item.id contains your shortId
                   }
+                }}
+                onPlay={() => {
+                  // Alternative approach: track view when video starts playing
+                  trackVideoView(item.id);
                 }}
                 onError={error => {
                   console.error('Video error:', error);
@@ -687,12 +700,15 @@ console.log("shortId",shortId)
                 </View>
                 {showCommentInputIndex === index && (
                   <View className="absolute bottom-2  px-4 w-screen">
-                    <View className='flex justify-end items-end py-2'>
-                      <TouchableOpacity onPress={()=>setShowCommentInputIndex(null)}>
-                      <Image source={require("../assets/Images/close.png")} className='w-6 h-6'/>
-
+                    <View className="flex justify-end items-end py-2">
+                      <TouchableOpacity
+                        onPress={() => setShowCommentInputIndex(null)}>
+                        <Image
+                          source={require('../assets/Images/close.png')}
+                          className="w-6 h-6"
+                        />
                       </TouchableOpacity>
-                      </View>
+                    </View>
                     <View className="bg-slate-50 rounded-t-3xl p-2">
                       <FlatList
                         data={groupedComments}

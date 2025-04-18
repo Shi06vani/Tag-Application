@@ -37,7 +37,7 @@ const Splash =()=>{
           className="rounded-full p-7 border-2 border-[#441752]"
           style={{ opacity: fadeAnim, transform: [{ scale: scaleAnim }] }}
         >
-          <Image source={require('../../src/assets/Images/logo.jpg')} className="w-16 h-16" />
+          <Image source={require('../assets/Images/Transparent-logo.png')} className="w-16 h-16" />
         </Animated.View>
       </View>
     )

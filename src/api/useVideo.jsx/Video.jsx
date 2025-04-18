@@ -1,3 +1,4 @@
+import { use } from "react";
 import BASE_URL from "../../../config"
 import axios from "axios";
 export const getAllPostedVideos = async (type) => {
@@ -37,12 +38,19 @@ export const getRelatedVideos = async (videoId) => {
   }
 };
 
-export const deleteVideo = async (videoId,userId) => {
+
+export const deleteVideo = async (videoId, userId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/api/videos/delete/${videoId}`,{userId:userId});
-    return response.data; 
+    const response = await axios.delete(`${BASE_URL}/api/videos/delete/${videoId}`, 
+      {
+        data: {
+          userId: userId,
+        },
+      },);
+
+    return response.data;
   } catch (error) {
-    console.error("Error deleted posted videos:", error.message);
+    console.error('Error deleting posted video:', error.message);
     return { error: error.message };
   }
 };

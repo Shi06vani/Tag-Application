@@ -56,8 +56,13 @@ const BrandFollowers = ({route}) => {
           renderItem={({ item }) => (
             <StyledView className="flex-row items-center px-4 py-3 border-b border-gray-200">
               <StyledImage
-                source={{ uri: item.image }}
-                className="w-12 h-12 rounded-full"
+                // source={{ uri: item.image }}
+                source={
+                  item?.image
+                    ? { uri: item.image }
+                    : require('../../assets/Images/default-image.png') // replace with your actual path
+                }
+                className="w-10 h-10 rounded-full"
               />
               
               {/* User Info */}

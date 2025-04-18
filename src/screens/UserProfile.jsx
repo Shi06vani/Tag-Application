@@ -101,6 +101,7 @@ const UserProfile = () => {
     navigation.navigate('Login');
   };
 
+
   return (
     <ScrollView className="bg-purple-50">
       <View className="p-[8px] mt-16  flex-1">
@@ -119,10 +120,10 @@ const UserProfile = () => {
               }>
               <StyledView className=" p-3 rounded-lg shadow-md">
                 <StyledView className="flex-row items-center space-x-3">
-                    <StyledImage
-                      source={require('../assets/Images/man.png')}
-                      className="w-12 h-12 rounded-full"
-                    />
+                  <Image
+                    source={{uri: userData?.image}}
+                    className="w-12 h-12 rounded-full mr-3"
+                  />
 
                   <StyledView>
                     <StyledText className="text-black text-lg font-bold">
@@ -132,22 +133,22 @@ const UserProfile = () => {
                       {userData?.email}
                     </StyledText>
                     <StyledText className="text-gray-500 text-sm">
-                      {userData?.role} - {userData?.companyName}
+                      {userData?.role} {role==="brand"? -userData?.companyName:""}
                     </StyledText>
                   </StyledView>
                 </StyledView>
                 <StyledText className="text-gray-600 mt-2">
                   {userData?.bio}
                 </StyledText>
-                <StyledText className="text-gray-600 mt-2">
+                {/* <StyledText className="text-gray-600 mt-2">
                   {userData?.topic}
-                </StyledText>
+                </StyledText> */}
               </StyledView>
             </StyledTouchableOpacity>
           </View>
 
           {/* Buttons Section */}
-          <StyledView className="my-4 pl-4">
+          <StyledView className="mb-4 pl-4">
             <ScrollView
               horizontal={true}
               showsHorizontalScrollIndicator={false}
@@ -194,46 +195,6 @@ const UserProfile = () => {
           </StyledView>
         </StyledView>
 
-        {/* <View className="bg-white mt-2 p-1 rounded-lg">
-          <Text className="text-[#000000] text-[16px] ">Recent</Text>
-
-          <View className="p-[5px] w-full">
-            <ScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              className="flex flex-row gap-[10px]">
-              {recentData.map((item, index) => {
-                return (
-                  <StyledView
-                    className="w-40 bg-white rounded-lg overflow-hidden"
-                    key={index}>
-                    <StyledView className="relative">
-                      <StyledImage
-                        source={require('../assets/Images/heart-touching.png')}
-                        className="w-full h-24"
-                      />
-                      <StyledView className="absolute bottom-1 right-1 bg-black px-2 py-1 rounded-md">
-                        <StyledText className="text-white text-xs">
-                          0:50
-                        </StyledText>
-                      </StyledView>
-                    </StyledView>
-
-                    <StyledView className="p-2">
-                      <StyledText className="text-black font-semibold text-sm">
-                        Heart Touching Nasheed #Shorts
-                      </StyledText>
-                      <StyledText className="text-gray-500 text-xs">
-                        An Naffe
-                      </StyledText>
-                    </StyledView>
-                  </StyledView>
-                );
-              })}
-            </ScrollView>
-          </View>
-        </View> */}
-
         <View>
           <ScrollView className="">
             <View className="">
@@ -256,8 +217,9 @@ const UserProfile = () => {
                     onPress={() => navigation.navigate('Your-requirement')}>
                     <StyledView className="flex-row items-center px-4 py-3 gap-[8px]">
                       <StyledImage
-                        source={require('../assets/Images/clock.png')}
-                        className="w-[24px] h-[24px]"
+                        tintColor={'#441752'}
+                        source={require('../assets/Images/requirement.png')}
+                        className="w-[22px] h-[22px]"
                       />
                       <StyledView>
                         <StyledText className="text-black text-base">
@@ -272,7 +234,8 @@ const UserProfile = () => {
                   onPress={() => navigation.navigate('My-Videos')}>
                   <StyledView className="flex-row items-center px-4 py-3 gap-[8px]">
                     <StyledImage
-                      source={require(`../assets/Images/my-video.png`)}
+                      tintColor={'#441752'}
+                      source={require(`../assets/Images/user-video.png`)}
                       className="w-[24px] h-[24px]"
                     />
 
@@ -288,7 +251,8 @@ const UserProfile = () => {
                   onPress={() => navigation.navigate('My-Shorts')}>
                   <StyledView className="flex-row items-center px-4 py-3 gap-[8px]">
                     <StyledImage
-                      source={require(`../assets/Images/my-video.png`)}
+                      tintColor={'#441752'}
+                      source={require(`../assets/Images/user-short.png`)}
                       className="w-[24px] h-[24px]"
                     />
 

@@ -370,7 +370,6 @@ const BrandDetails = ({route}) => {
   const creatorId = brandid;
   const userId = loginUserId;
 
-  
   const [routes] = useState([
     {key: 'videos', title: 'Videos'},
     {key: 'shorts', title: 'Shorts'},
@@ -459,10 +458,13 @@ const BrandDetails = ({route}) => {
 
   const handleFollow = async () => {
     const result = await followUser(loginUserId, brandid);
-    console.log("fllow result",result);
+
+     if(result){
+      setIsFollowing(true);
+     }
+    console.log('fllow result', result);
 
     if (!result.error) {
-
     } else {
       console.error('Error following user:', result.error);
     }
@@ -470,6 +472,10 @@ const BrandDetails = ({route}) => {
 
   const handleUnFollow = async () => {
     const result = await unfollowUser(loginUserId, brandid);
+    
+    if(result){
+      setIsFollowing(false);
+     }
     if (!result.error) {
     } else {
       console.error('Error unfollowing user:', result.error);
@@ -520,13 +526,10 @@ const BrandDetails = ({route}) => {
     );
   };
 
- 
-
   useEffect(() => {
     const CheckUserFollowing = async () => {
+      console.log('->>>>>>', userId);
 
-    console.log("->>>>>>",userId)
-      
       if (!userId) {
         console.error('User ID not found');
         return;
@@ -548,6 +551,7 @@ const BrandDetails = ({route}) => {
         }
 
         const result = await response.json();
+        console.log(result, 'isfollowing result');
         setIsFollowing(result?.isFollowing);
         return result;
       } catch (error) {
@@ -578,16 +582,16 @@ const BrandDetails = ({route}) => {
               <View className="">
                 <View className="flex-row justify-between">
                   {isFollowing ? (
-                    <TouchableOpacity
-                      onPress={handleFollow}
-                      >
-                      <Text className="text-sm font-bold px-4 py-2 rounded-md text-white bg-primary cursor-pointer">Follow</Text>
+                    <TouchableOpacity onPress={handleUnFollow} className="">
+                      <Text className="bg-secondary text-sm font-bold px-4 py-2 rounded-md text-white  cursor-pointer">
+                        UnFollow
+                      </Text>
                     </TouchableOpacity>
                   ) : (
-                    <TouchableOpacity
-                      onPress={handleUnFollow}
-                      className="">
-                      <Text className='bg-secondary text-sm font-bold px-4 py-2 rounded-md text-white  cursor-pointer'>UnFollow</Text>
+                    <TouchableOpacity onPress={handleFollow}>
+                      <Text className="text-sm font-bold px-4 py-2 rounded-md text-white bg-primary cursor-pointer">
+                        Follow
+                      </Text>
                     </TouchableOpacity>
                   )}
 

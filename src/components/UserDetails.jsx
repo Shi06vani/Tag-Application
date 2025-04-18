@@ -20,7 +20,7 @@ import {BrandVideos} from '../api/brandRequirements/Requiements';
 import Video from 'react-native-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
-import BASE_URL from "../../config"
+import BASE_URL from '../../config';
 
 export default function UserDetails({route}) {
   const [userData, setUserData] = useState(null);
@@ -31,7 +31,7 @@ export default function UserDetails({route}) {
   const [videos, setVideos] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loginUserId, setLoginUserId] = useState('');
- const[shorts,setShorts]= useState([])
+  const [shorts, setShorts] = useState([]);
   const navigation = useNavigation();
   const creatorId = userId;
   useEffect(() => {
@@ -74,9 +74,11 @@ export default function UserDetails({route}) {
     getBrandVideos();
   }, [userId]);
 
-
   const handleFollow = async () => {
     const result = await followUser(loginUserId, creatorId);
+    if(result){
+      setIsFollowing(true);
+     }
     if (!result.error) {
     } else {
       console.error('Error following user:', result.error);
@@ -85,6 +87,9 @@ export default function UserDetails({route}) {
 
   const handleUnFollow = async () => {
     const result = await unfollowUser(loginUserId, creatorId);
+    if(result){
+      setIsFollowing(false);
+     }
     if (!result.error) {
     } else {
       console.error('Error unfollowing user:', result.error);
@@ -155,35 +160,33 @@ export default function UserDetails({route}) {
     CheckUserFollowing();
   }, [creatorId, loginUserId]);
 
-
-    const fetchUserShorts = async () => {
-      try {
-      if(!creatorId){
-       Alert.alert("createrId  not found")
+  const fetchUserShorts = async () => {
+    try {
+      if (!creatorId) {
+        Alert.alert('createrId  not found');
       }
-        const response = await fetch(
-          `${BASE_URL}/api/videos/user-sorts/${creatorId}`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+      const response = await fetch(
+        `${BASE_URL}/api/videos/user-sorts/${creatorId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        );
-        const data = await response.json();
-  
-        setShorts(data.videos || []);
-      } catch (error) {
-        console.error('Error fetching shorts:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    useEffect(() => {
-      fetchUserShorts();
-    }, []);
-  
+        },
+      );
+      const data = await response.json();
+
+      setShorts(data.videos || []);
+    } catch (error) {
+      console.error('Error fetching shorts:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserShorts();
+  }, []);
 
   if (loading) {
     return (
@@ -195,8 +198,7 @@ export default function UserDetails({route}) {
     );
   }
 
-  console.log("video user shorts",shorts)
-
+  console.log('video user shorts', shorts);
 
   return (
     <ScrollView className="flex-1">
@@ -233,15 +235,15 @@ export default function UserDetails({route}) {
 
           <View className="shadow-lg">
             {isFollowing ? (
-              <TouchableOpacity onPress={handleFollow}>
-                <Text className="text-sm font-bold px-4 py-2 rounded-md text-white bg-primary cursor-pointer">
-                  Follow
-                </Text>
-              </TouchableOpacity>
-            ) : (
               <TouchableOpacity onPress={handleUnFollow} className="">
                 <Text className="bg-secondary text-sm font-bold px-4 py-2 rounded-md text-white  cursor-pointer">
                   UnFollow
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={handleFollow}>
+                <Text className="text-sm font-bold px-4 py-2 rounded-md text-white bg-primary cursor-pointer">
+                  Follow
                 </Text>
               </TouchableOpacity>
             )}

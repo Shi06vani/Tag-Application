@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
@@ -78,8 +79,16 @@ const UserVideos = () => {
 
   const handleDelete = async (videoId) => {
     const userId = await AsyncStorage.getItem('loginuser_id');
-    const response = deleteVideo(videoId, userId);
-    console.log(response, 'delete response');
+     console.log("both",userId,videoId)
+    const response = await deleteVideo(videoId, userId);
+
+    if (response) {
+      Alert.alert('Success', response.message);
+      console.log(response, 'delete response');
+
+    } else {
+      Alert.alert('Failed', response.error);
+    }
   };
 
   return (
@@ -114,7 +123,7 @@ const UserVideos = () => {
                     {item?.category}
                   </Text>
                 </View>
-                <TouchableOpacity onPress={()=>handleDelete(item._id)}>
+                <TouchableOpacity onPress={() => handleDelete(item._id)}>
                   <View>
                     <Text className="text-white text-xs bg-red-500 px-3 py-1 rounded-lg">
                       Delete

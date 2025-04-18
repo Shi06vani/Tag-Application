@@ -1,12 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import {View, Text, StyleSheet, FlatList, TouchableOpacity, Image} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import {getRelatedVideos} from '../api/useVideo.jsx/Video';
-import { getTimeAgo } from './common/GetTime';
+import {getTimeAgo} from './common/GetTime';
 import Video from 'react-native-video';
 
-const RelatedVideos = ({ videoId }) => {
+const RelatedVideos = ({videoId}) => {
   const [relatedVideos, setRelatedVideos] = useState([]);
-  
+
   useEffect(() => {
     if (videoId) {
       fetchRelatedVideos();

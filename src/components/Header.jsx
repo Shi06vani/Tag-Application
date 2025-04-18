@@ -29,10 +29,10 @@ const Header = () => {
   return (
     <View className="flex flex-row justify-between py-4 px-[15px]  border-b-4  border-b-[#ECECEC] bg-white ">
       <TouchableOpacity onPress={()=> navigation.replace("Main")}>
-      <View className="flex flex-row gap-2 items-center justify-center">
+      <View className="flex flex-row gap-2 items-center justify-center shadow-lg">
         <Image
-          source={require('../assets/Images/logo.jpg')}
-          className="w-7 h-7"
+          source={require('../assets/Images/Transparent-logo.png')}
+          className="w-10 h-10"
         />
         <Text className="text-xl font-bold font-serif text-[#441752]">Tag</Text>
       </View>
@@ -51,7 +51,7 @@ const Header = () => {
           <Text className='text-xs bg-primary rounded-full px-3 py-1 text-white font-semibold'>Signup</Text>
         </TouchableOpacity>
       )}
-        <TouchableOpacity onPress={()=> navigation.navigate("Chat")}>
+        <TouchableOpacity onPress={()=> navigation.navigate("User-Chatlist")}>
           <Image
             source={require('../assets/Images/chat-icon.png')}
             className="w-6 h-6"

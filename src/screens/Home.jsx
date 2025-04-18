@@ -93,6 +93,10 @@ const Home = () => {
     }
   };
 
+
+  console.log("home video",videos)
+
+
   return (
     <View className="bg-white flex-1">
       <View className="flex flex-row items-center pt-20 pb-4  ">
@@ -144,6 +148,7 @@ const Home = () => {
                         </TouchableOpacity>
                         <View className="  absolute top-20 left-40 ">
                           <TouchableOpacity
+                          onPress={() => {setIsVideoPressed(!isVideoPressed);trackVideoView(item._id, item)}}
                         >
                             <View className="bg-black opacity-75 p-2 rounded-full">
                               <Image
@@ -176,7 +181,7 @@ const Home = () => {
                             }
                             className="mr-3">
                             <Image
-                              source={require('../assets/Images/user.png')}
+                              source={ item?.image ? item?.image :   require('../assets/Images/default-image.png')}
                               className="w-10 h-10 rounded-full"
                             />
                           </TouchableOpacity>

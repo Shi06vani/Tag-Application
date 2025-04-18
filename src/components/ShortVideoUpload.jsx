@@ -7,11 +7,13 @@ import {
   ActivityIndicator,
   Alert,
   TextInput,
+  ScrollView,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
+import Video from 'react-native-video';
 
 const API_URL = 'https://tag-backend.vercel.app/api';
 
@@ -117,30 +119,37 @@ const ShortVideoUpload = () => {
   console.log('data', description);
 
   return (
-    <View className="flex-1 bg-purple-50 mt-16  p-4">
+    <ScrollView className='flex-1 bg-purple-50'>
+       <View className=" mt-16  p-2">
+   
+
       {videoUri && (
-        <View className="mb-4">
-          {/* <Text className="text-gray-600 mb-2">Selected Short Preview:</Text> */}
-          {/* <Video
-            source={{uri: videoUri}}
+        <View className="">
+          <Text className="text-gray-600 mb-2">Selected Video Preview:</Text>
+          <Video
+            source={{
+              uri: videoUri,
+              type: 'video/mp4', // Explicitly set the video type
+            }}
             style={{width: '100%', height: 200, borderRadius: 12}}
             resizeMode="cover"
             controls
           />
-          <TouchableOpacity
-            className="mt-2 text-sm self-center bg-red-500 px-4 py-2 rounded-full"
-            onPress={() => setVideoUri(null)}>
-            <Text className="text-white font-semibold">Remove Video</Text>
-          </TouchableOpacity> */}
-          <View className="flex-row items-center justify-center gap- border  border-primary bg-purple-50 rounded-lg my-3">
+
+          <View className="flex-row items-center justify-center gap- border  border-primary bg-purple-50 rounded-lg my-2">
             <Image
               source={require('../assets/Images/right-click-arrow.png')}
-              className="w-14 h-14 border border-primary"
+              className="w-10 h-10 border border-primary"
             />
-            <Text className="text-primary text-base font-semibold">
+            <Text className="text-primary text-xs font-semibold">
               Video Selected Successfully
             </Text>
           </View>
+          <TouchableOpacity
+            className=" mt-2 mb-4 text-xs self-center bg-red-500 px-4 py-2 rounded-full"
+            onPress={() => setVideoUri(null)}>
+            <Text className="text-white font-semibold">Remove Video</Text>
+          </TouchableOpacity>
         </View>
       )}
 
@@ -182,7 +191,7 @@ const ShortVideoUpload = () => {
       {/* Upload Button */}
       <View className="flex justify-center items-center">
         <TouchableOpacity
-          className="bg-[#8174A0] px-6 py-3 rounded-full flex-row items-center"
+          className="bg-primary px-6 py-3 rounded-full flex-row items-center"
           onPress={uploadVideo}
           disabled={isUploading}>
           <Text className="text-white">
@@ -196,6 +205,8 @@ const ShortVideoUpload = () => {
         <ActivityIndicator size="large" color="#441752" className="mt-4" />
       )}
     </View>
+    </ScrollView>
+   
   );
 };
 

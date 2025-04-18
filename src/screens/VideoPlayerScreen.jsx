@@ -8,6 +8,7 @@ import {
   Image,
   TextInput,
   Alert,
+  ScrollView,
 } from 'react-native';
 import Video from 'react-native-video';
 import {getVideoLikeCount, likeVideo} from '../api/Likes';
@@ -107,6 +108,9 @@ const VideoPlayerScreen = ({route}) => {
 
   const handleLike = async videoId => {
     const userId = await AsyncStorage.getItem('loginuser_id');
+    if (!userId) {
+      Alert.alert('Failure', 'Please Login First');
+    }
     try {
       const result = await likeVideo(videoId, userId);
       if (result) {
@@ -126,22 +130,36 @@ const VideoPlayerScreen = ({route}) => {
   const handleComment = async () => {
     const videoId = videoData._id;
     const userId = await AsyncStorage.getItem('loginuser_id');
+    if (!userId) {
+      Alert.alert('Failure', 'Please Login First');
+    }
     const commentText = newComment;
 
-    if (!videoId || !userId || !commentText.trim()) {
-      Alert.alert(
-        'Missing Data',
-        'Video ID, User ID, and Comment cannot be empty.',
-      );
-      return;
+    let missingFields = [];
+
+    if (!videoId) {
+      missingFields.push('Video ID');
     }
 
-    const result = await postComment(videoId, userId, commentText);
+    if (!commentText.trim()) {
+      missingFields.push('Comment');
+    }
 
-    if (result) {
-      setNewComment('');
+    if (missingFields.length > 0) {
+      Alert.alert(
+        'Missing Data',
+        `${missingFields.join(', ')} ${
+          missingFields.length > 1 ? 'are' : 'is'
+        } required.`,
+      );
+      return;
     } else {
-      console.log('Failed to post comment.');
+      const result = await postComment(videoId, userId, commentText);
+      if (result) {
+        setNewComment('');
+      } else {
+        console.log('Failed to post comment.');
+      }
     }
   };
 
@@ -171,238 +189,282 @@ const VideoPlayerScreen = ({route}) => {
   };
 
   return (
-    <View className="flex-1 bg-purple-50">
-      {/* Video Player */}
-      <View className="w-full h-60 bg-black">
-        <Video
-          source={{uri: videoData.videoUrl}}
-          style={{width: '100%', height: '100%'}}
-          resizeMode="cover"
-          controls
-        />
-      </View>
-      <View className="px-3">
+    <ScrollView>
+      <View className="flex-1 bg-purple-50">
+        {/* Video Player */}
+        <View className="w-full h-60 bg-black">
+          <Video
+            source={{uri: videoData.videoUrl}}
+            style={{width: '100%', height: '100%'}}
+            resizeMode="cover"
+            controls
+          />
+        </View>
         <View className="px-3">
-          {/* Title */}
-          <Text className="text-lg font-bold text-black mt-4">
-            {videoData.title}
-          </Text>
+          <View className="px-3">
+            {/* Title */}
+            <Text className="text-lg font-bold text-black mt-4">
+              {videoData.title}
+            </Text>
 
-          {/* Meta Info Row */}
-          <View className="flex-row items-center mt-1 space-x-2">
-            <Text className="text-gray-600 text-sm">
-              {videoData.views} views
-            </Text>
-            <Text className="text-gray-600 text-sm">•</Text>
-            <Text className="text-gray-600 text-sm">
-              {formatDate(videoData?.createdAt)}
-            </Text>
-            <Text className="text-gray-600 text-sm">•</Text>
-            <TouchableOpacity
-              onPress={() => setShowDescription(!showDescription)}>
-              <Text className="text-[#441752] text-xs font-semibold">
-                {showDescription ? 'less' : '...more'}
+            {/* Meta Info Row */}
+            <View className="flex-row items-center mt-1 space-x-2">
+              <Text className="text-gray-600 text-sm">
+                {videoData.views} views
               </Text>
+              <Text className="text-gray-600 text-sm">•</Text>
+              <Text className="text-gray-600 text-sm">
+                {formatDate(videoData?.createdAt)}
+              </Text>
+              <Text className="text-gray-600 text-sm">•</Text>
+              <TouchableOpacity
+                onPress={() => setShowDescription(!showDescription)}>
+                <Text className="text-[#441752] text-xs font-semibold">
+                  {showDescription ? 'less' : '...more'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Description */}
+            {showDescription && (
+              <Text className="text-gray-700 mt-2 leading-5 text-sm">
+                {videoData.description}
+              </Text>
+            )}
+          </View>
+
+          {/* Actions: Like (with FlatIcon), Comment, Share */}
+          <View className="flex-row justify-between items-center mt-3 px-2">
+            {/* Like */}
+            <TouchableOpacity
+              className="flex-row items-center space-x-1"
+              onPress={() => {
+                handleLike(videoData._id);
+              }}>
+              <Image
+                source={
+                  liked
+                    ? require('../assets/Images/heart-filled.png')
+                    : require('../assets/Images/heart-outline.png')
+                }
+                className="w-6 h-6"
+              />
+              <Text className="text-gray-600 text-sm">
+                {/* {totalLikes > 999
+                ? (totalLikes / 1000).toFixed(1) + 'k'
+                : totalLikes || 0} */}
+                {totalLikes || 0}
+              </Text>
+            </TouchableOpacity>
+
+            {/* Comment */}
+            <TouchableOpacity
+              className="flex-row items-center space-x-1"
+              onPress={() => {
+                setShowInput(!showInput);
+              }}>
+              {/* <MessageCircle size={20} color="#6b7280" /> */}
+              <Image
+                tintColor={'#6b7280'}
+                className="w-6 h-6"
+                source={require('../assets/Images/video-comment.png')}
+              />
+              <Text className="text-gray-600 text-sm">{commentCount}</Text>
+            </TouchableOpacity>
+
+            {/* Share */}
+            <TouchableOpacity className="flex-row items-center space-x-1">
+              <Image
+                tintColor={'#6b7280'}
+                className="w-6 h-6"
+                source={require('../assets/Images/forward.png')}
+              />
+              <Text className="text-gray-600 text-sm">Share</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Description */}
-          {showDescription && (
-            <Text className="text-gray-700 mt-2 leading-5 text-sm">
-              {videoData.description}
-            </Text>
-          )}
-        </View>
+          {/* Comments Section */}
+          <View className="px-3">
+            {showInput &&
+              groupedComments &&
+              Object.keys(groupedComments).length > 0 && (
+                <Text className="mt-5 text-base font-semibold text-black">
+                  Comments
+                </Text>
+              )}
 
-        {/* Actions: Like (with FlatIcon), Comment, Share */}
-        <View className="flex-row justify-between items-center mt-3 px-2">
-          {/* Like */}
-          <TouchableOpacity
-            className="flex-row items-center space-x-1"
-            onPress={() => {
-              handleLike(videoData._id);
-            }}>
-            <Image
-              source={
-                liked
-                  ? require('../assets/Images/heart-filled.png')
-                  : require('../assets/Images/heart-outline.png')
-              }
-              className="w-6 h-6"
-            />
-            <Text className="text-gray-600 text-sm">
-              {/* {totalLikes > 999
-                ? (totalLikes / 1000).toFixed(1) + 'k'
-                : totalLikes || 0} */}
-               {totalLikes || 0}
-            </Text>
-          </TouchableOpacity>
+            <FlatList
+              scrollEnabled
+              data={groupedComments}
+              keyExtractor={item => item[0].user._id}
+              renderItem={({item}) => {
+                const userId = item[0].user._id;
+                const isExpanded = expandedUsers.includes(userId);
+                const commentsToRender = isExpanded ? item : [item[0]];
 
-          {/* Comment */}
-          <TouchableOpacity
-            className="flex-row items-center space-x-1"
-            onPress={() => {
-              setShowInput(!showInput);
-            }}>
-            {/* <MessageCircle size={20} color="#6b7280" /> */}
-            <Image
-              tintColor={'#6b7280'}
-              className="w-6 h-6"
-              source={require('../assets/Images/video-comment.png')}
-            />
-            <Text className="text-gray-600 text-sm">{commentCount}</Text>
-          </TouchableOpacity>
-
-          {/* Share */}
-          <TouchableOpacity className="flex-row items-center space-x-1">
-            <Image
-              tintColor={'#6b7280'}
-              className="w-6 h-6"
-              source={require('../assets/Images/forward.png')}
-            />
-            <Text className="text-gray-600 text-sm">Share</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Comments Section */}
-        <View className="px-3">
-          {groupedComments && (
-            <Text className="mt-5 text-base font-semibold text-black">
-              Comments
-            </Text>
-          )}
-
-          <FlatList
-            data={groupedComments}
-            keyExtractor={item => item[0].user._id}
-            renderItem={({item}) => {
-              const userId = item[0].user._id;
-              const isExpanded = expandedUsers.includes(userId);
-              const commentsToRender = isExpanded ? item : [item[0]];
-
-              return (
-                <View className="mb-3">
-                  {commentsToRender.map((comment, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => {
-                        setShowInput(!showInput);
-                      }}>
-                      <View key={index} className="flex-row gap-2 mt-2">
-                        <Image
-                          source={
-                            hasError || !comment.imageUri
-                              ? require('../assets/Images/default-image.png')
-                              : {uri: comment.imageUri}
-                          }
-                          className="w-8 h-8 rounded-full"
-                          onError={() => setHasError(true)}
-                        />
-                        <View className="flex-1 bg-white p-3 rounded-lg">
-                          <View className="flex-row gap-1 items-center">
-                            <Text className="font-semibold text-sm">
-                              {comment.user.name}
-                            </Text>
-                            <Text className="text-xs text-gray-500">
-                              • {getTimeAgo(comment.createdAt)}
-                            </Text>
+                return (
+                  <View className="">
+                    <ScrollView className={showInput ? `h-46` : 'h-0 '}>
+                      <View className="pb-4 pt-2">
+                        {showInput && (
+                          <>
+                           <View className="pb-4 pt-2">
+                            {commentsToRender.length > 0 ? (
+                              commentsToRender.map((comment, index) => (
+                                <View>
+                                  <TouchableOpacity key={index}>
+                                    <View className="flex-row gap-2 mt-2">
+                                      <Image
+                                        source={
+                                          hasError || !comment.imageUri
+                                            ? require('../assets/Images/default-image.png')
+                                            : {uri: comment.imageUri}
+                                        }
+                                        className="w-8 h-8 rounded-full"
+                                        onError={() => setHasError(true)}
+                                      />
+                                      <View className="flex-1 bg-white p-3 rounded-lg">
+                                        <View className="flex-row gap-1 items-center">
+                                          <Text className="font-semibold text-sm">
+                                            {comment.user.name}
+                                          </Text>
+                                          <Text className="text-xs text-gray-500">
+                                            • {getTimeAgo(comment.createdAt)}
+                                          </Text>
+                                        </View>
+                                        <Text className="text-sm text-gray-800">
+                                          {comment.text}
+                                        </Text>
+                                      </View>
+                                    </View>
+                                  </TouchableOpacity>
+                               
+                                </View>
+                                
+                              ))
+                            ) : (
+                              <Text className="text-center text-gray-500 mt-2">
+                                No comments yet.
+                              </Text>
+                            )}
                           </View>
-                          <Text className="text-sm text-gray-800">
-                            {comment.text}
-                          </Text>
-                        </View>
+                             <View className="flex justify-end items-end">
+                             {item.length > 1 && (
+                               <TouchableOpacity
+                                 onPress={() => toggleExpand(userId)}>
+                                 <View className=" rounded-full p-2">
+                                   <Text className="text-xs font-semibold text-primary ">
+                                     {!isExpanded
+                                       ? `View ${
+                                           item.length - 1
+                                         } more comment${
+                                           item.length - 1 > 1 ? 's' : ''
+                                         }`
+                                       : 'View less comments'}
+                                   </Text>
+                                 </View>
+                               </TouchableOpacity>
+                             )}
+                           </View>
+                          </>
+
+                         
+
+                          //   <>
+                          //     {commentsToRender.map((comment, index) => (
+                          //       <TouchableOpacity
+                          //         key={index}
+                          //         // onPress={() => {
+                          //         //   setShowInput(!showInput);
+                          //         // }}
+                          //       >
+                          //         <View
+                          //           key={index}
+                          //           className="flex-row gap-2 mt-2">
+                          //           <Image
+                          //             source={
+                          //               hasError || !comment.imageUri
+                          //                 ? require('../assets/Images/default-image.png')
+                          //                 : {uri: comment.imageUri}
+                          //             }
+                          //             className="w-8 h-8 rounded-full"
+                          //             onError={() => setHasError(true)}
+                          //           />
+                          //           <View className="flex-1 bg-white p-3 rounded-lg">
+                          //             <View className="flex-row gap-1 items-center">
+                          //               <Text className="font-semibold text-sm">
+                          //                 {comment.user.name}
+                          //               </Text>
+                          //               <Text className="text-xs text-gray-500">
+                          //                 • {getTimeAgo(comment.createdAt)}
+                          //               </Text>
+                          //             </View>
+                          //             <Text className="text-sm text-gray-800">
+                          //               {comment.text}
+                          //             </Text>
+                          //           </View>
+                          //         </View>
+                          //       </TouchableOpacity>
+                          //     ))}
+
+                          //     <View className="flex justify-end items-end">
+                          //       {item.length > 1 && (
+                          //         <TouchableOpacity
+                          //           onPress={() => toggleExpand(userId)}>
+                          //           <View className=" rounded-full p-2">
+                          //             <Text className="text-xs font-semibold text-primary ">
+                          //               {!isExpanded
+                          //                 ? `View ${
+                          //                     item.length - 1
+                          //                   } more comment${
+                          //                     item.length - 1 > 1 ? 's' : ''
+                          //                   }`
+                          //                 : 'View less comments'}
+                          //             </Text>
+                          //           </View>
+                          //         </TouchableOpacity>
+                          //       )}
+                          //     </View>
+
+                          //   </>
+                        )}
                       </View>
-                    </TouchableOpacity>
-                  ))}
-
-                  <View className="flex justify-end items-end">
-                    {item.length > 1 && (
-                      <TouchableOpacity onPress={() => toggleExpand(userId)}>
-                        <View className=" rounded-full p-2">
-                          <Text className="text-xs font-semibold text-primary ">
-                            {!isExpanded
-                              ? `View ${item.length - 1} more comment${
-                                  item.length - 1 > 1 ? 's' : ''
-                                }`
-                              : 'View less comments'}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                    )}
+                    </ScrollView>
                   </View>
-                </View>
-              );
-            }}
-          />
+                );
+              }}
+            />
+            {showInput && (
+              
+              <View className="flex-row items-center space-x-2  border-t border-gray-300 pt-3">
+                <Image
+                  source={currentUser?.image}
+                  className="w-8 h-8 rounded-full"
+                />
+                <TextInput
+                  placeholder="Add a comment..."
+                  value={newComment}
+                  onChangeText={setNewComment}
+                  className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm"
+                />
+                <TouchableOpacity onPress={handleComment}>
+                  <Text className="text-[#441752] font-bold">Post</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        </View>
 
-          {/* Add Comment Input */}
-          {showInput && (
-            <View className="flex-row items-center space-x-2 mt-4 border-t border-gray-300 pt-3">
-              <Image
-                source={currentUser.image}
-                className="w-8 h-8 rounded-full"
-              />
-              <TextInput
-                placeholder="Add a comment..."
-                value={newComment}
-                onChangeText={setNewComment}
-                className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm"
-              />
-              <TouchableOpacity onPress={handleComment}>
-                <Text className="text-[#441752] font-bold">Post</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+        {/* Suggested Videos */}
+        <View className="flex-1 px-4  mt-3 py-2">
+          <Text className="text-xl font-bold text-[#441752] mb-4">
+            Suggested Videos
+          </Text>
+
+          <RelatedVideos videoId={videoData._id} />
         </View>
       </View>
-
-      {/* Suggested Videos */}
-      <View className="flex-1 px-4 py-2">
-        <Text className="text-xl font-bold text-[#441752] mb-4">
-          Suggested Videos
-        </Text>
-
-        {/* <FlatList
-          data={relatedVideos}
-          keyExtractor={item => item.id.toString()}
-          showsVerticalScrollIndicator={false}
-          renderItem={({item}) => (
-            <TouchableOpacity className="flex-row mb-5 bg-white">
-              <View className="relative">
-                <Image
-                  source={item.thumbnail}
-                  className="w-36 h-28 rounded-lg"
-                  resizeMode="cover"
-                />
-                <View className="absolute left-14 top-10 inset-0 flex justify-center items-center ">
-                  <Image
-                    tintColor={'white'}
-                    source={require('../assets/Images/play.png')}
-                    className="w-5 h-5 p-3 rounded-full opacity-80"
-                  />
-                </View>
-              </View>
-
-              <View className="ml-3 flex-1 justify-between py-3">
-                <Text
-                  className="text-base font-medium text-black"
-                  numberOfLines={2}>
-                  {item.title}
-                </Text>
-                <Text className="text-sm text-gray-600 mt-1">
-                  @{item.creator}
-                </Text>
-                <Text className="text-sm text-gray-500">
-                  {item.views} views • {item.timeAgo}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        /> */}
-
-        <RelatedVideos videoId={videoData._id} />
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 

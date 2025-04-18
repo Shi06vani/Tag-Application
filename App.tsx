@@ -41,6 +41,7 @@ import UserFollowing from './src/components/UserFollowing';
 import VideoPlayerScreen from './src/screens/VideoPlayerScreen';
 import VerifyEmail from './src/screens/VerififyEmail';
 import ForgetPassword from './src/screens/ForgetPassword';
+import UserChatlist from './src/screens/UserChatlist';
 
 const Stack = createNativeStackNavigator();
 
@@ -104,6 +105,7 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Videos" component={VideoPlayerScreen} />
         <Stack.Screen name="Verify-Email" component={VerifyEmail} />
         <Stack.Screen name="Forget-Password" component={ForgetPassword} />
+        <Stack.Screen name="User-Chatlist" component={UserChatlist} />
 
         {/* <Stack.Screen name="Shorts" component={Shorts} options={{ headerShown: true, }}/> */}
 

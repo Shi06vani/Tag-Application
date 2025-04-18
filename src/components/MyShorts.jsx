@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Video from 'react-native-video';
@@ -70,8 +71,13 @@ const MyShorts = () => {
 
   const handleDelete = async shortId => {
     const userId = await AsyncStorage.getItem('loginuser_id');
-    const response = deleteVideo(shortId, userId);
-    console.log(response, 'delete response');
+    const response = await deleteVideo(shortId, userId);
+       if (response) {
+          Alert.alert('Success', response.message);
+    
+        } else {
+          Alert.alert('Failed', response.error);
+        }
   };
 
   return (

@@ -24,31 +24,66 @@ const LoginScreen = () => {
       Alert.alert('Error', 'Please enter email and password');
       return;
     }
+    // try {
+    //   const response = await fetch(`${BASE_URL}/api/auth/login`, {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({email, password}),
+    //   });
+    //   const data = await response.json();
+    //   console.log('ddd', data.message);
+
+
+    //   if (response.ok === "false") {
+    //     Alert.alert('Failure', data.message);
+    //   }
+
+    //   Alert.alert('Success', 'Logged in successfully');
+    //   navigation.replace('Main');
+    //   await AsyncStorage.setItem('token', data?.token);
+    //   await AsyncStorage.setItem('loginuser_id', data?.user?.id);
+    //   await AsyncStorage.setItem('role', data?.user?.role);
+    //   await AsyncStorage.setItem('category', data?.user?.topic);
+
+
+    // } 
     try {
       const response = await fetch(`${BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({email, password}),
+        body: JSON.stringify({ email, password }),
       });
-
+    
       const data = await response.json();
-      console.log('logindata', data.token, data.user.id, data?.user?.topic);
-
+      console.log('Server response:', data);
+    
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        Alert.alert('Failure', data.message || 'Login failed');
+        return; // Stop further execution
       }
-
+    
+      // Success
       Alert.alert('Success', 'Logged in successfully');
+    
+      // Save credentials
+      await Promise.all([
+        AsyncStorage.setItem('token', data?.token),
+        AsyncStorage.setItem('loginuser_id', data?.user?.id),
+        AsyncStorage.setItem('role', data?.user?.role),
+        // AsyncStorage.setItem('category', data?.user?.topic),
+      ]);
+    
+      // Navigate to main screen
       navigation.replace('Main');
-      await AsyncStorage.setItem('token', data?.token);
-      await AsyncStorage.setItem('loginuser_id', data?.user?.id);
-      await AsyncStorage.setItem('role', data?.user?.role);
-      await AsyncStorage.setItem('category', data?.user?.topic);
     } catch (error) {
+      console.error('Login error:', error);
       Alert.alert('Login Failed', error.message);
     }
+   
   };
 
   return (
