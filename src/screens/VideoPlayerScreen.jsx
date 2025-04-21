@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -9,14 +9,17 @@ import {
   TextInput,
   Alert,
   ScrollView,
+  Dimensions,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import Video from 'react-native-video';
 import {getVideoLikeCount, likeVideo} from '../api/Likes';
 import {getVideoComments, postComment} from '../api/comment';
 import {groupByUser} from '../components/common/Comment';
-import {getRelatedVideos} from '../api/useVideo.jsx/Video';
+import {getRelatedVideos, isVideoLiked} from '../api/useVideo.jsx/Video';
 import {getTimeAgo} from '../components/common/GetTime';
 import RelatedVideos from '../components/RelatedVideos';
+import Orientation from 'react-native-orientation-locker';
 
 const suggestedVideos = [
   {
@@ -63,6 +66,7 @@ const formatDate = dateString => {
     return `${years} ${years === 1 ? 'year' : 'years'} ago`;
   }
 };
+
 const VideoPlayerScreen = ({route}) => {
   const [showDescription, setShowDescription] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -75,6 +79,57 @@ const VideoPlayerScreen = ({route}) => {
   const [hasError, setHasError] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [showInput, setShowInput] = useState(false);
+  const [isliked, setIsLiked] = useState(false);
+  const [userId, setUserId] = useState('');
+
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = () => {
+    if (isFullscreen) {
+      Orientation.lockToPortrait();
+    } else {
+      Orientation.lockToLandscape();
+    }
+    setIsFullscreen(!isFullscreen);
+  };
+
+  useEffect(() => {
+    return () => {
+      Orientation.lockToPortrait(); // Reset orientation on unmount
+    };
+  }, []);
+
+  const {height, width} = Dimensions.get('window');
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const id = await AsyncStorage.getItem('loginuser_id');
+      setUserId(id);
+    };
+
+    getUserId();
+  }, []);
+
+  useEffect(() => {
+    const checkIfLiked = async () => {
+      const userId = await AsyncStorage.getItem('loginuser_id');
+
+      if (!userId) {
+        Alert.alert('Failure', 'You are not login , first login');
+      }
+
+      try {
+        const result = await isVideoLiked(videoData._id, userId);
+
+        console.log('likes result', result.liked);
+        setIsLiked(result.liked);
+      } catch (error) {
+        console.error('Failed to check liked status', error);
+      }
+    };
+
+    checkIfLiked();
+  }, [videoData._id, userId]);
 
   useEffect(() => {
     fetchLikes();
@@ -84,7 +139,6 @@ const VideoPlayerScreen = ({route}) => {
   const fetchLikes = async () => {
     const likeData = await getVideoLikeCount(videoData._id);
     if (likeData) {
-      console.log('likeData', likeData.likeCount);
       setTotalLike(likeData?.likeCount);
     }
   };
@@ -109,7 +163,7 @@ const VideoPlayerScreen = ({route}) => {
   const handleLike = async videoId => {
     const userId = await AsyncStorage.getItem('loginuser_id');
     if (!userId) {
-      Alert.alert('Failure', 'Please Login First');
+      Alert.alert('Failure', 'Please Login First hhhh');
     }
     try {
       const result = await likeVideo(videoId, userId);
@@ -130,6 +184,7 @@ const VideoPlayerScreen = ({route}) => {
   const handleComment = async () => {
     const videoId = videoData._id;
     const userId = await AsyncStorage.getItem('loginuser_id');
+
     if (!userId) {
       Alert.alert('Failure', 'Please Login First');
     }
@@ -188,18 +243,44 @@ const VideoPlayerScreen = ({route}) => {
     );
   };
 
+  console.log('video data', groupedComments);
+
   return (
-    <ScrollView>
-      <View className="flex-1 bg-purple-50">
+    <ScrollView className="flex-1 bg-purple-50">
+      <View className="">
         {/* Video Player */}
-        <View className="w-full h-60 bg-black">
+        {/* <View className="w-full h-60 bg-black">
           <Video
             source={{uri: videoData.videoUrl}}
             style={{width: '100%', height: '100%'}}
             resizeMode="cover"
             controls
           />
+        </View> */}
+
+        <View
+          className={`bg-black ${
+            isFullscreen ? 'absolute z-50 top-0 left-0' : ''
+          }`}
+          style={{
+            width: isFullscreen ? height : '100%',
+            height: isFullscreen ? width: 240,
+          }}>
+          <Video
+            source={{uri: videoData.videoUrl}}
+            className="w-full h-full"
+            resizeMode="cover"
+            controls
+          />
+
+          {/* Fullscreen Button */}
+          <TouchableOpacity
+            onPress={toggleFullscreen}
+            className="absolute bottom-3 right-3 p-2 rounded-full bg-black/40">
+            <Text>{isFullscreen ? 'contract' : 'expand'}</Text>
+          </TouchableOpacity>
         </View>
+
         <View className="px-3">
           <View className="px-3">
             {/* Title */}
@@ -243,7 +324,7 @@ const VideoPlayerScreen = ({route}) => {
               }}>
               <Image
                 source={
-                  liked
+                  isliked
                     ? require('../assets/Images/heart-filled.png')
                     : require('../assets/Images/heart-outline.png')
                 }
@@ -305,128 +386,66 @@ const VideoPlayerScreen = ({route}) => {
                 return (
                   <View className="">
                     <ScrollView className={showInput ? `h-46` : 'h-0 '}>
-                      <View className="pb-4 pt-2">
+                      <View className=" ">
                         {showInput && (
                           <>
-                           <View className="pb-4 pt-2">
-                            {commentsToRender.length > 0 ? (
-                              commentsToRender.map((comment, index) => (
-                                <View>
-                                  <TouchableOpacity key={index}>
-                                    <View className="flex-row gap-2 mt-2">
-                                      <Image
-                                        source={
-                                          hasError || !comment.imageUri
-                                            ? require('../assets/Images/default-image.png')
-                                            : {uri: comment.imageUri}
-                                        }
-                                        className="w-8 h-8 rounded-full"
-                                        onError={() => setHasError(true)}
-                                      />
-                                      <View className="flex-1 bg-white p-3 rounded-lg">
-                                        <View className="flex-row gap-1 items-center">
-                                          <Text className="font-semibold text-sm">
-                                            {comment.user.name}
-                                          </Text>
-                                          <Text className="text-xs text-gray-500">
-                                            • {getTimeAgo(comment.createdAt)}
+                            <View className="pb-4">
+                              {commentsToRender.length > 0 ? (
+                                commentsToRender.map((comment, index) => (
+                                  <View key={index}>
+                                    <TouchableOpacity>
+                                      <View className="flex-row gap-2 mt-2">
+                                        <Image
+                                          source={
+                                            hasError || !comment?.user?.image
+                                              ? require('../assets/Images/default-image.png')
+                                              : {uri: comment.user.image}
+                                          }
+                                          className="w-8 h-8 rounded-full"
+                                          onError={() => setHasError(true)}
+                                        />
+                                        <View className="flex-1 bg-white p-3 rounded-lg">
+                                          <View className="flex-row gap-1 items-center">
+                                            <Text className="font-semibold text-sm">
+                                              {comment?.user?.name}
+                                            </Text>
+                                            <Text className="text-xs text-gray-500">
+                                              • {getTimeAgo(comment.createdAt)}
+                                            </Text>
+                                          </View>
+                                          <Text className="text-sm text-gray-800">
+                                            {comment.text}
                                           </Text>
                                         </View>
-                                        <Text className="text-sm text-gray-800">
-                                          {comment.text}
-                                        </Text>
                                       </View>
-                                    </View>
-                                  </TouchableOpacity>
-                               
-                                </View>
-                                
-                              ))
-                            ) : (
-                              <Text className="text-center text-gray-500 mt-2">
-                                No comments yet.
-                              </Text>
-                            )}
-                          </View>
-                             <View className="flex justify-end items-end">
-                             {item.length > 1 && (
-                               <TouchableOpacity
-                                 onPress={() => toggleExpand(userId)}>
-                                 <View className=" rounded-full p-2">
-                                   <Text className="text-xs font-semibold text-primary ">
-                                     {!isExpanded
-                                       ? `View ${
-                                           item.length - 1
-                                         } more comment${
-                                           item.length - 1 > 1 ? 's' : ''
-                                         }`
-                                       : 'View less comments'}
-                                   </Text>
-                                 </View>
-                               </TouchableOpacity>
-                             )}
-                           </View>
+                                    </TouchableOpacity>
+                                  </View>
+                                ))
+                              ) : (
+                                <Text className="text-center text-gray-500 mt-2">
+                                  No comments yet.
+                                </Text>
+                              )}
+                            </View>
+                            <View className="flex justify-end items-end">
+                              {item.length > 1 && (
+                                <TouchableOpacity
+                                  onPress={() => toggleExpand(userId)}>
+                                  <View className=" rounded-full p-2">
+                                    <Text className="text-xs font-semibold text-primary ">
+                                      {!isExpanded
+                                        ? `View ${
+                                            item.length - 1
+                                          } more comment${
+                                            item.length - 1 > 1 ? 's' : ''
+                                          }`
+                                        : 'View less comments'}
+                                    </Text>
+                                  </View>
+                                </TouchableOpacity>
+                              )}
+                            </View>
                           </>
-
-                         
-
-                          //   <>
-                          //     {commentsToRender.map((comment, index) => (
-                          //       <TouchableOpacity
-                          //         key={index}
-                          //         // onPress={() => {
-                          //         //   setShowInput(!showInput);
-                          //         // }}
-                          //       >
-                          //         <View
-                          //           key={index}
-                          //           className="flex-row gap-2 mt-2">
-                          //           <Image
-                          //             source={
-                          //               hasError || !comment.imageUri
-                          //                 ? require('../assets/Images/default-image.png')
-                          //                 : {uri: comment.imageUri}
-                          //             }
-                          //             className="w-8 h-8 rounded-full"
-                          //             onError={() => setHasError(true)}
-                          //           />
-                          //           <View className="flex-1 bg-white p-3 rounded-lg">
-                          //             <View className="flex-row gap-1 items-center">
-                          //               <Text className="font-semibold text-sm">
-                          //                 {comment.user.name}
-                          //               </Text>
-                          //               <Text className="text-xs text-gray-500">
-                          //                 • {getTimeAgo(comment.createdAt)}
-                          //               </Text>
-                          //             </View>
-                          //             <Text className="text-sm text-gray-800">
-                          //               {comment.text}
-                          //             </Text>
-                          //           </View>
-                          //         </View>
-                          //       </TouchableOpacity>
-                          //     ))}
-
-                          //     <View className="flex justify-end items-end">
-                          //       {item.length > 1 && (
-                          //         <TouchableOpacity
-                          //           onPress={() => toggleExpand(userId)}>
-                          //           <View className=" rounded-full p-2">
-                          //             <Text className="text-xs font-semibold text-primary ">
-                          //               {!isExpanded
-                          //                 ? `View ${
-                          //                     item.length - 1
-                          //                   } more comment${
-                          //                     item.length - 1 > 1 ? 's' : ''
-                          //                   }`
-                          //                 : 'View less comments'}
-                          //             </Text>
-                          //           </View>
-                          //         </TouchableOpacity>
-                          //       )}
-                          //     </View>
-
-                          //   </>
                         )}
                       </View>
                     </ScrollView>
@@ -435,8 +454,7 @@ const VideoPlayerScreen = ({route}) => {
               }}
             />
             {showInput && (
-              
-              <View className="flex-row items-center space-x-2  border-t border-gray-300 pt-3">
+              <View className="flex-row items-center space-x-2 mt-2 border-t border-gray-300 pt-3">
                 <Image
                   source={currentUser?.image}
                   className="w-8 h-8 rounded-full"
@@ -469,3 +487,61 @@ const VideoPlayerScreen = ({route}) => {
 };
 
 export default VideoPlayerScreen;
+
+//   <>
+//     {commentsToRender.map((comment, index) => (
+//       <TouchableOpacity
+//         key={index}
+//         // onPress={() => {
+//         //   setShowInput(!showInput);
+//         // }}
+//       >
+//         <View
+//           key={index}
+//           className="flex-row gap-2 mt-2">
+//           <Image
+//             source={
+//               hasError || !comment.imageUri
+//                 ? require('../assets/Images/default-image.png')
+//                 : {uri: comment.imageUri}
+//             }
+//             className="w-8 h-8 rounded-full"
+//             onError={() => setHasError(true)}
+//           />
+//           <View className="flex-1 bg-white p-3 rounded-lg">
+//             <View className="flex-row gap-1 items-center">
+//               <Text className="font-semibold text-sm">
+//                 {comment.user.name}
+//               </Text>
+//               <Text className="text-xs text-gray-500">
+//                 • {getTimeAgo(comment.createdAt)}
+//               </Text>
+//             </View>
+//             <Text className="text-sm text-gray-800">
+//               {comment.text}
+//             </Text>
+//           </View>
+//         </View>
+//       </TouchableOpacity>
+//     ))}
+
+//     <View className="flex justify-end items-end">
+//       {item.length > 1 && (
+//         <TouchableOpacity
+//           onPress={() => toggleExpand(userId)}>
+//           <View className=" rounded-full p-2">
+//             <Text className="text-xs font-semibold text-primary ">
+//               {!isExpanded
+//                 ? `View ${
+//                     item.length - 1
+//                   } more comment${
+//                     item.length - 1 > 1 ? 's' : ''
+//                   }`
+//                 : 'View less comments'}
+//             </Text>
+//           </View>
+//         </TouchableOpacity>
+//       )}
+//     </View>
+
+//   </>

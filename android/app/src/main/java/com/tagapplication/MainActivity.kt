@@ -1,4 +1,4 @@
-package com.youtubeproject
+package com.tag.tagapplication
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

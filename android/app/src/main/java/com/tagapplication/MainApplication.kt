@@ -1,4 +1,4 @@
-package com.youtubeproject
+package com.tag.tagapplication
 
 import android.app.Application
 import com.facebook.react.PackageList

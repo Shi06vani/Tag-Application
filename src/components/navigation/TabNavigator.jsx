@@ -57,10 +57,7 @@ const TabNavigator = () => {
             }
 
             return (
-              // <Image
-              //   source={iconSource}
-              //   style={{width: 35, height: 35, resizeMode: 'contain'}}
-              // />
+           
               <View
                 style={{
                   width:48,

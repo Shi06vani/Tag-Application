@@ -215,7 +215,7 @@ const BrandRequirementScreen = ({navigation}) => {
                   <TouchableOpacity
                     className="bg-primary p-2.5 rounded-lg mt-3 items-center "
                     onPress={() =>
-                      navigation.navigate('User-Chatlist', {
+                      navigation.navigate('Chat', {
                         brandid: item?.brandId?._id,
                       })
                     }>

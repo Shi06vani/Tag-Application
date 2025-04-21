@@ -436,7 +436,7 @@ const Shorts = () => {
         response.json(),
       );
     } catch (error) {
-      Alert.alert('Failed', error.message);
+      // Alert.alert('Failed', error.message);
       console.error('Error tracking video view:', error);
     }
   };
@@ -527,6 +527,8 @@ const Shorts = () => {
         : [...prev, userId],
     );
   };
+console.log("shaort video",videos)
+
 
   return (
     <FlatList
@@ -617,12 +619,18 @@ const Shorts = () => {
 
                   {/* Creator Info */}
                   <View className="flex-row items-center space-x-2">
+                 
                     <Image
-                      source={require('../assets/Images/user.png')}
+                      source={
+                        item.creatorId?.image
+                          ? {uri: item.creatorId?.image}
+                          : require('../assets/Images/default-image.png')
+                      }
                       className="w-7 h-7 rounded-full"
                     />
+
                     <Text className="text-white text-sm font-medium">
-                      @{item.creatorId?.name}
+                      {`@ ${item?.creatorId?.name ||""}`} 
                     </Text>
                   </View>
 

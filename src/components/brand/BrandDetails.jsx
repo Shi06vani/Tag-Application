@@ -459,9 +459,9 @@ const BrandDetails = ({route}) => {
   const handleFollow = async () => {
     const result = await followUser(loginUserId, brandid);
 
-     if(result){
+    if (result) {
       setIsFollowing(true);
-     }
+    }
     console.log('fllow result', result);
 
     if (!result.error) {
@@ -472,10 +472,10 @@ const BrandDetails = ({route}) => {
 
   const handleUnFollow = async () => {
     const result = await unfollowUser(loginUserId, brandid);
-    
-    if(result){
+
+    if (result) {
       setIsFollowing(false);
-     }
+    }
     if (!result.error) {
     } else {
       console.error('Error unfollowing user:', result.error);
@@ -563,7 +563,6 @@ const BrandDetails = ({route}) => {
     CheckUserFollowing();
   }, [creatorId, userId]);
 
-  console.log('loginUserId', loginUserId);
 
   return (
     <ScrollView className="bg-white h-full flex-1">
@@ -575,10 +574,34 @@ const BrandDetails = ({route}) => {
         ) : (
           <ScrollView className="flex-1">
             <View className="relative h-full">
-              <Image
-                source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}}
-                className="w-32 h-32 rounded-full border self-center mb-4"
-              />
+              <View className="relative">
+                {/* <Image
+                  source={{
+                    uri: 'https://randomuser.me/api/portraits/men/1.jpg',
+                  }}
+                  className="w-32 h-32   rounded-full border self-center mb-4"
+                /> */}
+                <Image
+                  source={
+                    brand?.image
+                      ? {uri: brand?.image}
+                      : require('../../assets/Images/default-image.png')
+                  }
+                  className="w-32 h-32   rounded-full border self-center mb-4"
+                />
+                {brand.isVerified ? (
+                  <View className=" absolute right-32 bottom-4">
+                    <Image
+                      tintColor={'#441752'}
+                      className="w-7 h-7"
+                      source={require('../../assets/Images/check-mark.png')}
+                    />
+                  </View>
+                ) : (
+                  ''
+                )}
+              </View>
+
               <View className="">
                 <View className="flex-row justify-between">
                   {isFollowing ? (
@@ -637,7 +660,7 @@ const BrandDetails = ({route}) => {
                   Topic: {brand?.topic || 'N/A'}
                 </Text>
               </View>
-              <View className="flex border-dotted border-primary py-5 mx-5 mb-4">
+              <View className="flex border-dotted border-primary py-5  mb-1">
                 <TouchableOpacity
                   className="bg-[#441752] rounded-full cursor-pointer py-2 px-6"
                   onPress={() =>
@@ -647,10 +670,10 @@ const BrandDetails = ({route}) => {
                   }>
                   <Text className="text-white text-base text-center font-bold">
                     Upload Video
-                  </Text>
+                  </Text>  
                 </TouchableOpacity>
               </View>
-              <View className="flex-row justify-around gap-1 items-center py-3">
+              <View className="flex-row justify-around gap-1 items-center ">
                 <TouchableOpacity
                   className={`px-4 py-2.5 rounded-full w-[45%] ${
                     activeTab === 'Videos' ? 'bg-[#441752]' : 'bg-accent'

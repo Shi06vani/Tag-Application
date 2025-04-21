@@ -15,10 +15,11 @@ import {getAllPostedVideos} from '../api/useVideo.jsx/Video.jsx';
 import {useNavigation} from '@react-navigation/native';
 import VideoPlayer from 'react-native-video-controls';
 import LinearGradient from 'react-native-linear-gradient';
+import SearchInput from '../components/common/SearchInput.jsx';
 const Home = () => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const[isVideoPressed, setIsVideoPressed]=  useState(false)
+  const [isVideoPressed, setIsVideoPressed] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -93,21 +94,23 @@ const Home = () => {
     }
   };
 
-
-  console.log("home video",videos)
-
+  console.log('home video', videos);
 
   return (
     <View className="bg-white flex-1">
-      <View className="flex flex-row items-center pt-20 pb-4  ">
+      <View className="pt-24 pb-2">
+        <SearchInput />
+      </View>
+     
+      <View className="flex flex-row items-center  pb-3  ">
         <View className="w-full">
           <TagList />
         </View>
       </View>
 
-      <View className="bg-white px-3 pb-10">
+      <View className="bg-white px-3 flex-1">
         {loading ? (
-          <View className=" h-full flex-1 justify-center items-center">
+          <View className="  flex-1 justify-center items-center">
             <ActivityIndicator size="large" color="#441752" />
           </View>
         ) : (
@@ -139,8 +142,12 @@ const Home = () => {
                             onPlay={() => trackVideoView(item._id, item)}
                           />
                         </View> */}
-                      <View className='relative'>
-                        <TouchableOpacity     onPress={() => {setIsVideoPressed(!isVideoPressed);trackVideoView(item._id, item)}}>
+                      <View className="relative">
+                        <TouchableOpacity
+                          onPress={() => {
+                            setIsVideoPressed(!isVideoPressed);
+                            trackVideoView(item._id, item);
+                          }}>
                           <Image
                             style={{width: '100%', height: 200}}
                             source={require('../assets/Images/thnumnail2.jpg')}
@@ -148,13 +155,15 @@ const Home = () => {
                         </TouchableOpacity>
                         <View className="  absolute top-20 left-40 ">
                           <TouchableOpacity
-                          onPress={() => {setIsVideoPressed(!isVideoPressed);trackVideoView(item._id, item)}}
-                        >
+                            onPress={() => {
+                              setIsVideoPressed(!isVideoPressed);
+                              trackVideoView(item._id, item);
+                            }}>
                             <View className="bg-black opacity-75 p-2 rounded-full">
                               <Image
                                 tintColor={'white'}
                                 className=" w-6 h-6"
-                                source={   require('../assets/Images/play.png')}
+                                source={require('../assets/Images/play.png')}
 
                                 // source={  isVideoPressed ? require('../assets/Images/pause.png'): require("../assets/Images/play.png")}
                               />
@@ -181,7 +190,11 @@ const Home = () => {
                             }
                             className="mr-3">
                             <Image
-                              source={ item?.image ? item?.image :   require('../assets/Images/default-image.png')}
+                              source={
+                                item?.creatorId?.image
+                                  ? {uri: item?.creatorId?.image}
+                                  : require('../assets/Images/default-image.png')
+                              }
                               className="w-10 h-10 rounded-full"
                             />
                           </TouchableOpacity>

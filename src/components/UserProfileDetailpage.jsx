@@ -130,8 +130,12 @@ export default function UserProfileDetailpage({route}) {
           <>
             <View className="items-center mb-5 rounded-b-full bg-primary py-8">
               <Image
-                source={require('../assets/Images/user.png')}
-                className="w-24 h-24 rounded-full"
+                source={
+                  userData?.image
+                    ? {uri: userData?.image}
+                    : require('../assets/Images/default-image.png')
+                }
+                className="w-24 h-24 rounded-full "
               />
               <Text className="text-xl font-bold text-white mt-3">
                 {userData?.name}
@@ -283,11 +287,11 @@ export default function UserProfileDetailpage({route}) {
         </ScrollView>
       ) : (
         <View className="flex-1 items-center justify-center">
-         <ActivityIndicator
-        size="large"
-        color="#441752"
-        className="flex-1 justify-center items-center"
-      />
+          <ActivityIndicator
+            size="large"
+            color="#441752"
+            className="flex-1 justify-center items-center"
+          />
         </View>
       )}
     </View>

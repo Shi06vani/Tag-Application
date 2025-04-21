@@ -29,8 +29,10 @@ const Leaderboard = () => {
     fetchData();
   }, []);
 
+  console.log()
+
   return (
-    <View className="flex-1 bg-purple-100 p-[15px]">
+    <View className="flex-1 bg-purple-50 p-[15px]">
       <Text className="text-2xl font-bold text-center text-primary mb-4">
         Top Creators
       </Text>
@@ -46,11 +48,16 @@ const Leaderboard = () => {
             leaderboard.map((creator, index) => (
               <View
                 key={creator.creatorId}
-                className="flex-row items-center justify-between p-2 border-b border-purple-50">
-                <View className="flex-row items-start">
-                <Image
-                    source={require('../assets/Images/user.png')}
-                    className="w-12 h-12 rounded-full mr-4"
+                className="flex-row  justify-between p-2 border-b border-purple-50">
+                <View className="flex-row ">
+                
+                       <Image
+                    source={
+                      creator?.image
+                        ? {uri:creator?.image}
+                        : require('../assets/Images/default-image.png')
+                    }
+                    className="w-10 h-10 rounded-full mr-4"
                   />
                   <View className='flex-col'>
                 
@@ -71,8 +78,8 @@ const Leaderboard = () => {
                 
 
                 </View>
-                <Text className="text-xl font-bold text-purple-900">
-                  {creator.totalPoints} points
+                <Text className="text-base font-bold text-purple-900">
+                  {creator.totalPoints || 0} points
                 </Text>
               </View>
             ))

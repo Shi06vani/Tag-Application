@@ -54,3 +54,33 @@ export const deleteVideo = async (videoId, userId) => {
     return { error: error.message };
   }
 };
+
+
+export const isVideoLiked = async (videoId, userId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/social/videos/${videoId}/isliked/${userId}`);
+    return response.data; // Assume backend returns { liked: true/false }
+  } catch (error) {
+    console.error('Error checking if video is liked:', error);
+    throw error;
+  }
+};
+
+
+export const searchVideos = async (searchText) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/api/videos/search`, {
+      search: searchText
+    });
+
+    if (response.data) {
+      return response.data; 
+    } else {
+    
+      return console.warn('No videos found');
+    }
+  } catch (error) {
+    return  console.error('Search API error:', error);
+    ;
+  }
+};

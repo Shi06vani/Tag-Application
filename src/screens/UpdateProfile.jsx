@@ -69,12 +69,7 @@ const UpdateProfileScreen = ({route}) => {
       Alert.alert('Please select an image');
       return;
     }
-    if (
-      !userData?.name ||
-      !userData?.email ||
-      !userData?.bio
-      
-    ) {
+    if (!userData?.name || !userData?.email || !userData?.bio) {
       Alert.alert('Please fill out all required fields');
       return;
     }
@@ -127,16 +122,71 @@ const UpdateProfileScreen = ({route}) => {
     }
   };
 
+  console.log(data.image, 'Data');
+
   return (
-    <ScrollView className='flex-1 bg-white'>
+    <ScrollView className="flex-1 bg-white">
       <View className=" p-6">
-        <View className="mb-5 flex justify-center items-center">
+        {/* <View className="mb-5 flex justify-center items-center">
           <TouchableOpacity
             onPress={pickImage}
             className="border-2 border-dashed border-primary rounded-full w-40 bg-purple-50 h-40 items-center justify-center overflow-hidden">
             {selectedImage ? (
               <Image
-                source={{uri: selectedImage.uri}}
+                source={
+                  data?.image
+                    ? {uri: data?.image}
+                   
+                    : require('../assets/Images/default-image.png')
+                }
+                // source={{uri: selectedImage.uri}}
+                className="w-40 h-40 rounded-full"
+                resizeMode="cover"
+              />
+            ) : (
+              <View className="flex-col items-center gap-2">
+                <Image
+                  tintColor={'#441752'}
+                  className="w-12 h-12"
+                  source={require('../assets/Images/camera.png')}
+                />
+                <Text className="text-primary text-sm font-medium">
+                  Tap to select image
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity> 
+          {  data && (
+             <View className='my-3'>
+             <TouchableOpacity
+               onPress={pickImage}
+               className="flex-row  gap-2 items-center">
+               <Image
+                 tintColor={'#441752'}
+                 className="w-6 h-6"
+                 source={require('../assets/Images/camera.png')}
+               />
+               <Text className="text-xl text-primary font-bold  text-center">
+                 Update Image
+               </Text>
+             </TouchableOpacity>
+             </View>
+          )
+
+          }
+        </View> */}
+
+        <View className="mb-5 flex justify-center items-center">
+          <TouchableOpacity
+            onPress={pickImage}
+            className="border-2 border-dashed border-primary rounded-full w-40 bg-purple-50 h-40 items-center justify-center overflow-hidden">
+            {selectedImage?.uri || data?.image ? (
+              <Image
+                source={
+                  selectedImage?.uri
+                    ? {uri: selectedImage.uri}
+                    : {uri: data.image} 
+                }
                 className="w-40 h-40 rounded-full"
                 resizeMode="cover"
               />
@@ -153,10 +203,25 @@ const UpdateProfileScreen = ({route}) => {
               </View>
             )}
           </TouchableOpacity>
-          <Text className="text-xl text-primary font-bold my-4 text-center">
-            Select Image
-          </Text>
+
+          {data && (
+            <View className="my-3">
+              <TouchableOpacity
+                onPress={pickImage}
+                className="flex-row gap-2 items-center">
+                <Image
+                  tintColor={'#441752'}
+                  className="w-6 h-6"
+                  source={require('../assets/Images/camera.png')}
+                />
+                <Text className="text-xl text-primary font-bold text-center">
+                  Update Image
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
+
         <Text className="text-primary mb-1 text-base font-semibold">Name</Text>
         <TextInput
           className="border-2 border-secondary p-3 shadow-xl mb-4 text-base rounded-full focus:outline-none focus:ring-2 focus:ring-primary"

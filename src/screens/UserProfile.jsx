@@ -121,7 +121,7 @@ const UserProfile = () => {
               <StyledView className=" p-3 rounded-lg shadow-md">
                 <StyledView className="flex-row items-center space-x-3">
                   <Image
-                    source={{uri: userData?.image}}
+                    source={  userData?.image?  {   uri: userData?.image} : require("../assets/Images/default-image.png")}
                     className="w-12 h-12 rounded-full mr-3"
                   />
 

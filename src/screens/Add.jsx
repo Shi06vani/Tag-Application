@@ -19,7 +19,7 @@ import Video from 'react-native-video';
 const API_URL = 'https://tag-backend.vercel.app/api';
 
 const Add = () => {
-  const [activeTab, setActiveTab] = useState('Long Shorts');
+  const [activeTab, setActiveTab] = useState('Long Video');
   const [videoUri, setVideoUri] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [title, setTitle] = useState('');
@@ -99,16 +99,22 @@ const Add = () => {
       return;
     }
 
+    console.log(categoryActiveTab, 'categoryActiveTab');
+
     const missingFields = [];
-    if (!title) missingFields.push('Title');
-    if (!description) missingFields.push('Description');
+    // if (!title) missingFields.push('Title');
+    // if (!description) missingFields.push('Description');
+    if (!title || title.trim() === '') missingFields.push('Title');
+    if (!description || description.trim() === '')
+      missingFields.push('Description');
+
     if (!categoryActiveTab) missingFields.push('Category');
     if (!creatorId) missingFields.push('Creator ID');
 
     if (missingFields.length > 0) {
       Alert.alert(
         'Missing Fields',
-        `Please fill the following field(s):\n${missingFields.join(', ')}`,
+        `Please fill the following field and check no sapce arrount text \n${missingFields.join(', ')}`,
       );
       return;
     }
@@ -155,7 +161,7 @@ const Add = () => {
   console.log(videoUri, 'videoUri');
 
   return (
-    <ScrollView className='flex-1 bg-purple-50'>
+    <ScrollView className="flex-1 bg-purple-50">
       <View className=" my-16  p-4">
         <Text className="text-xl font-bold mb-3 text-center">
           Upload or Record {activeTab}
@@ -166,10 +172,10 @@ const Add = () => {
           <View className="flex-row gap-6">
             <TouchableOpacity
               className={`px-4 py-2 rounded-full ${
-                activeTab === 'Long Shorts' ? 'bg-[#441752]' : 'bg-[#A888B5]'
+                activeTab === 'Long Video' ? 'bg-[#441752]' : 'bg-[#A888B5]'
               }`}
-              onPress={() => setActiveTab('Long Shorts')}>
-              <Text className="text-white font-bold">Long Shorts</Text>
+              onPress={() => setActiveTab('Long Video')}>
+              <Text className="text-white font-bold">Long Video</Text>
             </TouchableOpacity>
             <TouchableOpacity
               className={`px-4 py-2 rounded-full ${
@@ -210,7 +216,7 @@ const Add = () => {
           </ScrollView>
         </View>
 
-        {activeTab === 'Long Shorts' && (
+        {activeTab === 'Long Video' && (
           <View className="my-10  ">
             {videoUri && (
               <View className="">
@@ -304,7 +310,7 @@ const Add = () => {
 
         {activeTab === 'Short Shorts' && (
           <>
-            <ShortVideoUpload />
+            <ShortVideoUpload categoryActiveTab={categoryActiveTab} />
           </>
         )}
       </View>

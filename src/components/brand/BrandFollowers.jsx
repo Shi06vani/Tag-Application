@@ -59,7 +59,7 @@ const BrandFollowers = ({route}) => {
                 // source={{ uri: item.image }}
                 source={
                   item?.image
-                    ? { uri: item.image }
+                    ? { uri: item?.image }
                     : require('../../assets/Images/default-image.png') // replace with your actual path
                 }
                 className="w-10 h-10 rounded-full"

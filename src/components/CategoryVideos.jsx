@@ -66,9 +66,9 @@ const CategoryVideos = ({route}) => {
   }
 
   return (
-    <ScrollView
+    <ScrollView 
       contentContainerStyle={{paddingBottom: 30}}
-      className="px-4 bg-white">
+      className="px-4 bg-purple-50 flex-1">
       <StyledText className="text-xl font-bold text-center text-purple-900 my-6">
         {category} Videos
       </StyledText>
@@ -78,7 +78,7 @@ const CategoryVideos = ({route}) => {
         keyExtractor={item => item._id}
         scrollEnabled={false}
         renderItem={({item}) => (
-          <StyledView className="bg-purple-50 rounded-2xl mb-5 p-4 shadow-2xl ">
+          <StyledView className="bg-primary rounded-2xl mb-5 p-4 shadow-2xl ">
             {/* Video Player */}
             <Video
               source={{uri: item.videoUrl}}
@@ -95,18 +95,25 @@ const CategoryVideos = ({route}) => {
 
             {/* Video Info */}
             <StyledView className="mt-4">
-              <StyledText className="text-lg font-semibold text-black">
+              <View className='flex-row gap-3 items-center'>
+              <StyledText className="text-lg font-semibold text-white">
                 {item.title}
               </StyledText>
-              <StyledText className="text-sm text-gray-700 mt-1">
+              <StyledText className="text-xs px-4 py-1 bg-accent opacity-60 rounded-full text-white">
+                {item.category}
+              </StyledText>
+              </View>
+           
+              <StyledText className="text-sm text-gray-200 mt-1">
                 {item.description}
               </StyledText>
-              <StyledText className="text-sm text-gray-500 mt-2">
-                Creator: {item?.creatorId?.name || 'Unknown'}
+              <View className='flex-row gap-3 items-center'>
+              <StyledText className="text-sm text-gray-400 mt-2">
+                {item?.creatorId?.name || 'Unknown'}
               </StyledText>
-              <StyledText className="text-xs text-gray-400">
-                Category: {item.category}
-              </StyledText>
+           
+              </View>
+             
             </StyledView>
           </StyledView>
         )}

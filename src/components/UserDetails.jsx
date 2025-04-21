@@ -76,9 +76,9 @@ export default function UserDetails({route}) {
 
   const handleFollow = async () => {
     const result = await followUser(loginUserId, creatorId);
-    if(result){
+    if (result) {
       setIsFollowing(true);
-     }
+    }
     if (!result.error) {
     } else {
       console.error('Error following user:', result.error);
@@ -87,9 +87,9 @@ export default function UserDetails({route}) {
 
   const handleUnFollow = async () => {
     const result = await unfollowUser(loginUserId, creatorId);
-    if(result){
+    if (result) {
       setIsFollowing(false);
-     }
+    }
     if (!result.error) {
     } else {
       console.error('Error unfollowing user:', result.error);
@@ -201,7 +201,7 @@ export default function UserDetails({route}) {
   console.log('video user shorts', shorts);
 
   return (
-    <ScrollView className="flex-1">
+    <ScrollView className="flex-1 bg-white">
       <View>
         <LinearGradient
           colors={['#6a0080', '#441752']}
@@ -221,32 +221,45 @@ export default function UserDetails({route}) {
       ;
       <View className="p-5">
         {/* Role & Topic Card */}
-        <View className="bg-purple-50 p-5 rounded-2xl shadow-md mb-4 flex-row justify-between">
-          <View>
-            <View className="flex-row items-center">
+        <View className="bg-purple-50 p-5 rounded-2xl shadow-md mb-4 flex-col justify-between">
+          <View className="flex-row justify-between items-center ">
+            <View className="flex-row   items-center">
               <Text className="text-black font-semibold ml-2">
                 Role:{' '}
                 {userData?.role.charAt(0).toUpperCase() +
                   userData?.role.slice(1)}
               </Text>
             </View>
-            <Text className="text-gray-600 mt-1">Topic: {userData?.topic}</Text>
+            
+            <Text className="text-primary font-bold text-xs  px-2 py-1 rounded-full "> Topic: {userData?.topic}</Text>
           </View>
-
-          <View className="shadow-lg">
-            {isFollowing ? (
-              <TouchableOpacity onPress={handleUnFollow} className="">
-                <Text className="bg-secondary text-sm font-bold px-4 py-2 rounded-md text-white  cursor-pointer">
-                  UnFollow
-                </Text>
+          <View className='flex-row items-center justify-between gap-3 py-2'>
+            <View className="shadow-lg ">
+              {isFollowing ? (
+                <TouchableOpacity onPress={handleUnFollow} className="">
+                  <Text className="bg-secondary text-sm font-bold px-4 py-2 rounded-md text-white  cursor-pointer">
+                    UnFollow
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity onPress={handleFollow}>
+                  <Text className="text-sm font-bold px-4 py-2 text-center rounded-full text-white bg-primary cursor-pointer">
+                    Follow
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <View className="">
+              <TouchableOpacity
+                className="bg-primary flex-row px-3 py-3 items-center   rounded-full "
+                onPress={() =>
+                  navigation.navigate('Chat', {
+                    brandid: userData?._id,
+                  })
+                }>
+                  <Image tintColor={"white"} source={require("../assets/Images/chat-icon.png")} className='w-5 h-5'/>
               </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={handleFollow}>
-                <Text className="text-sm font-bold px-4 py-2 rounded-md text-white bg-primary cursor-pointer">
-                  Follow
-                </Text>
-              </TouchableOpacity>
-            )}
+            </View>
           </View>
         </View>
 
