@@ -17,23 +17,21 @@ import Video from 'react-native-video';
 
 const API_URL = 'https://tag-backend.vercel.app/api';
 
-const ShortVideoUpload = ({categoryActiveTab}) => {
+const ShortVideoUpload = () => {
   const [videoUri, setVideoUri] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [creatorId, setCreatorId] = useState(null);
+  
   // const [category, setCategory] = useState(null);
   const navigation = useNavigation();
-
-  const category = categoryActiveTab;
 
   useEffect(() => {
     const fetchUserId = async () => {
       try {
         const id = await AsyncStorage.getItem('loginuser_id');
-        // const category = await AsyncStorage.getItem('category');
-        // setCategory(category);
+
         if (id) setCreatorId(id);
       } catch (error) {
         console.error('Error retrieving user ID:', error);
@@ -72,10 +70,8 @@ const ShortVideoUpload = ({categoryActiveTab}) => {
     const missingFields = [];
     // if (!title) missingFields.push('Title');
     // if (!description) missingFields.push('Description');
-    if (!title || title.trim() === '') missingFields.push('Title');
-    if (!description || description.trim() === '')
-      missingFields.push('Description');
-    if (!category) missingFields.push('Category');
+    if (!title) missingFields.push('Title');
+    if (!description) missingFields.push('Description');
     if (!creatorId) missingFields.push('Creator ID');
 
     if (missingFields.length > 0) {
@@ -94,9 +90,9 @@ const ShortVideoUpload = ({categoryActiveTab}) => {
       name: 'uploaded_video.mp4',
       type: 'video/mp4',
     });
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('category', category);
+    formData.append('title', title.trim());
+    formData.append('description', description.trim());
+    // formData.append('category', category);
     formData.append('type', 'short');
     formData.append('creatorId', creatorId);
 
@@ -109,7 +105,7 @@ const ShortVideoUpload = ({categoryActiveTab}) => {
         },
       );
 
-      Alert.alert('Success', response.data.message);
+      Alert.alert('Success', "Video Uploaded sucessfully");
       setVideoUri(null);
       navigation.replace('Main');
     } catch (error) {
@@ -119,10 +115,6 @@ const ShortVideoUpload = ({categoryActiveTab}) => {
       setIsUploading(false);
     }
   };
-
-  console.log('data', title);
-  console.log('data', description);
-  console.log('22222@@', category);
 
   return (
     <ScrollView className="flex-1 bg-purple-50">

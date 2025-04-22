@@ -101,18 +101,18 @@ const Home = () => {
       <View className="pt-24 pb-2">
         <SearchInput />
       </View>
-     
+
       <View className="flex flex-row items-center  pb-3  ">
         <View className="w-full">
           <TagList />
         </View>
       </View>
 
-      <View className="bg-white px-3 flex-1">
+      <View className="bg-white px-3 pb-28 h-full">
         {loading ? (
-          <View className="  flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="#441752" />
-          </View>
+           <View className="flex-1 justify-center items-center">
+           <ActivityIndicator size="large" color="#441752" />
+         </View>
         ) : (
           <FlatList
             data={videos}
@@ -203,7 +203,7 @@ const Home = () => {
                             <Text
                               className="text-base text-white font-bold mb-0.5"
                               numberOfLines={2}>
-                              {item?.title || 'Untitled Video'}
+                              {item?.title || ''}
                             </Text>
 
                             <Text className="text-sm text-gray-200">
@@ -211,13 +211,6 @@ const Home = () => {
                               {formatDate(item?.createdAt)}
                             </Text>
                           </View>
-
-                          {/* <TouchableOpacity>
-                          <Image
-                          tintColor={"white"}
-                            source={require('../assets/Images/more.png')}
-                          />
-                        </TouchableOpacity> */}
                         </View>
                       </LinearGradient>
                     </View>
@@ -226,9 +219,24 @@ const Home = () => {
               );
             }}
             nestedScrollEnabled={true}
+            ListEmptyComponent={
+              <View className="flex-1 items-center justify-center py-20">
+                <Image
+                  source={require('../assets/Images/out-of-stock.png')}
+                  // Optional: Add your own placeholder image
+                  className="w-24 h-24 mb-4 opacity-60"
+                  resizeMode="contain"
+                />
+                <Text className="text-gray-500 text-lg font-medium">
+                  No Videos
+                </Text>
+              </View>
+            }
           />
         )}
       </View>
+
+     
 
       {/* <View className="px-1">
         <HomeShorts />

@@ -67,13 +67,26 @@ const UserFollowers = ({route}) => {
               </StyledView>
 
               {/* Follow/Following Button */}
-              <StyledTouchableOpacity>
+              {/* <StyledTouchableOpacity>
                 <StyledText className="bg-gray-200 p-1.5 rounded-md">
                   Meassage
                 </StyledText>
-              </StyledTouchableOpacity>
+              </StyledTouchableOpacity> */}
             </StyledView>
           )}
+             ListEmptyComponent={
+                      <View className="flex-1 items-center justify-center py-20">
+                        <Image
+                          source={require('../assets/Images/out-of-stock.png')}
+                          // Optional: Add your own placeholder image
+                          className="w-24 h-24 mb-4 opacity-60"
+                          resizeMode="contain"
+                        />
+                        <StyledText className="text-gray-500 text-lg font-medium">
+                          No followers to show.
+                        </StyledText>
+                      </View>
+                    }
         />
       </View>
     </StyledView>

@@ -15,7 +15,7 @@ const SearchInput = () => {
       if (results) {
         // setFilterVideos(results);
         setSearchText('');
-        navigation.navigate('filter-Videos', {filterVideos: results});
+        navigation.navigate('Filter-Videos', {filterVideos: results});
       } else {
         Alert.alert('error', 'filter video not found');
       }

@@ -40,7 +40,8 @@ export default function UserDetails({route}) {
       if (loginUserId) {
         setLoginUserId(loginUserId);
       } else {
-        Alert.alert('login user id not found');
+        Alert.alert("Not Found",'login user id not found ,login first');
+          navigation.navigate("Login")
       }
     };
     const fetchUserData = async () => {
@@ -231,7 +232,7 @@ export default function UserDetails({route}) {
               </Text>
             </View>
             
-            <Text className="text-primary font-bold text-xs  px-2 py-1 rounded-full "> Topic: {userData?.topic}</Text>
+            <Text className="text-primary font-bold text-xs  px-2 py-1 rounded-full "> {userData?.topic ? "Topic:":""} {userData?.topic}</Text>
           </View>
           <View className='flex-row items-center justify-between gap-3 py-2'>
             <View className="shadow-lg ">

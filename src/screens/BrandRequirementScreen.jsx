@@ -197,7 +197,7 @@ const BrandRequirementScreen = ({navigation}) => {
                 Total need: {item.totalNeed}
               </Text>
               <View className="flex-row gap-2">
-                <View className='w-[50%]'>
+                <View className="w-[50%]">
                   <TouchableOpacity
                     className="bg-primary p-2.5 rounded-lg mt-3 items-center w-full"
                     onPress={() =>
@@ -206,12 +206,12 @@ const BrandRequirementScreen = ({navigation}) => {
                       })
                     }>
                     <Text className="text-white text-base font-semibold">
-                      Apply 
+                      Apply
                     </Text>
                   </TouchableOpacity>
                 </View>
 
-                <View className='w-[50%]'>
+                <View className="w-[50%]">
                   <TouchableOpacity
                     className="bg-primary p-2.5 rounded-lg mt-3 items-center "
                     onPress={() =>
@@ -227,6 +227,17 @@ const BrandRequirementScreen = ({navigation}) => {
               </View>
             </View>
           )}
+          ListEmptyComponent={
+            <Text
+              style={{
+                textAlign: 'center',
+                marginTop: 20,
+                fontSize: 16,
+                color: 'gray',
+              }}>
+              No Brand found
+            </Text>
+          }
         />
       )}
     </View>

@@ -87,7 +87,21 @@ const Add = () => {
       } else if (response.errorMessage) {
         console.log('Error:', response.errorMessage);
       } else {
-        setVideoUri(response.assets[0].uri);
+        // setVideoUri(response.assets[0].uri);
+
+        const selectedAsset = response.assets[0];
+        const fileSizeInBytes = selectedAsset.fileSize;
+
+        const maxFileSize = 4.5 * 1024 * 1024; // 4.5 MB
+
+        if (fileSizeInBytes > maxFileSize) {
+          Alert.alert(
+            'File Too Large',
+            'Please select a video smaller than 4.5 MB.',
+          );
+        } else {
+          setVideoUri(selectedAsset.uri);
+        }
       }
     });
   };
@@ -104,9 +118,8 @@ const Add = () => {
     const missingFields = [];
     // if (!title) missingFields.push('Title');
     // if (!description) missingFields.push('Description');
-    if (!title || title.trim() === '') missingFields.push('Title');
-    if (!description || description.trim() === '')
-      missingFields.push('Description');
+    if (!title) missingFields.push('Title');
+    if (!description) missingFields.push('Description');
 
     if (!categoryActiveTab) missingFields.push('Category');
     if (!creatorId) missingFields.push('Creator ID');
@@ -114,7 +127,7 @@ const Add = () => {
     if (missingFields.length > 0) {
       Alert.alert(
         'Missing Fields',
-        `Please fill the following field and check no sapce arrount text \n${missingFields.join(', ')}`,
+        `Please fill the following field  \n${missingFields.join(', ')}`,
       );
       return;
     }
@@ -128,8 +141,8 @@ const Add = () => {
       type: 'video/mp4',
     });
 
-    formData.append('title', title);
-    formData.append('description', description);
+    formData.append('title', title.trim());
+    formData.append('description', description.trim());
     formData.append('category', categoryActiveTab);
     formData.append('type', 'video');
     formData.append('creatorId', creatorId);
@@ -143,7 +156,7 @@ const Add = () => {
         },
       );
 
-      Alert.alert('Success', response.data.message);
+      Alert.alert('Success', 'Video Uploaded sucessfully');
       setVideoUri(null);
       navigation.replace('Main');
     } catch (error) {
@@ -153,12 +166,6 @@ const Add = () => {
       setIsUploading(false);
     }
   };
-
-  console.log('data', title);
-  console.log('data', description);
-  console.log(categoryActiveTab, 'categoryActiveTab');
-
-  console.log(videoUri, 'videoUri');
 
   return (
     <ScrollView className="flex-1 bg-purple-50">
@@ -187,34 +194,36 @@ const Add = () => {
           </View>
         </View>
 
-        <View>
-          <Text className="text-primary text-base font-semibold py-3 px-3">
-            Category
-          </Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View className="flex-row space-x-3 px-4">
-              {categories.map((category, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => setCategoryActiveTab(category)}
-                  className={`px-5 py-2 rounded-full border items-center justify-center  ${
-                    categoryActiveTab === category
-                      ? 'bg-[#441752] border-[#441752]'
-                      : 'bg-[#fdf0ff] border-[#441752]'
-                  }`}>
-                  <Text
-                    className={`text-xs font-semibold ${
+        {activeTab === 'Long Video' && (
+          <View>
+            <Text className="text-primary text-base font-semibold py-3 px-3">
+              Category
+            </Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View className="flex-row space-x-3 px-4">
+                {categories.map((category, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => setCategoryActiveTab(category)}
+                    className={`px-5 py-2 rounded-full border items-center justify-center  ${
                       categoryActiveTab === category
-                        ? 'text-white'
-                        : 'text-[#441752]'
+                        ? 'bg-[#441752] border-[#441752]'
+                        : 'bg-[#fdf0ff] border-[#441752]'
                     }`}>
-                    {category}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
-        </View>
+                    <Text
+                      className={`text-xs font-semibold ${
+                        categoryActiveTab === category
+                          ? 'text-white'
+                          : 'text-[#441752]'
+                      }`}>
+                      {category}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        )}
 
         {activeTab === 'Long Video' && (
           <View className="my-10  ">
@@ -310,7 +319,7 @@ const Add = () => {
 
         {activeTab === 'Short Shorts' && (
           <>
-            <ShortVideoUpload categoryActiveTab={categoryActiveTab} />
+            <ShortVideoUpload />
           </>
         )}
       </View>

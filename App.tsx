@@ -104,13 +104,13 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Brand-Video" component={BrandVideoUpload} />
         <Stack.Screen name="User-Followers" component={UserFollowers} />
         <Stack.Screen name="User-Followings" component={UserFollowing} />
-        <Stack.Screen name="Videos" component={VideoPlayerScreen} />
+        <Stack.Screen name="Videos" component={VideoPlayerScreen} options={{ headerShown: false, }} />
         <Stack.Screen name="Verify-Email" component={VerifyEmail} />
         <Stack.Screen name="Forget-Password" component={ForgetPassword} />
         <Stack.Screen name="User-Chatlist" component={UserChatlist} />
         <Stack.Screen name="User-Chat" component={ChatScreensPage} />
 
-        <Stack.Screen name="filter-Videos" component={FilterVideos} />
+        <Stack.Screen name="Filter-Videos" component={FilterVideos} />
 
         {/* <Stack.Screen name="Shorts" component={Shorts} options={{ headerShown: true, }}/> */}
 

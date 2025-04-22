@@ -294,6 +294,8 @@ import {
   Alert,
   TextInput,
 } from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
+
 import Video from 'react-native-video';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getAllPostedVideos} from '../api/useVideo.jsx/Video';
@@ -302,6 +304,7 @@ import {getVideoLikeCount, likeVideo} from '../api/Likes';
 import {getVideoComments, postComment} from '../api/comment';
 import {getTimeAgo} from '../components/common/GetTime';
 import {groupByUser} from '../components/common/Comment';
+import {useNavigation} from '@react-navigation/native';
 const {height, width} = Dimensions.get('window');
 
 const Shorts = () => {
@@ -325,6 +328,9 @@ const Shorts = () => {
   const [expandedUsers, setExpandedUsers] = useState([]);
   const [totalLikes, setTotalLike] = useState(1);
   const [hasError, setHasError] = useState(false);
+
+  const navigation = useNavigation();
+  const isFocused = useIsFocused(); // Returns true when screen is focused
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
@@ -527,8 +533,7 @@ const Shorts = () => {
         : [...prev, userId],
     );
   };
-console.log("shaort video",videos)
-
+  console.log('shaort video', videos);
 
   return (
     <FlatList
@@ -564,7 +569,7 @@ console.log("shaort video",videos)
                 alignItems: 'center',
               }}>
               {/* Video Player - Full height */}
-              <Video
+              {/* <Video
                 ref={ref => (videoRefs.current[index] = ref)}
                 source={{uri: item.videoUrl}}
                 style={{width: '100%', height: 300}}
@@ -576,13 +581,35 @@ console.log("shaort video",videos)
                 paused={isPaused || currentIndex !== index}
                 onLoad={() => {
                   if (currentIndex === index && !isPaused) {
-                    // Track view when video is loaded and ready to play
-                    trackVideoView(item.id); // Assuming item.id contains your shortId
+                    trackVideoView(item.id);
                   }
                 }}
                 onPlay={() => {
-                  // Alternative approach: track view when video starts playing
                   trackVideoView(item.id);
+                }}
+                onError={error => {
+                  console.error('Video error:', error);
+                }}
+              /> */}
+              <Video
+                ref={ref => (videoRefs.current[index] = ref)}
+                source={{uri: item.videoUrl}}
+                style={{width: '100%', height: 300}}
+                resizeMode="cover"
+                repeat
+                muted={currentIndex !== index}
+                playInBackground={false}
+                playWhenInactive={false}
+                paused={!isFocused || isPaused || currentIndex !== index}
+                onLoad={() => {
+                  if (currentIndex === index && !isPaused && isFocused) {
+                    trackVideoView(item.id);
+                  }
+                }}
+                onPlay={() => {
+                  if (isFocused) {
+                    trackVideoView(item.id);
+                  }
                 }}
                 onError={error => {
                   console.error('Video error:', error);
@@ -618,21 +645,27 @@ console.log("shaort video",videos)
                   </Text>
 
                   {/* Creator Info */}
-                  <View className="flex-row items-center space-x-2">
-                 
-                    <Image
-                      source={
-                        item.creatorId?.image
-                          ? {uri: item.creatorId?.image}
-                          : require('../assets/Images/default-image.png')
-                      }
-                      className="w-7 h-7 rounded-full"
-                    />
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('User-Details', {
+                        userId: item?.creatorId?._id,
+                      })
+                    }>
+                    <View className="flex-row items-center space-x-2">
+                      <Image
+                        source={
+                          item.creatorId?.image
+                            ? {uri: item.creatorId?.image}
+                            : require('../assets/Images/default-image.png')
+                        }
+                        className="w-7 h-7 rounded-full"
+                      />
 
-                    <Text className="text-white text-sm font-medium">
-                      {`@ ${item?.creatorId?.name ||""}`} 
-                    </Text>
-                  </View>
+                      <Text className="text-white text-sm font-medium">
+                        {`@ ${item?.creatorId?.name || ''}`}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
 
                   {/* Description - Optional */}
                   {item.description ? (
@@ -808,6 +841,11 @@ console.log("shaort video",videos)
           </TouchableOpacity>
         );
       }}
+      ListEmptyComponent={
+        <Text style={{textAlign: 'center', fontSize: 16, color: 'gray'}}>
+          No Shorts found
+        </Text>
+      }
     />
   );
 };

@@ -1,7 +1,7 @@
 export const groupByUser = (comments) => {
     const groups = {};
   
-    comments.forEach(comment => {
+    comments?.forEach(comment => {
       const userId = comment.user._id;
   
       if (!groups[userId]) {
