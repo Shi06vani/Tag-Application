@@ -73,63 +73,132 @@ const CategoryVideos = ({route}) => {
         {category} Videos
       </StyledText>
 
-      <FlatList
-        data={videos}
-        keyExtractor={item => item._id}
-        scrollEnabled={false}
-        renderItem={({item}) => (
-          <StyledView className="bg-primary rounded-2xl mb-5 p-4 shadow-2xl ">
-            {/* Video Player */}
-            <Video
-              source={{uri: item.videoUrl}}
-              style={{
-                width: '100%',
-                height: 200,
-                borderRadius: 12,
-                backgroundColor: '#000',
-              }}
-              resizeMode="cover"
-              controls
-              paused
-            />
+     
 
-            {/* Video Info */}
-            <StyledView className="mt-4">
-              <View className='flex-row gap-3 items-center'>
-              <StyledText className="text-lg font-semibold text-white">
-                {item.title}
-              </StyledText>
-              <StyledText className="text-xs px-4 py-1 bg-accent opacity-60 rounded-full text-white">
-                {item.category}
-              </StyledText>
-              </View>
-           
-              <StyledText className="text-sm text-gray-200 mt-1">
-                {item.description}
-              </StyledText>
-              <View className='flex-row gap-3 items-center'>
-              <StyledText className="text-sm text-gray-400 mt-2">
-                {item?.creatorId?.name || 'Unknown'}
-              </StyledText>
-           
-              </View>
-             
-            </StyledView>
-          </StyledView>
-        )}
-        ListEmptyComponent={() => (
-          <View className="flex-1 items-center justify-center mt-10 w-full">
-            <Text className="text-gray-600 text-lg text-center">
-              No videos releted to the category
-            </Text>
+
+
+{loading ? (
+  <View className="flex-1 justify-center items-center">
+    <ActivityIndicator size="large" color="#441752" />
+  </View>
+) : (
+  <FlatList
+    data={videos}
+    keyExtractor={item => item._id}
+    scrollEnabled={false}
+    renderItem={({item}) => (
+      <StyledView className="bg-primary rounded-2xl mb-5 p-4 shadow-2xl">
+        {/* Video Player */}
+        <Video
+          source={{uri: item.videoUrl}}
+          style={{
+            width: '100%',
+            height: 200,
+            borderRadius: 12,
+            backgroundColor: '#000',
+          }}
+          resizeMode="cover"
+          controls
+          paused
+        />
+
+        {/* Video Info */}
+        <StyledView className="mt-4">
+          <View className="flex-row gap-3 items-center">
+            <StyledText className="text-lg font-semibold text-white">
+              {item.title}
+            </StyledText>
+            <StyledText className="text-xs px-4 py-1 bg-accent opacity-60 rounded-full text-white">
+              {item.category}
+            </StyledText>
           </View>
-        )}
-      />
+
+          <StyledText className="text-sm text-gray-200 mt-1">
+            {item.description}
+          </StyledText>
+          <View className="flex-row gap-3 items-center">
+            <StyledText className="text-sm text-gray-400 mt-2">
+              {item?.creatorId?.name || 'Unknown'}
+            </StyledText>
+          </View>
+        </StyledView>
+      </StyledView>
+    )}
+    ListEmptyComponent={() => (
+      <View className="flex-1 items-center justify-center mt-10 w-full">
+        <Text className="text-gray-600 text-lg text-center">
+          No videos related to the category
+        </Text>
+      </View>
+    )}
+  />
+)}
+
     </ScrollView>
   );
 };
 
 export default CategoryVideos;
+
+
+
+// <FlatList
+// data={videos}
+// keyExtractor={item => item._id}
+// scrollEnabled={false}
+// renderItem={({item}) => (
+//   <StyledView className="bg-primary rounded-2xl mb-5 p-4 shadow-2xl ">
+//     {/* Video Player */}
+//     <Video
+//       source={{uri: item.videoUrl}}
+//       style={{
+//         width: '100%',
+//         height: 200,
+//         borderRadius: 12,
+//         backgroundColor: '#000',
+//       }}
+//       resizeMode="cover"
+//       controls
+//       paused
+//     />
+
+//     {/* Video Info */}
+//     <StyledView className="mt-4">
+//       <View className='flex-row gap-3 items-center'>
+//       <StyledText className="text-lg font-semibold text-white">
+//         {item.title}
+//       </StyledText>
+//       <StyledText className="text-xs px-4 py-1 bg-accent opacity-60 rounded-full text-white">
+//         {item.category}
+//       </StyledText>
+//       </View>
+   
+//       <StyledText className="text-sm text-gray-200 mt-1">
+//         {item.description}
+//       </StyledText>
+//       <View className='flex-row gap-3 items-center'>
+//       <StyledText className="text-sm text-gray-400 mt-2">
+//         {item?.creatorId?.name || 'Unknown'}
+//       </StyledText>
+   
+//       </View>
+     
+//     </StyledView>
+//   </StyledView>
+// )}
+// ListEmptyComponent={() => (
+//   <View className="flex-1 items-center justify-center mt-10 w-full">
+//     <Text className="text-gray-600 text-lg text-center">
+//       No videos releted to the category
+//     </Text>
+//   </View>
+// )}
+// />
+
+
+
+
+
 
 // <ScrollView>
 //   <View style={{flex: 1, padding: 20}}>

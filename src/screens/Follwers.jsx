@@ -21,9 +21,9 @@ const Following = () => {
   const [followers, setFollowers] = useState([]);
 
   useEffect(() => {
-    AsyncStorage.getItem('loginuser_id')
+          AsyncStorage.getItem('loginuser_id')
       .then(userId => {
-        console.log(userId);
+        console.log("00000",userId);
         if (userId) {
           fetchFollowersList(userId);
         }

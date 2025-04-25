@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import {brandRequirements} from '../api/brandRequirements/Requiements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -228,15 +229,18 @@ const BrandRequirementScreen = ({navigation}) => {
             </View>
           )}
           ListEmptyComponent={
+            <View className='flex-1 justify-center items-center'>
+              <Image source={require("../assets/Images/out-of-stock.png")}/>
             <Text
               style={{
                 textAlign: 'center',
-                marginTop: 20,
-                fontSize: 16,
+                marginTop: 10,
+                fontSize: 20,
                 color: 'gray',
               }}>
-              No Brand found
+              No brand found
             </Text>
+            </View>
           }
         />
       )}
