@@ -1,38 +1,35 @@
-import Add from "../screens/Add"
-import BrandListScreen from "../screens/BrandListScreen"
-import Home from "../screens/Home"
-import Leaderboard from "../screens/Leaderboard"
-import Shorts from "../screens/Shorts"
-import Subscription from "../screens/Subscription"
-import UserProfile from "../screens/UserProfile"
+import Add from '../screens/Add';
+import BrandListScreen from '../screens/BrandListScreen';
+import BrandRequirementScreen from '../screens/BrandRequirementScreen';
+import Home from '../screens/Home';
+import Leaderboard from '../screens/Leaderboard';
+import Shorts from '../screens/Shorts';
+import UserProfile from '../screens/UserProfile';
 
 export const TabsRoutes = [
   {
-    name: "Home",
+    name: 'Home',
     Component: Home,
-    options: { headerShown: false }
+    options: {headerShown: false},
   },
   {
-    name: "Leaderboard",
-    Component: Leaderboard,
-    options: { headerShown: false  }
-
+    name: 'Shorts',
+    Component: Shorts,
+    options: {headerShown: false},
   },
   {
-    name: "Add",
+    name: 'Add',
     Component: Add,
-    options: { headerShown: false,tabBarLabel: 'Add' }
-
+    options: {headerShown: false, tabBarLabel: 'Add'},
   },
   {
-    name: "Brand",
-    Component: BrandListScreen,
-    options: { headerShown: false }
-
+    name: 'BrandRequirement',
+    Component: BrandRequirementScreen,
+    options: {headerShown: false},
   },
   {
-    name: "User",
+    name: 'User',
     Component: UserProfile,
-    options: { headerShown: false }
+    options: {headerShown: false},
   },
-]
+];

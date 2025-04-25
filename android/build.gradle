@@ -12,6 +12,7 @@ buildscript {
         mavenCentral()
          maven { url "https://jitpack.io" }
         maven { url "https://maven.aliyun.com/repository/public" } 
+        maven { url "$rootDir/../node_modules/react-native/android" }
     }
     dependencies {
         classpath("com.android.tools.build:gradle")

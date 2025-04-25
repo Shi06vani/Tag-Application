@@ -8,7 +8,7 @@
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {Text, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import TabNavigator from './src/components/navigation/TabNavigator';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
@@ -18,7 +18,32 @@ import BrandRequirementForm from './src/screens/BrandRequirementForm';
 import Leaderboard from './src/screens/Leaderboard';
 import ChatScreen from './src/screens/ChatScreen';
 import Shorts from './src/screens/Shorts';
-
+import Splash from './src/screens/Splash';
+import BrandDetails from './src/components/brand/BrandDetails';
+import UploadFromGallery from './src/components/UploadFromGallery';
+import RecordVideo from './src/components/RecordVideo';
+import FullScreenVideo from "./src/components/FullScreenVideo"
+import ShortsPlayer from './src/components/ShortsPlayer';
+import Following from './src/screens/Following';
+import Followers from './src/screens/Follwers';
+import UpdateProfileScreen from './src/screens/UpdateProfile';
+import UserListing from './src/screens/UserListing';
+import BrandFollowing from './src/components/brand/BrandFollowing';
+import BrandFollowers from './src/components/brand/BrandFollowers';
+import UserDetails from './src/components/UserDetails';
+import UserProfileDetailpage from './src/components/UserProfileDetailpage';
+import CategoryVideos from './src/components/CategoryVideos';
+import UserVideos from './src/components/UserVideos';
+import MyShorts from './src/components/MyShorts';
+import BrandVideoUpload from './src/components/brand/BrandVideoUpload';
+import UserFollowers from './src/components/UserFollowers';
+import UserFollowing from './src/components/UserFollowing';
+import VideoPlayerScreen from './src/screens/VideoPlayerScreen';
+import VerifyEmail from './src/screens/VerififyEmail';
+import ForgetPassword from './src/screens/ForgetPassword';
+import UserChatlist from './src/screens/UserChatlist';
+import ChatScreensPage from './src/screens/ChatScreensPage';
+import FilterVideos from './src/screens/FilterVideos';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,18 +51,68 @@ const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Signup">
-        <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
-        <Stack.Screen name="Profile" component={() => <View><Text>hdgfhg</Text></View>} />
+      <Stack.Navigator initialRouteName="Splash" >
 
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Splash"
+          component={Splash}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Brands-list" component={BrandListScreen} />
         <Stack.Screen name="Brands-requirement" component={BrandRequirementScreen} />
         <Stack.Screen name="Your-requirement" component={BrandRequirementForm} />
         <Stack.Screen name="Leaderboard" component={Leaderboard} />
         <Stack.Screen name="Chat" component={ChatScreen} />
-        <Stack.Screen name="Shorts" component={Shorts} />
+        <Stack.Screen name="Brand-details" component={BrandDetails} />
+        <Stack.Screen name="UploadFromGallery" component={UploadFromGallery} />
+        <Stack.Screen name="RecordVideo" component={RecordVideo} />
+        <Stack.Screen name="FullScreenVideo" component={FullScreenVideo} />
+        <Stack.Screen name="FullScreenShorts" component={ShortsPlayer} />
+        <Stack.Screen name="Following" component={Following} />
+        <Stack.Screen name="Followers" component={Followers} />
+        <Stack.Screen name="Update-Profile" component={UpdateProfileScreen} />
+        <Stack.Screen name="User-listing" component={UserListing} />
+        <Stack.Screen name="Brand-following" component={BrandFollowing} />
+        <Stack.Screen name="Brand-followers" component={BrandFollowers} />
+        {/* <Stack.Screen name="User-Details" component={UserDetails} /> */}
+        <Stack.Screen
+          name="User-Details"
+          component={UserDetails}
+          options={({ navigation }) => ({
+            headerRight: () => (
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Chat")}
+                className="mr-0"
+              >
+                <Image
+                  source={require('./src/assets/Images/chat-icon.png')}
+                  className="w-6 h-6"
+                />
+              </TouchableOpacity>
+            ),
+          })}
+        />
+
+        <Stack.Screen name="Profile-details" component={UserProfileDetailpage} />
+        <Stack.Screen name="Category-videos" component={CategoryVideos} />
+        <Stack.Screen name="My-Videos" component={UserVideos} />
+        <Stack.Screen name="My-Shorts" component={MyShorts} />
+        <Stack.Screen name="Brand-Video" component={BrandVideoUpload} />
+        <Stack.Screen name="User-Followers" component={UserFollowers} />
+        <Stack.Screen name="User-Followings" component={UserFollowing} />
+        <Stack.Screen name="Videos" component={VideoPlayerScreen} options={{ headerShown: false, }} />
+        <Stack.Screen name="Verify-Email" component={VerifyEmail} />
+        <Stack.Screen name="Forget-Password" component={ForgetPassword} />
+        <Stack.Screen name="User-Chatlist" component={UserChatlist} />
+        <Stack.Screen name="User-Chat" component={ChatScreensPage} />
+
+        <Stack.Screen name="Filter-Videos" component={FilterVideos} />
+
+        {/* <Stack.Screen name="Shorts" component={Shorts} options={{ headerShown: true, }}/> */}
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,31 +1,40 @@
-import { useState } from "react";
-import Tags from "../ui/tags/Tags";
-import { FlatList, View } from "react-native";
+import {useState} from 'react';
+import Tags from '../ui/tags/Tags';
+import {FlatList, TouchableOpacity, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+
+const tags = ['News','Game',"Music", 'Comedy', 'Dance','General', 'Informative'];
 
 
-const tags = ["All", "Mixes", "Music", "Graphic"];
 
 const TagList = () => {
-    const [selectedTag, setSelectedTag] = useState("All");
+  const [selectedTag, setSelectedTag] = useState('News');
+  const navigation = useNavigation();
 
-    return (
-      <View className=" flex flex-row  space-x-2  p-3">
-        <FlatList
-          data={tags}
-        
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item}
-          renderItem={({ item }) => (
+  return (
+    <View className=" flex flex-row  p-3 ">
+      <FlatList
+        className="max-w-full flex "
+        data={tags}
+        contentContainerStyle={{paddingHorizontal: 10, columnGap: 7}}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={item => item}
+        renderItem={({item}) => (
+          <View>
             <Tags
-              label={item} 
-              isSelected={item === selectedTag} 
-              onPress={() => setSelectedTag(item)}
+              label={item}
+              isSelected={item === selectedTag}
+              onPress={() => {
+                setSelectedTag(item);
+                navigation.navigate('Category-videos', { category: item }); // ✅ FIXED
+              }}
             />
-          )}
-        />
-      </View>
-    );
-  };
-  
-  export default TagList;
+          </View>
+        )}
+      />
+    </View>
+  );
+};
+
+export default TagList;
