@@ -1,11 +1,9 @@
 // screens/ChatUsersList.js
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, Text, View} from 'react-native';
+import {ActivityIndicator, FlatList, Image, Text, View} from 'react-native';
 import ChatUserItem from '../components/ChatUserItem';
 import {getChatBetweenUsers, getUserChatList} from '../api/chat/Chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
 
 const UserChatlist = ({navigation}) => {
   const [chatData, setChatData] = useState([]);
@@ -15,7 +13,9 @@ const UserChatlist = ({navigation}) => {
   const renderItem = ({item}) => (
     <ChatUserItem
       user={item}
-      onPress={() => navigation.navigate('Chat', {brandid:item._id,user: item})}
+      onPress={() =>
+        navigation.navigate('Chat', {brandid: item._id, user: item})
+      }
     />
   );
 
@@ -33,12 +33,11 @@ const UserChatlist = ({navigation}) => {
       const userId = await AsyncStorage.getItem('loginuser_id');
       console.log(userId, 'userId,,,,,');
 
-      
       try {
         const data = await getUserChatList(userId);
         setChatData(data);
 
-        console.log("chatlistdata",data)
+        console.log('chatlistdata', data);
       } catch (err) {
         console.log('Failed to load chat:', err.message);
       } finally {
@@ -51,24 +50,30 @@ const UserChatlist = ({navigation}) => {
 
   if (loading) {
     return (
-      <ActivityIndicator
-        size="large"
-        color="#441752"
-        className="flex-1 justify-center items-center"
-      />
+      <View className='flex-1 bg-purple-50 justify-center items-center'>
+        <ActivityIndicator
+          size="large"
+          color="#441752"
+        />
+      </View>
     );
   }
 
   console.log(chatData, 'setChatData');
 
   return (
-    <View className="flex-1 bg-purple-50 pt-4">
+    <View className="flex-1 bg-purple-50 pt-4 ">
       <FlatList
         data={chatData}
         keyExtractor={item => item.id}
         renderItem={renderItem}
         ListEmptyComponent={
-          <Text className="text-center text-gray-500 mt-10">No chats yet.</Text>
+          <View className='flex-1 mt-10 justify-center items-center'>
+          <Image source={require("../assets/Images/out-of-stock.png")}/>
+          <Text className="text-center text-lg text-gray-500 mt-3">
+            No chats yet.
+          </Text>
+          </View>
         }
       />
     </View>
