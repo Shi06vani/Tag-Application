@@ -65,14 +65,22 @@ const UpdateProfileScreen = ({route}) => {
       console.log('id not found');
     }
 
-    if (!selectedImage) {
-      Alert.alert('Please select an image');
-      return;
-    }
+   
+    
+  
+
     if (!userData?.name || !userData?.email || !userData?.bio) {
       Alert.alert('Please fill out all required fields');
       return;
     }
+
+    if (!selectedImage?.uri && ! data?.image) {
+      Alert.alert('Please fill out all required fields');
+      return;
+    }
+
+
+  
     if (role === 'brand') {
       if (!userData?.companyName || !userData?.website) {
         Alert.alert(
@@ -89,11 +97,19 @@ const UpdateProfileScreen = ({route}) => {
     formData.append('email', userData?.email);
     formData.append('bio', userData?.bio);
 
-    formData.append('image', {
-      uri: selectedImage.uri,
-      type: selectedImage.type || 'image/jpeg',
-      name: selectedImage.fileName || 'photo.jpg',
-    });
+    // formData.append('image', {
+    //   uri: selectedImage?.uri || data?.image,
+    //   type: selectedImage.type || 'image/jpeg',
+    //   name: selectedImage.fileName || 'photo.jpg',
+    // });
+
+    if (selectedImage?.uri) {
+      formData.append('image', {
+        uri: selectedImage.uri,
+        type: selectedImage.type || 'image/jpeg',
+        name: selectedImage.fileName || 'photo.jpg',
+      });
+    }
 
     if (role === 'brand') {
       formData.append('companyName', userData?.companyName);
@@ -122,7 +138,7 @@ const UpdateProfileScreen = ({route}) => {
     }
   };
 
-  console.log(data.image, 'Data');
+  console.log("selectedImage",data?.image ,selectedImage)
 
   return (
     <ScrollView className="flex-1 bg-white">
@@ -184,8 +200,8 @@ const UpdateProfileScreen = ({route}) => {
               <Image
                 source={
                   selectedImage?.uri
-                    ? {uri: selectedImage.uri}
-                    : {uri: data.image} 
+                    ? {uri: selectedImage?.uri}
+                    : {uri: data?.image} 
                 }
                 className="w-40 h-40 rounded-full"
                 resizeMode="cover"

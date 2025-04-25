@@ -77,85 +77,155 @@ const UserVideos = () => {
     return 'just now';
   };
 
-  const handleDelete = async (videoId) => {
+  const handleDelete = async videoId => {
     const userId = await AsyncStorage.getItem('loginuser_id');
-     console.log("both",userId,videoId)
+    console.log('both', userId, videoId);
     const response = await deleteVideo(videoId, userId);
 
     if (response) {
       Alert.alert('Success', response.message);
       console.log(response, 'delete response');
-
     } else {
       Alert.alert('Failed', response.error);
     }
   };
 
   return (
-    <View className="flex-1 bg-purple-50">
-      <FlatList
-        data={videos}
-        className="mt-4 w-full px-5"
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => (
-          <View className="  overflow-hidden rounded-xl mb-5 shadow-sm">
-            <Video
-              source={{uri: item.videoUrl}}
-              style={{width: '100%', height: 200, borderRadius: 12}}
-              resizeMode="cover"
-              controls
-              muted={false}
-              volume={1.0}
-              repeat
-            />
+    <View className="flex-1 bg-purple-50 ">
+      {loading ? (
+        <View className="flex-1 justify-center items-center mt-20">
+          <ActivityIndicator size="large" color="#441752" />
+        </View>
+      ) : (
+        <FlatList
+          data={videos}
+          className="mt-4 w-full px-5"
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => (
+            <View className="overflow-hidden rounded-xl mb-5 shadow-sm">
+              <Video
+                source={{uri: item.videoUrl}}
+                style={{width: '100%', height: 200, borderRadius: 12}}
+                resizeMode="cover"
+                controls
+                muted={false}
+                volume={1.0}
+                repeat
+              />
 
-            <View className="py-4 bg-primary px-3">
-              <View className="flex-row justify-between ">
-                <View className="flex-row gap-3 items-center">
-                  <Text
-                    className="text-white text-base font-bold"
-                    numberOfLines={1}>
-                    {item?.title}
-                  </Text>
-                  <Text
-                    className="text-xs font-semibold  mt-1 text-primary rounded-full px-2 py-1 bg-purple-50 opacity-2
-              ">
-                    {item?.category}
-                  </Text>
-                </View>
-                <TouchableOpacity onPress={() => handleDelete(item._id)}>
-                  <View>
-                    <Text className="text-white text-xs bg-red-500 px-3 py-1 rounded-lg">
-                      Delete
+              <View className="py-4 bg-primary px-3">
+                <View className="flex-row justify-between">
+                  <View className="flex-row gap-3 items-center">
+                    <Text
+                      className="text-white text-base font-bold"
+                      numberOfLines={1}>
+                      {item?.title}
+                    </Text>
+                    <Text className="text-xs font-semibold mt-1 text-primary rounded-full px-2 py-1 bg-purple-50 opacity-2">
+                      {item?.category}
                     </Text>
                   </View>
-                </TouchableOpacity>
-              </View>
+                  <TouchableOpacity onPress={() => handleDelete(item._id)}>
+                    <View>
+                      <Text className="text-white text-xs bg-red-500 px-3 py-1 rounded-lg">
+                        Delete
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
 
-              {/* Description (optional) */}
-              {item?.description ? (
-                <Text className="text-gray-300 text-sm mt-1" numberOfLines={2}>
-                  {item?.description}
-                </Text>
-              ) : null}
+                {/* Description (optional) */}
+                {item?.description ? (
+                  <Text
+                    className="text-gray-300 text-sm mt-1"
+                    numberOfLines={2}>
+                    {item?.description}
+                  </Text>
+                ) : null}
 
-              {/* Views and Time Ago */}
-              <View className="flex-row mt-1">
-                <Text className="text-gray-400 text-xs">
-                  {item?.views || 0} views • {timeAgo(item?.createdAt)}
-                </Text>
+                {/* Views and Time Ago */}
+                <View className="flex-row mt-1">
+                  <Text className="text-gray-400 text-xs">
+                    {item?.views || 0} views • {timeAgo(item?.createdAt)}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-        )}
-        ListEmptyComponent={() => (
-          <View className=" flex flex-1 justify-center items-center ">
-            <Text className="text-base text-primary">No videos found.</Text>
-          </View>
-        )}
-      />
+          )}
+          ListEmptyComponent={() => (
+            <View className="flex-1 justify-center items-center py-32">
+              <Image source={require('../assets/Images/out-of-stock.png')} />
+              <Text className="text-lg text-gray-500 mt-4">No videos found.</Text>
+            </View>
+          )}
+        />
+      )}
     </View>
   );
 };
 
 export default UserVideos;
+
+// <FlatList
+// data={videos}
+// className="mt-4 w-full px-5"
+// keyExtractor={(item, index) => index.toString()}
+// renderItem={({item}) => (
+//   <View className="  overflow-hidden rounded-xl mb-5 shadow-sm">
+//     <Video
+//       source={{uri: item.videoUrl}}
+//       style={{width: '100%', height: 200, borderRadius: 12}}
+//       resizeMode="cover"
+//       controls
+//       muted={false}
+//       volume={1.0}
+//       repeat
+//     />
+
+//     <View className="py-4 bg-primary px-3">
+//       <View className="flex-row justify-between ">
+//         <View className="flex-row gap-3 items-center">
+//           <Text
+//             className="text-white text-base font-bold"
+//             numberOfLines={1}>
+//             {item?.title}
+//           </Text>
+//           <Text
+//             className="text-xs font-semibold  mt-1 text-primary rounded-full px-2 py-1 bg-purple-50 opacity-2
+//       ">
+//             {item?.category}
+//           </Text>
+//         </View>
+//         <TouchableOpacity onPress={() => handleDelete(item._id)}>
+//           <View>
+//             <Text className="text-white text-xs bg-red-500 px-3 py-1 rounded-lg">
+//               Delete
+//             </Text>
+//           </View>
+//         </TouchableOpacity>
+//       </View>
+
+//       {/* Description (optional) */}
+//       {item?.description ? (
+//         <Text className="text-gray-300 text-sm mt-1" numberOfLines={2}>
+//           {item?.description}
+//         </Text>
+//       ) : null}
+
+//       {/* Views and Time Ago */}
+//       <View className="flex-row mt-1">
+//         <Text className="text-gray-400 text-xs">
+//           {item?.views || 0} views • {timeAgo(item?.createdAt)}
+//         </Text>
+//       </View>
+//     </View>
+//   </View>
+// )}
+// ListEmptyComponent={() => (
+//   <View className=" flex flex-1 justify-center items-center">
+//               <Image source={require("../assets/Images/out-of-stock.png")}/>
+
+//     <Text className="text-lg text-gray-500">No videos found.</Text>
+//   </View>
+// )}
+// />

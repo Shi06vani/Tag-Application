@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
+  Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Video from 'react-native-video';
@@ -72,12 +73,11 @@ const MyShorts = () => {
   const handleDelete = async shortId => {
     const userId = await AsyncStorage.getItem('loginuser_id');
     const response = await deleteVideo(shortId, userId);
-       if (response) {
-          Alert.alert('Success', response.message);
-    
-        } else {
-          Alert.alert('Failed', response.error);
-        }
+    if (response) {
+      Alert.alert('Success', response.message);
+    } else {
+      Alert.alert('Failed', response.error);
+    }
   };
 
   return (
@@ -87,9 +87,13 @@ const MyShorts = () => {
           <ActivityIndicator size="large" color="#441752" />
         </View>
       ) : shorts?.length === 0 ? (
-        <Text className="text-center mt-6 text-gray-500 text-base">
-          No shorts found
-        </Text>
+        <View className="flex justify-center items-center py-32">
+          <Image source={require('../assets/Images/out-of-stock.png')} />
+
+          <Text className="text-center text-lg  mt-1 text-gray-500 ">
+            No shorts found
+          </Text>
+        </View>
       ) : (
         // <FlatList
         //   data={shorts}
@@ -190,11 +194,7 @@ const MyShorts = () => {
               </View>
             </View>
           )}
-          ListEmptyComponent={() => (
-            <View className=" flex flex-1 justify-center items-center ">
-              <Text className="text-base text-primary">No videos found.</Text>
-            </View>
-          )}
+         
         />
       )}
     </View>
