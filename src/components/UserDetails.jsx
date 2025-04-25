@@ -210,7 +210,7 @@ export default function UserDetails({route}) {
           end={{x: 1, y: 1}}
           className="pb-8 pt-8 items-center rounded-b-full shadow-lg">
           <Image
-            source={require('../assets/Images/default-image.png')}
+            source={  userData?.image ? {uri: userData?.image} :require('../assets/Images/default-image.png')}
             className="w-24 h-24 rounded-full border-4 border-white"
           />
           <Text className="text-xl font-bold text-white mt-3">
